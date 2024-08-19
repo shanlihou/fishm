@@ -1,6 +1,6 @@
 import 'dart:isolate';
 import 'package:flutter/material.dart';
-import 'package:toonfu/pages/home.dart';
+import 'package:toonfu/views/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/worker.dart';
 import 'package:toonfu/isolates/lua.dart';
