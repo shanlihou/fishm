@@ -31,9 +31,11 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.2
-  lua_dardo: ^0.0.5
+  # lua_dardo: ^0.0.5
+  lua_dardo_co:
+    path: /Users/hoshily/custom/git/flutter/LuaDardo
   dio: ^5.6.0
-
+  logger: ^1.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

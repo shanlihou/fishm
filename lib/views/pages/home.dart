@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lua_dardo/lua.dart';
 import 'package:toonfu/views/tabs/explore.dart';
 
 class Home extends StatefulWidget {
@@ -21,10 +20,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // LuaState state = LuaState.newState();
-    // state.openLibs();
-    // state.loadString('print("Hello, lua!")');
-    // state.call(0, 0);
     _tabController = TabController(
       length: _tabs.length,
       vsync: this,
