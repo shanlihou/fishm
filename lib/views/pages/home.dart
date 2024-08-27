@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:toonfu/views/tabs/explore.dart';
+import '../mixin/lua_mixin.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin, LuaMixin {
   late TabController _tabController;
   final List<String> _tabs = <String>[
     'Tab 1',
@@ -19,11 +21,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    initLua();
 
     _tabController = TabController(
       length: _tabs.length,
       vsync: this,
     );
+
+    startLuaLoop();
+  }
+
+  void startLuaLoop() async {
+    Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      loopOnce();
+    });
   }
 
   @override

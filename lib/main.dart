@@ -1,12 +1,12 @@
-import 'dart:isolate';
+// import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:toonfu/views/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/worker.dart';
-import 'package:toonfu/isolates/lua.dart';
+// import 'package:toonfu/isolates/lua.dart';
 
 void main() {
-  Isolate.spawn<void>(luaLoop, null);
+  // Isolate.spawn<void>(luaLoop, null);
 
   runApp(
     MultiProvider(

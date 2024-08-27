@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import '../../api/flutter_call_lua/method.dart';
+import '../../common/log.dart';
 
 
 class ExploreTab extends StatefulWidget {
-  const ExploreTab({Key? key}) : super(key: key);
+  const ExploreTab({super.key});
 
   @override
   State<ExploreTab> createState() => _ExploreTabState();
@@ -14,17 +15,14 @@ class _ExploreTabState extends State<ExploreTab> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-
-    test();
+    getGallery();
   }
 
-  void test() async {
-    String url = "https://comic.idmzj.com";
-    Dio dio = Dio();
-    print('will get');
-    var ret = await dio.get(url);
-    print(ret);
+  void getGallery() async {
+    String ret = await gallery();
+    Log.instance.d(ret);
   }
+
 
   @override
   Widget build(BuildContext context) {
