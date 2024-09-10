@@ -4,6 +4,7 @@ import '../../common/log.dart';
 import '../../types/manager/actions.dart';
 import '../flutter_call_lua/payload/http_response.dart';
 import '../../utils/lua_table.dart';
+import 'dart:convert';
 
 
 class HttpLib {
@@ -21,17 +22,28 @@ class HttpLib {
       int cbid,
       Map<String, dynamic> query,
       Map<String, dynamic> headers,
+      ResponseType responseType,
       ) async {
     Dio dio = Dio();
     var ret = await dio.get(
       url,
       queryParameters: query,
       options: Options(
-        responseType: ResponseType.json,
+        responseType: responseType,
         headers: headers,
       ),
     );
-    actionsManager.addAction(HttpResponse.toAction(ret.toString(), cbid));
+
+    String data;
+    if (ret.data is List || ret.data is Map) {
+      data = const JsonEncoder().convert(ret.data);
+    } else {
+      data = ret.data.toString();
+    }
+
+    int code = ret.statusCode ?? 0;
+
+    actionsManager.addAction(HttpResponse.toAction(data, code, cbid));
   }
 
   static int _httpGet(LuaState ls) {
@@ -39,6 +51,7 @@ class HttpLib {
     String? url = ls.checkString(2);
     Map<String, dynamic> query = {};
     Map<String, dynamic> headers = {};
+    ResponseType responseType = ResponseType.json;
 
     if (ls.type(3) == LuaType.luaTable) {
       if (ls.getField(3, 'query') == LuaType.luaTable) {
@@ -52,6 +65,15 @@ class HttpLib {
       }
 
       ls.pop(1);
+
+      if (ls.getField(3, 'responseType') == LuaType.luaString) {
+        if (ls.checkString(-1) == 'json') {
+          responseType = ResponseType.json;
+        } else if (ls.checkString(-1) == 'plain') {
+          responseType = ResponseType.plain;
+        }
+      }
+      ls.pop(1);
     }
 
     if (cbid == null || url == null) {
@@ -60,7 +82,7 @@ class HttpLib {
     }
 
     Log.instance.d('will get $url');
-    _get(url, cbid, query, headers);
+    _get(url, cbid, query, headers, responseType);
     return 0;
   }
 }

@@ -25,35 +25,20 @@ class JsonLib {
     return 1;
   }
 
-  static void _pushJsonMap(LuaState ls, Map<String, dynamic> json) {
-    ls.newTable();
-    json.forEach((key, value) {
-      ls.pushString(key);
-      if (value is String) {
-        ls.pushString(value);
-      } else if (value is int) {
-        ls.pushInteger(value);
-      } else if (value is double) {
-        ls.pushNumber(value);
-      } else if (value is bool) {
-        ls.pushBoolean(value);
-      } else if (value is Map<String, dynamic>) {
-        _pushJsonMap(ls, value);
-      } else {
-        ls.pushNil();
-      }
-      ls.setTable(-3);
-    });
-  }
-
   static int _jsonDecode(LuaState ls) {
     String? jsonStr = ls.checkString(-1);
     if (jsonStr == null) {
       return 0;
     }
 
-    Map<String, dynamic> json = const JsonDecoder().convert(jsonStr);
-    _pushJsonMap(ls, json);
+    Object json = const JsonDecoder().convert(jsonStr);
+    if (json is List) {
+      pushJsonList(ls, json);
+    } else if (json is Map<String, dynamic>) {
+      pushJsonMap(ls, json);
+    } else {
+      ls.pushNil();
+    }
     return 1;
   }
 

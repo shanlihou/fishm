@@ -3,7 +3,7 @@ import 'package:lua_dardo_co/lua.dart';
 List<Object> fromLuaTable(LuaTable t) {
   List<Object> list = [];
   if (t.length() != 0) {
-    for (int i = 1; i <= t.length(); i++) {
+    for (int i = 0; i < t.length(); i++) {
       Object? value = t.arr![i];
       if (value is String) {
         list.add(value);
@@ -14,7 +14,12 @@ List<Object> fromLuaTable(LuaTable t) {
       } else if (value is bool) {
         list.add(value);
       } else if (value is LuaTable) {
-        list.add(fromLuaTable(value));
+        if (value.length() != 0) {
+          list.add(fromLuaTable(value));
+        }
+        else {
+          list.add(fromLuaMap(value));
+        }
       }
     }
   }
@@ -48,3 +53,51 @@ Map<String, dynamic> fromLuaMap(LuaTable t) {
   });
   return map;
 }
+
+
+void pushJsonList(LuaState ls, List<dynamic> list) {
+  ls.newTable();
+  for (int i = 0; i < list.length; i++) {
+    ls.pushInteger(i + 1);
+    if (list[i] is String) {
+      ls.pushString(list[i]);
+    } else if (list[i] is int) {
+      ls.pushInteger(list[i]);
+    } else if (list[i] is double) {
+      ls.pushNumber(list[i]);
+    } else if (list[i] is bool) {
+      ls.pushBoolean(list[i]);
+    } else if (list[i] is List) {
+      pushJsonList(ls, list[i]);
+    } else if (list[i] is Map<String, dynamic>) {
+      pushJsonMap(ls, list[i]);
+    } else {
+      ls.pushNil();
+    }
+    ls.setTable(-3);
+  }
+}
+
+void pushJsonMap(LuaState ls, Map<String, dynamic> json) {
+  ls.newTable();
+  json.forEach((key, value) {
+    ls.pushString(key);
+    if (value is String) {
+      ls.pushString(value);
+    } else if (value is int) {
+      ls.pushInteger(value);
+    } else if (value is double) {
+      ls.pushNumber(value);
+    } else if (value is bool) {
+      ls.pushBoolean(value);
+    } else if (value is Map<String, dynamic>) {
+      pushJsonMap(ls, value);
+    } else if (value is List) {
+      pushJsonList(ls, value);
+    } else {
+      ls.pushNil();
+    }
+    ls.setTable(-3);
+  });
+}
+

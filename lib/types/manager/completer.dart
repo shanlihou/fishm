@@ -14,6 +14,13 @@ class CompleterManager {
   void addCompleter(int id, Completer<Object> completer) {
     _map[id] = completer;
   }
+
+  void commplete(int id, Object value) {
+    if (_map.containsKey(id)) {
+      _map[id]!.complete(value);
+      _map.remove(id);
+    }
+  }
 }
 
 final completerManager = CompleterManager();
