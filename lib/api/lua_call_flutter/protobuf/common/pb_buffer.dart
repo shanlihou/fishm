@@ -138,6 +138,7 @@ class PbBuffer {
         double? d = ls.toNumberX(idx);
         if (d != null) {
           len = addDouble(d);
+          ret = 1;
         }
 
         if (d == 0.0) {
@@ -149,6 +150,7 @@ class PbBuffer {
         double? d = ls.toNumberX(idx);
         if (d != null) {
           len = addFloat(d);
+          ret = 1;
         }
 
         if (d == 0.0) {
@@ -160,6 +162,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addFixed32(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -171,6 +174,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addFixed32(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -182,6 +186,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addVarint64(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -193,6 +198,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addVarint32(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -204,6 +210,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addVarint32((n << 1) ^ (n >> 31));
+          ret = 1;
         }
 
         if (n == 0) {
@@ -215,6 +222,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addFixed64(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -226,6 +234,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addFixed64(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -238,6 +247,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addVarint64(n);
+          ret = 1;
         }
 
         if (n == 0) {
@@ -249,6 +259,7 @@ class PbBuffer {
         int? n = ls.toIntegerX(idx);
         if (n != null) {
           len = addVarint64((n << 1) ^ (n >> 63));
+          ret = 1;
         }
 
         if (n == 0) {
@@ -264,6 +275,8 @@ class PbBuffer {
           if (s.isEmpty) {
             hasData = 0;
           }
+
+          ret = 1;
         }
         else {
           hasData = 0;

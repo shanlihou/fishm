@@ -8,6 +8,10 @@ class PbState {
   bool encodeDefaultValues = false;
 
   PbType newType(String name) {
+    if (types.containsKey(name)) {
+      return types[name]!;
+    }
+
     var type = PbType(name);
     types[name] = type;
     return type;
@@ -21,9 +25,19 @@ class PbState {
   }
 
   PbField newField(PbType type, String name, int number) {
-    var field = PbField(type, name, number);
-    type.fieldNames[name] = field;
-    type.fieldTags[number] = field;
-    return field;
+    PbField? f;
+    if (type.fieldNames.containsKey(name)) {
+      f = type.fieldNames[name]!;
+    }
+
+    if (type.fieldTags.containsKey(number)) {
+      f = type.fieldTags[number]!;
+    }
+
+    f ??= PbField(type, name, number);
+
+    type.fieldNames[name] = f;
+    type.fieldTags[number] = f;
+    return f;
   }
 }

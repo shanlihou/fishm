@@ -21,10 +21,10 @@ class LuaManager {
     ls.requireF('dart_bytes', BytesLib.openBytesLib, true);
     ls.requireF('dart_pb', ProtobufLib.openProtobufLib, true);
     ls.pop(1);
-    HookContext ctx = HookContext(1, 837, "protoc", () {
-      Log.instance.i("hooked");
-    });
-    ls.setHook(ctx);
+    // HookContext ctx = HookContext(1, 837, "protoc", () {
+    //   Log.instance.i("hooked");
+    // });
+    // ls.setHook(ctx);
     if (!ls.doFile("lua/main.lua")) {
       Log.instance.e("error: ${ls.toStr(-1)}");
       ls.pop(1);
