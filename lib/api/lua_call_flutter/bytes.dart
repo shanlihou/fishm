@@ -5,6 +5,7 @@ class BytesLib {
   static const Map<String, DartFunction> _bytesFuncs = {
     "hex": _hex,
     "len": _len,
+    "fromhex": _fromHex,
   };
 
   static int openBytesLib(LuaState ls) {
@@ -27,6 +28,24 @@ class BytesLib {
       ls.pushNil();
       return 1;
     }
+  }
+
+  static int _fromHex(LuaState ls) {
+    String hex = ls.checkString(1)!;
+    hex = hex.replaceAll(RegExp(r'\s+'), '');
+    if (hex.length % 2 != 0) {
+      ls.pushNil();
+      ls.pushString("invalid hex string");
+      return 2;
+    }
+    Uint8List data = Uint8List(hex.length ~/ 2);
+    for (int i = 0; i < hex.length; i += 2) {
+      String byte = hex.substring(i, i + 2);
+      data[i ~/ 2] = int.parse(byte, radix: 16);
+    }
+    Userdata ud = ls.newUserdata();
+    ud.data = data;
+    return 1;
   }
 
   static int _len(LuaState ls) {

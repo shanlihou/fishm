@@ -9,6 +9,10 @@ class PbSlice {
   int start;
   int end;
 
+  static PbSlice empty() {
+    return PbSlice(Uint8List(0), 0, 0);
+  }
+
   PbSlice(this.buffer, this.start, this.end, {int current = 0}) {
     _current = current;
   }
@@ -331,24 +335,32 @@ class PbSlice {
     return ret;
   }
 
-
-// static unsigned pbN_calchash(pb_Slice s) {
-//     size_t len = pb_len(s);
-//     unsigned h = (unsigned)len;
-//     size_t step = (len >> PB_HASHLIMIT) + 1;
-//     for (; len >= step; len -= step)
-//         h ^= ((h<<5) + (h>>2) + (unsigned char)(s.p[len - 1]));
-//     return h;
-// }
-
-  int calchash() {
-    int length = len();
-    int h = length;
-    int step = (length >> PB_HASHLIMIT) + 1;
-    for (; length >= step; length -= step) {
-      h ^= ((h << 5) + (h >> 2) + buffer[_current + length - 1]);
+  (int, int) readfixed32() {
+    int n = 0;
+    if (_current + 4 > end) {
+      return (0, 0);
     }
-    return h;
+
+    for (int i = 3; i >= 0; i--) {
+      n = (n << 8) | (buffer[_current + i] & 0xff);
+    }
+
+    _current += 4;
+    return (n, 4);
+  }
+
+  (int, int) readfixed64() {
+    int n = 0;
+    if (_current + 8 > end) {
+      return (0, 0);
+    }
+
+    for (int i = 7; i >= 0; i--) {
+      n = (n << 8) | (buffer[_current + i] & 0xff);
+    }
+
+    _current += 8;
+    return (n, 8);
   }
 
   bool isSameString(String val) {

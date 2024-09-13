@@ -11,6 +11,7 @@ class ProtobufLib {
   static const Map<String, DartFunction> _protobufFuncs = {
     "load": _load,
     "encode": _encode,
+    "decode": _decode,
   };
 
   static int openProtobufLib(LuaState ls) {
@@ -39,22 +40,7 @@ class ProtobufLib {
   }
 
   static int _load(LuaState ls) {
-    PbSlice slice;
-    if (ls.type(1) == LuaType.luaString) {
-      String s = ls.checkString(1)!;
-      slice = PbSlice.fromString(s, 0, s.length);
-    }
-    else {
-      Userdata ud = ls.toUserdata(1)!;
-      if (ud.data is Uint8List) {
-        Uint8List data = ud.data as Uint8List;
-        slice = PbSlice(data, 0, data.length);
-      }
-      else {
-        ls.pushNil();
-        return 1;
-      }
-    }
+    PbSlice slice = luaSlice(ls, 1)!;
 
     PbState state = getState(ls);
     PbLoader loader = PbLoader(slice, false);
@@ -69,7 +55,7 @@ class ProtobufLib {
   }
 
   static int _encode(LuaState ls) {
-    PbEnv env = PbEnv(ls, getState(ls), PbBuffer());
+    PbEnv env = PbEnv(ls, getState(ls), PbBuffer(), PbSlice.empty());
     String typeName = ls.checkString(1)!;
     if (ls.type(2) != LuaType.luaTable) {
       throw Exception("pb encode table excepted");
@@ -81,6 +67,42 @@ class ProtobufLib {
 
     Userdata ud = ls.newUserdata();
     ud.data = env.b.toBytes();
+    return 1;
+  }
+
+  static PbSlice? luaSlice(LuaState ls, int idx) {
+    if (ls.type(idx) == LuaType.luaString) {
+      String s = ls.checkString(idx)!;
+      return PbSlice.fromString(s, 0, s.length);
+    }
+    else {
+      Userdata ud = ls.toUserdata(idx)!;
+      if (ud.data is Uint8List) {
+        Uint8List data = ud.data as Uint8List;
+        return PbSlice(data, 0, data.length);
+      }
+      else {
+        return null;
+      }
+    }
+  }
+
+  static int _decode(LuaState ls) {
+    String typeName = ls.checkString(1)!;
+    PbSlice s = luaSlice(ls, 2)!;
+
+    PbEnv env = PbEnv(ls, getState(ls), PbBuffer(), s);
+    var t = env.ps.findType(typeName)!;
+
+    ls.setTop(3);
+
+    if (ls.type(3) != LuaType.luaTable) {
+      ls.pop(1);
+
+      env.ps.pushTypeTable(ls, t);
+    }
+
+    env.dMessage(t);
     return 1;
   }
 }

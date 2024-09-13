@@ -1,4 +1,24 @@
+const INT_MIN = -2147483647 -1;
+const UINT_MAX = 2147483647 * 2 + 1;
 
+
+// enum lpb_Int64Mode { LPB_NUMBER, LPB_STRING, LPB_HEXSTRING };
+const LPB_NUMBER = 0;
+const LPB_STRING = 1;
+const LPB_HEXSTRING = 2;
+
+// define LUA_NOREF       (-2)
+const LUA_NOREF = -2;
+
+// typedef enum {USE_FIELD = 1, USE_REPEAT = 2, USE_MESSAGE = 4} lpb_DefFlags;
+const USE_FIELD = 1;
+const USE_REPEAT = 2;
+const USE_MESSAGE = 4;
+
+const LPB_DEFDEF = 0;
+const LPB_COPYDEF = 1;
+const LPB_METADEF = 2;
+const LPB_NODEF = 3;
 
 
 const PB_TVARINT = 0;

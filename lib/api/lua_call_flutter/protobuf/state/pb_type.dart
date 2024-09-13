@@ -12,6 +12,7 @@ class PbType {
   Map<int, PbOneofEntry> oneofIndex = {};
   int oneofField = 0;
   int oneofCount = 0;
+  bool isDead = false;
 
   PbType(this.name) {
     basename = name.split('.').last;
@@ -19,5 +20,9 @@ class PbType {
 
   PbField? findField(String name) {
     return fieldNames[name];
+  }
+
+  PbField? findFieldByTag(int tag) {
+    return fieldTags[tag];
   }
 }
