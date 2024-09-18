@@ -14,7 +14,11 @@ Future<List<Object>> gallery() async {
   completerManager.addCompleter(retId, completer);
   var ret = await completer.future;
 
-  return ret as List<Object>;
+  if (ret is! List<Object>) {
+    return [];
+  }
+
+  return ret;
 }
 
 Future<void> getDetail(Map<String, dynamic> extra) async {

@@ -4,6 +4,8 @@ import '../../api/lua_call_flutter/http.dart';
 import '../../api/lua_call_flutter/json.dart';
 import '../../api/lua_call_flutter/crypto.dart';
 import '../../api/lua_call_flutter/bytes.dart';
+import '../../api/lua_call_flutter/utils.dart';
+import '../../api/lua_call_flutter/os_ext.dart';
 import '../../api/lua_call_flutter/protobuf/protobuf.dart';
 import '../../common/log.dart';
 import '../../utils/lua_table.dart';
@@ -20,6 +22,8 @@ class LuaManager {
     ls.requireF('dart_crypto', CryptoLib.openCryptoLib, true);
     ls.requireF('dart_bytes', BytesLib.openBytesLib, true);
     ls.requireF('dart_pb', ProtobufLib.openProtobufLib, true);
+    ls.requireF('dart_utils', UtilsLib.openUtilsLib, true);
+    ls.requireF('dart_os_ext', OsExtensionLib.openOsExtensionLib, true);
     ls.pop(1);
     // HookContext ctx = HookContext(1, 837, "protoc", () {
     //   Log.instance.i("hooked");
