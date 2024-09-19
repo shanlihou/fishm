@@ -1,6 +1,7 @@
 import './utils.dart';
 import './pb_const.dart';
 import 'dart:typed_data';
+import 'dart:convert';
 
 
 class PbSlice {
@@ -369,7 +370,7 @@ class PbSlice {
 
   @override
   String toString() {
-    return String.fromCharCodes(buffer.sublist(_current, end));
+    return utf8.decode(buffer.sublist(_current, end));
   }
 
   int charAt(int index) {

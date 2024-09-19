@@ -61,7 +61,7 @@ class CryptoLib {
       return 1;
     }
 
-    if (!(content.data is! Uint8List)) {
+    if (content.data is! Uint8List) {
       ls.pushNil();
       return 1;
     }
@@ -77,5 +77,4 @@ class CryptoLib {
     }
     return 1;
   }
-
 }

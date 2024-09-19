@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../api/flutter_call_lua/method.dart';
+import '../../models/comic_detail.dart';
+import './reader.dart';
 
 class ComicDetailPage extends StatefulWidget {
   final String title;
@@ -8,7 +10,8 @@ class ComicDetailPage extends StatefulWidget {
   final String description;
   final Map<String, dynamic> extra;
 
-  const ComicDetailPage(this.extra, {
+  const ComicDetailPage(
+    this.extra, {
     super.key,
     required this.title,
     required this.author,
@@ -22,11 +25,23 @@ class ComicDetailPage extends StatefulWidget {
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
   bool isFavorite = false;
+  ComicDetail? detail;
 
   @override
   void initState() {
     super.initState();
-    getDetail(widget.extra);
+    initAsync();
+  }
+
+  Future<void> initAsync() async {
+    Object ret = await getDetail(widget.extra);
+    updateDetail(ComicDetail.fromJson(ret as Map<String, dynamic>));
+  }
+
+  void updateDetail(ComicDetail detail) {
+    setState(() {
+      this.detail = detail;
+    });
   }
 
   void toggleFavorite() {
@@ -37,6 +52,48 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = [];
+
+    children.add(Image.network(widget.coverImage,
+        height: 200, width: double.infinity, fit: BoxFit.cover));
+    children.add(Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.title),
+          SizedBox(height: 8),
+          Text('作者: ${widget.author}'),
+          SizedBox(height: 16),
+          Text('简介:'),
+          SizedBox(height: 8),
+          Text(widget.description),
+        ],
+      ),
+    ));
+
+    if (detail != null) {
+      for (int index = 0; index < detail!.chapters.length; index++) {
+        children.add(SizedBox(
+          height: 50,
+          child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ComicReaderPage(
+                      detail!.chapters[index].id,
+                      detail!.id,
+                      detail!.chapters[index].title,
+                    ),
+                  ),
+                );
+              },
+              child: Text(detail!.chapters[index].title)),
+        ));
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -50,24 +107,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(widget.coverImage, height: 200, width: double.infinity, fit: BoxFit.cover),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.title),
-                  SizedBox(height: 8),
-                  Text('作者: ${widget.author}'),
-                  SizedBox(height: 16),
-                  Text('简介:'),
-                  SizedBox(height: 8),
-                  Text(widget.description),
-                ],
-              ),
-            ),
-          ],
+          children: children,
         ),
       ),
     );
