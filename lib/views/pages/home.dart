@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:toonfu/views/tabs/explore.dart';
+import 'package:toonfu/views/tabs/explore_tab.dart';
+import 'package:toonfu/views/tabs/bookshelf.dart';
 import '../mixin/lua_mixin.dart';
+import 'settings/main_settings.dart';
+import '../tabs/extensions_tab.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,11 +13,12 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin, LuaMixin {
+class _HomeState extends State<Home>
+    with SingleTickerProviderStateMixin, LuaMixin {
   late TabController _tabController;
   final List<String> _tabs = <String>[
-    'Tab 1',
-    'Tab 2',
+    'Bookshelf',
+    'Extensions',
     'Explore',
   ];
 
@@ -41,20 +45,34 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, LuaMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Row(
+          children: [
+            const Expanded(flex: 1, child: Text('Home')),
+            Expanded(flex: 8, child: Container()),
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MainSettings()),
+                  );
+                },
+                icon: const Icon(Icons.settings),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
           Expanded(
               child: TabBarView(
             controller: _tabController,
-            children: <Widget>[
-              Center(
-                child: Text('Tab 1'),
-              ),
-              Center(
-                child: Text('Tab 2'),
-              ),
+            children: const <Widget>[
+              BookShelfTab(),
+              ExtensionsTab(),
               ExploreTab(),
             ],
           )),

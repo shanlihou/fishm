@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../api/flutter_call_lua/method.dart';
-import '../../models/comic_detail.dart';
+import '../../models/api/comic_detail.dart';
 import './reader.dart';
 
 class ComicDetailPage extends StatefulWidget {
+  final String extensionName;
   final String title;
   final String author;
   final String coverImage;
@@ -11,6 +12,7 @@ class ComicDetailPage extends StatefulWidget {
   final Map<String, dynamic> extra;
 
   const ComicDetailPage(
+    this.extensionName,
     this.extra, {
     super.key,
     required this.title,
@@ -34,7 +36,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   Future<void> initAsync() async {
-    Object ret = await getDetail(widget.extra);
+    Object ret = await getDetail(widget.extensionName, widget.extra);
     updateDetail(ComicDetail.fromJson(ret as Map<String, dynamic>));
   }
 
@@ -62,11 +64,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.title),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text('作者: ${widget.author}'),
-          SizedBox(height: 16),
-          Text('简介:'),
-          SizedBox(height: 8),
+          const SizedBox(height: 16),
+          const Text('简介:'),
+          const SizedBox(height: 8),
           Text(widget.description),
         ],
       ),
@@ -82,6 +84,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ComicReaderPage(
+                      widget.extensionName,
                       detail!.chapters[index].id,
                       detail!.id,
                       detail!.chapters[index].title,

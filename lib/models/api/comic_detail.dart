@@ -5,14 +5,14 @@ class Chpater {
   Chpater(this.title, this.id);
 }
 
-
 class ComicDetail {
   String title;
   int id;
+  Map<String, dynamic> extra;
 
   List<Chpater> chapters;
 
-  ComicDetail(this.title, this.chapters, this.id);
+  ComicDetail(this.title, this.chapters, this.id, this.extra);
 
   static ComicDetail fromJson(Map<String, dynamic> json) {
     List<Chpater> chapters = [];
@@ -21,6 +21,6 @@ class ComicDetail {
         chapters.add(Chpater(item['title'], item['id']));
       }
     }
-    return ComicDetail(json['title'], chapters, json['id']);
+    return ComicDetail(json['title'], chapters, json['id'], json['extra']);
   }
 }

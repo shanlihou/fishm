@@ -8,7 +8,7 @@ class GalleryRow {
 
   GalleryRow(this.items, this.maxColumn);
 
-  Widget toWidget(BuildContext context) {
+  Widget toWidget(BuildContext context, String extensionName) {
     List<Widget> children = [];
 
     for (var item in items) {
@@ -24,6 +24,7 @@ class GalleryRow {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ComicDetailPage(
+                      extensionName,
                       item.extra,
                       title: item.title,
                       author: '未知',

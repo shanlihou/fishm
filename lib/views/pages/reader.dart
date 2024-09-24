@@ -2,15 +2,18 @@
 
 import 'package:flutter/material.dart';
 import "../../api/flutter_call_lua/method.dart";
-import "../../models/chapter_detail.dart";
-
+import "../../models/api/chapter_detail.dart";
+import 'package:preload_page_view/preload_page_view.dart';
 
 class ComicReaderPage extends StatefulWidget {
   final int chapterId;
   final int comicId;
   final String chapterTitle;
+  final String extensionName;
 
-  const ComicReaderPage(this.chapterId, this.comicId, this.chapterTitle, {super.key});
+  const ComicReaderPage(
+      this.extensionName, this.chapterId, this.comicId, this.chapterTitle,
+      {super.key});
 
   @override
   _ComicReaderPageState createState() => _ComicReaderPageState();
@@ -18,6 +21,7 @@ class ComicReaderPage extends StatefulWidget {
 
 class _ComicReaderPageState extends State<ComicReaderPage> {
   int currentIndex = 0;
+  final PreloadPageController controller = PreloadPageController();
   List<String> images = [];
 
   @override
@@ -27,8 +31,10 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<void> initAsync() async {
-    var detail = await getChapterDetail(widget.chapterId, widget.comicId);
-    ChapterDetail chapterDetail = ChapterDetail.fromJson(detail as Map<String, dynamic>);
+    var detail = await getChapterDetail(
+        widget.extensionName, widget.chapterId, widget.comicId);
+    ChapterDetail chapterDetail =
+        ChapterDetail.fromJson(detail as Map<String, dynamic>);
     updateImages(chapterDetail.images);
     print(detail);
   }
@@ -69,11 +75,20 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          nextPage();
-        },
-        child: toImage(),
+      body: Container(
+        child: PreloadPageView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: images.length,
+          physics: null,
+          preloadPagesCount: 4,
+          controller: controller,
+          onPageChanged: (index) {
+            currentIndex = index;
+          },
+          itemBuilder: (context, index) {
+            return Image.network(images[index], fit: BoxFit.cover);
+          },
+        ),
       ),
     );
   }
