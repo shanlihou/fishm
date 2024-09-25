@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../pages/comic_detail_page.dart';
 import './comic_item.dart';
-import '../pages/detail.dart';
 
 class GalleryRow {
   final List<ComicItem> items;
@@ -24,12 +24,8 @@ class GalleryRow {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ComicDetailPage(
+                      item,
                       extensionName,
-                      item.extra,
-                      title: item.title,
-                      author: '未知',
-                      coverImage: item.imageUrl,
-                      description: '暂无简介',
                     ),
                   ),
                 );

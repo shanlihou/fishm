@@ -13,36 +13,14 @@ import '../../common/log.dart';
 import '../../utils/lua_table.dart';
 import './completer.dart';
 import '../../const/lua_const.dart';
-import 'package:dio/dio.dart';
-import 'package:archive/archive.dart';
 
 class LuaManager {
   final LuaState ls = LuaState.newState();
   bool initOk = false;
 
-  Future<void> downloadMainLua() async {
-    // download repo zip and then unzip to code, the url is mainRelease
-    Dio dio = Dio();
-    await dio.download(mainRelease, mainReleaseDownloadPath);
-    // unzip to code without first class folder
-    final bytes = await File(mainReleaseDownloadPath).readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive) {
-      String filename = file.name;
-      if (filename.contains('/')) {
-        filename = filename.substring(filename.indexOf('/') + 1);
-      }
-      print(filename);
-      if (file.isFile) {
-        final data = file.content as List<int>;
-        File('$mainDir/$filename')
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
-      }
-    }
-  }
-
   Future<void> initLua() async {
+    print("current path: ${Directory.current.path}");
+
     ls.openLibs();
     ls.requireF('dart_http', HttpLib.openHttpLib, true);
     ls.requireF('dart_json', JsonLib.openJsonLib, true);
@@ -52,18 +30,12 @@ class LuaManager {
     ls.requireF('dart_utils', UtilsLib.openUtilsLib, true);
     ls.requireF('dart_os_ext', OsExtensionLib.openOsExtensionLib, true);
     ls.pop(1);
-    // HookContext ctx = HookContext(1, 837, "protoc", () {
-    //   Log.instance.i("hooked");
-    // });
-    // ls.setHook(ctx);
-    // if (!ls.doFile("lua/main.lua")) {
-    //   Log.instance.e("error: ${ls.toStr(-1)}");
-    //   ls.pop(1);
-    // }
 
-    // judge if lua/main.lua exists
-    if (!(await File('$mainDir/main.lua').exists())) {
-      await downloadMainLua();
+    if (isSetHook) {
+      HookContext ctx = HookContext(1, 837, "protoc", () {
+        Log.instance.i("hooked");
+      });
+      ls.setHook(ctx);
     }
 
     ls.loadString(

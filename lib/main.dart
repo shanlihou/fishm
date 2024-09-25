@@ -1,4 +1,6 @@
 // import 'dart:isolate';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:toonfu/types/provider/extension_provider.dart';
 import 'package:toonfu/views/pages/home.dart';
@@ -8,10 +10,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toonfu/models/db/settings.dart';
 import 'package:toonfu/models/db/extensions.dart';
 
-void main() {
-  // Isolate.spawn<void>(luaLoop, null);
+import 'utils/general.dart';
 
-  Hive.initFlutter();
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  _main();
+}
+
+Future<void> _main() async {
+  // Isolate.spawn<void>(luaLoop, null);
+  await initDirectory();
+  Hive.init(Directory.current.path);
+  await Hive.initFlutter();
   // Hive.openBox('settings');
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ExtensionAdapter());

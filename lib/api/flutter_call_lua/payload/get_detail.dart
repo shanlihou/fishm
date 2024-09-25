@@ -2,9 +2,8 @@ import 'package:lua_dardo_co/lua.dart';
 import "../action.dart";
 import "../../../utils/lua_table.dart";
 
-
 class GetDetail extends Payload {
-  Map<String, dynamic> extra;
+  final Map<String, dynamic> extra;
 
   GetDetail(this.extra);
 
@@ -20,5 +19,3 @@ class GetDetail extends Payload {
     return Action('get_detail', GetDetail(extra), retId: retId, plugin: plugin);
   }
 }
-
-

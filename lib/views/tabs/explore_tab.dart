@@ -85,6 +85,7 @@ class _ExploreTabState extends State<ExploreTab>
             onTap: () {
               setState(() {
                 selectedExtensionIndex = index;
+                selectedExtensionName = extensions[index].name;
               });
             },
             child: Container(

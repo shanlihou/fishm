@@ -48,11 +48,9 @@ class _SourcesSettingsState extends State<SourcesSettings> {
           Expanded(
             flex: 10,
             child: ListView.builder(
-              itemCount:
-                  context.watch<SettingProvider>().settings.sources.length,
+              itemCount: context.watch<SettingProvider>().sources.length,
               itemBuilder: (context, index) {
-                return Text(
-                    context.watch<SettingProvider>().settings.sources[index]);
+                return Text(context.watch<SettingProvider>().sources[index]);
               },
             ),
           )

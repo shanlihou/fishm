@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/const/path.dart';
 import 'package:yaml/yaml.dart';
+import '../../common/log.dart';
 import '../../const/general.dart';
 import '../../const/lua_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
@@ -34,18 +35,38 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
     }
 
     _isInitContext = true;
-    List<String> sources = context.read<SettingProvider>().settings.sources;
+    List<String> sources = context.read<SettingProvider>().sources;
     _loadRemoteExtensions(sources);
   }
 
-  Future<void> _loadRemoteExtensions(List<String> sources) async {
+  Future<void> _loadRemoteExtensionsFromNet(String source) async {
     Dio dio = Dio();
+    await dio.download(source, tempSrcDownloadPath);
+    final srcFileContent = await File(tempSrcDownloadPath).readAsString();
+    var doc = loadYaml(srcFileContent);
+    for (var ext in doc[yamlExtensionKey]) {
+      _remoteExtensions.add(model_extensions.Extension.fromYaml(ext));
+    }
+  }
+
+  Future<void> _loadRemoteExtensionsFromFile(String path) async {
+    final srcFileContent = await File(path).readAsString();
+    var doc = loadYaml(srcFileContent);
+    for (var ext in doc[yamlExtensionKey]) {
+      _remoteExtensions.add(model_extensions.Extension.fromYaml(ext));
+    }
+  }
+
+  Future<void> _loadRemoteExtensions(List<String> sources) async {
     for (var src in sources) {
-      await dio.download(src, tempSrcDownloadPath);
-      final srcFileContent = await File(tempSrcDownloadPath).readAsString();
-      var doc = loadYaml(srcFileContent);
-      for (var ext in doc[yamlExtensionKey]) {
-        _remoteExtensions.add(model_extensions.Extension.fromYaml(ext));
+      try {
+        if (src.startsWith('http')) {
+          await _loadRemoteExtensionsFromNet(src);
+        } else {
+          await _loadRemoteExtensionsFromFile(src);
+        }
+      } catch (e) {
+        Log.instance.e('error: $e');
       }
     }
 
@@ -54,8 +75,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
     }
   }
 
-  Future<void> _installExtension(
-      model_extensions.Extension extension, BuildContext buildContext) async {
+  Future<void> _downloadExtension(model_extensions.Extension extension) async {
     Dio dio = Dio();
     await dio.download(extension.url, tempExtDownloadPath);
     final bytes = await File(tempExtDownloadPath).readAsBytes();
@@ -72,6 +92,33 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       }
+    }
+  }
+
+  Future<void> _copyLocalExtension(model_extensions.Extension extension) async {
+    final sourceDir = Directory(extension.url);
+    final targetDir = Directory('$pluginDir/${extension.name}');
+
+    if (!await targetDir.exists()) {
+      await targetDir.create(recursive: true);
+    }
+
+    await for (var entity in sourceDir.list(recursive: true)) {
+      if (entity is File) {
+        final relativePath = entity.path.substring(sourceDir.path.length + 1);
+        final newFile = File('${targetDir.path}/$relativePath');
+        await newFile.create(recursive: true);
+        await entity.copy(newFile.path);
+      }
+    }
+  }
+
+  Future<void> _installExtension(
+      model_extensions.Extension extension, BuildContext buildContext) async {
+    if (extension.url.startsWith("http")) {
+      await _downloadExtension(extension);
+    } else {
+      await _copyLocalExtension(extension);
     }
 
     var clone = extension.clone();

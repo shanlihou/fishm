@@ -1,13 +1,13 @@
 class Chpater {
   final String title;
-  final int id;
+  final String id;
 
   Chpater(this.title, this.id);
 }
 
 class ComicDetail {
   String title;
-  int id;
+  String id;
   Map<String, dynamic> extra;
 
   List<Chpater> chapters;

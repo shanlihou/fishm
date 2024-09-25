@@ -33,13 +33,13 @@ Future<Object> getDetail(
   return ret;
 }
 
-Future<Object> getChapterDetail(
-    String extensionName, int chapterId, int comicId) async {
+Future<Object> getChapterDetail(String extensionName, String chapterId,
+    String comicId, Map<String, dynamic> extra) async {
   Completer<Object> completer = Completer<Object>();
   int retId = completerManager.genCompleteId();
 
   actionsManager.addAction(
-      ChapterDetail.toAction(retId, extensionName, chapterId, comicId));
+      ChapterDetail.toAction(retId, extensionName, chapterId, comicId, extra));
 
   completerManager.addCompleter(retId, completer);
   var ret = await completer.future;

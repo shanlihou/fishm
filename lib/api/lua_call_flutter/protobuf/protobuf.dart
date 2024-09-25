@@ -92,17 +92,17 @@ class ProtobufLib {
     PbSlice s = luaSlice(ls, 2)!;
 
     PbEnv env = PbEnv(ls, getState(ls), PbBuffer(), s);
-    var t = env.ps.findType(typeName)!;
+    var t = env.ps.findType(typeName);
 
     ls.setTop(3);
 
     if (ls.type(3) != LuaType.luaTable) {
       ls.pop(1);
 
-      env.ps.pushTypeTable(ls, t);
+      env.ps.pushTypeTable(ls, t!);
     }
 
-    env.dMessage(t);
+    env.dMessage(t!);
     return 1;
   }
 }

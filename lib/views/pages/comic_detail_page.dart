@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../models/api/comic_detail.dart';
+import '../../views/class/comic_item.dart';
 import './reader.dart';
 
 class ComicDetailPage extends StatefulWidget {
+  final ComicItem comicItem;
   final String extensionName;
-  final String title;
-  final String author;
-  final String coverImage;
-  final String description;
-  final Map<String, dynamic> extra;
 
   const ComicDetailPage(
-    this.extensionName,
-    this.extra, {
+    this.comicItem,
+    this.extensionName, {
     super.key,
-    required this.title,
-    required this.author,
-    required this.coverImage,
-    required this.description,
   });
 
   @override
@@ -36,7 +29,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   Future<void> initAsync() async {
-    Object ret = await getDetail(widget.extensionName, widget.extra);
+    Object ret = await getDetail(widget.extensionName, widget.comicItem.extra);
     updateDetail(ComicDetail.fromJson(ret as Map<String, dynamic>));
   }
 
@@ -56,20 +49,20 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   Widget build(BuildContext context) {
     List<Widget> children = [];
 
-    children.add(Image.network(widget.coverImage,
+    children.add(Image.network(widget.comicItem.imageUrl,
         height: 200, width: double.infinity, fit: BoxFit.cover));
     children.add(Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.title),
+          Text(widget.comicItem.title),
           const SizedBox(height: 8),
-          Text('作者: ${widget.author}'),
+          Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
           const SizedBox(height: 16),
           const Text('简介:'),
           const SizedBox(height: 8),
-          Text(widget.description),
+          Text(widget.comicItem.extra['description'] ?? '暂无简介'),
         ],
       ),
     ));
@@ -84,11 +77,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ComicReaderPage(
-                      widget.extensionName,
-                      detail!.chapters[index].id,
-                      detail!.id,
-                      detail!.chapters[index].title,
-                    ),
+                        widget.extensionName,
+                        detail!.chapters[index].id,
+                        detail!.id,
+                        detail!.chapters[index].title,
+                        detail!.extra),
                   ),
                 );
               },
@@ -99,7 +92,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.comicItem.title),
         actions: [
           IconButton(
             icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),

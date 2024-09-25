@@ -17,10 +17,15 @@ class SettingProvider with ChangeNotifier {
     _isLoad = true;
     _settingsBox = await Hive.openBox<model_settings.Settings>('settings');
     _settings = _settingsBox.get('settings');
+    if (_settings == null) {
+      _settings = model_settings.Settings.defaultSettings();
+      _settingsBox.put('settings', _settings!);
+    }
+
     notifyListeners();
   }
 
-  model_settings.Settings get settings => _settings!;
+  List<String> get sources => _settings?.sources ?? [];
 
   void addSource(String source) {
     _settings?.sources.add(source);

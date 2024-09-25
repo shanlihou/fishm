@@ -29,11 +29,17 @@ class ExtensionProvider with ChangeNotifier {
   }
 
   void updateExtension(model_extensions.Extension extension) {
+    bool found = false;
     for (var i = _extensions!.extensions.length - 1; i >= 0; i--) {
       if (_extensions!.extensions[i].name == extension.name) {
         _extensions!.extensions[i] = extension;
+        found = true;
         break;
       }
+    }
+
+    if (!found) {
+      _extensions!.extensions.add(extension);
     }
 
     _extensionsBox.put(extensionKey, _extensions!);

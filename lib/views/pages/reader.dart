@@ -6,13 +6,14 @@ import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
 class ComicReaderPage extends StatefulWidget {
-  final int chapterId;
-  final int comicId;
+  final String chapterId;
+  final String comicId;
   final String chapterTitle;
   final String extensionName;
+  final Map<String, dynamic> extra;
 
-  const ComicReaderPage(
-      this.extensionName, this.chapterId, this.comicId, this.chapterTitle,
+  const ComicReaderPage(this.extensionName, this.chapterId, this.comicId,
+      this.chapterTitle, this.extra,
       {super.key});
 
   @override
@@ -32,11 +33,10 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   Future<void> initAsync() async {
     var detail = await getChapterDetail(
-        widget.extensionName, widget.chapterId, widget.comicId);
+        widget.extensionName, widget.chapterId, widget.comicId, widget.extra);
     ChapterDetail chapterDetail =
         ChapterDetail.fromJson(detail as Map<String, dynamic>);
     updateImages(chapterDetail.images);
-    print(detail);
   }
 
   void updateImages(List<String> newImages) {
