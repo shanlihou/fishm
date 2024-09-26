@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:toonfu/utils/general.dart';
+import 'package:toonfu/utils/utils_general.dart';
 
 import '../../../api/flutter_call_lua/method.dart';
 

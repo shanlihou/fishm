@@ -1,18 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:toonfu/const/general.dart';
-import 'package:toonfu/api/flutter_call_lua/method.dart';
+import 'package:toonfu/const/general_const.dart';
 
-import '../../common/log.dart';
+import '../../types/context/net_iamge_context.dart';
 
 class NetImage extends StatefulWidget {
-  final String extensionName;
-  final String imgKey;
-  final String imageUrl;
-  final Map<String, dynamic> extra;
-  const NetImage(this.extensionName, this.imgKey, this.imageUrl, this.extra,
-      {super.key});
+  final double width;
+  final double height;
+  final NetImageType type;
+  final NetImageContext ctx;
+  const NetImage(this.type, this.ctx, this.width, this.height, {super.key});
 
   @override
   State<NetImage> createState() => _NetImageState();
@@ -25,7 +23,7 @@ class _NetImageState extends State<NetImage> {
   void initState() {
     super.initState();
 
-    if (File(_formatImagePath()).existsSync()) {
+    if (File(widget.ctx.imagePath).existsSync()) {
       _isDownloading = true;
     } else {
       _downloadImage();
@@ -33,13 +31,8 @@ class _NetImageState extends State<NetImage> {
   }
 
   Future<void> _downloadImage() async {
-    var ret = await downloadImage(widget.extensionName, widget.extra,
-        widget.imageUrl, _formatImagePath()) as Map<String, dynamic>;
-
-    int code = ret['code'] as int;
-
-    if (code != 200) {
-      Log.instance.e('download image failed: $ret');
+    bool success = await widget.ctx.fetchImage();
+    if (!success) {
       return;
     }
 
@@ -50,32 +43,22 @@ class _NetImageState extends State<NetImage> {
     }
   }
 
-  String _getImageType() {
-    String imgType = widget.imgKey.split('.').last;
-    if (imgType == 'jpg' || imgType == 'png' || imgType == 'webp') {
-      return imgType;
-    }
-    return 'jpg';
-  }
-
-  String _formatImagePath() {
-    return '$tempImageDir/${widget.imgKey}.${_getImageType()}';
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isDownloading) {
       return Image.file(
-        File(_formatImagePath()),
+        File(widget.ctx.imagePath),
         fit: BoxFit.cover,
+        width: widget.width,
+        height: widget.height,
       );
     }
 
     // return Image not found
-    return const SizedBox(
-      width: 100,
-      height: 100,
-      child: Center(
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+      child: const Center(
         child: Text('Image not found'),
       ),
     );

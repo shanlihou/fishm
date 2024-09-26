@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
-import '../../utils/general.dart';
+import '../../utils/utils_general.dart';
 import 'home.dart';
 
 class SplashScreen extends StatefulWidget {

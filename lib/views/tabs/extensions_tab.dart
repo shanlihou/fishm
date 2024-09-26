@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:toonfu/const/path.dart';
 import 'package:yaml/yaml.dart';
 import '../../common/log.dart';
-import '../../const/general.dart';
+import '../../const/general_const.dart';
 import '../../const/lua_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
-import '../../utils/general.dart';
+import '../../utils/utils_general.dart';
 
 class ExtensionsTab extends StatefulWidget {
   const ExtensionsTab({super.key});

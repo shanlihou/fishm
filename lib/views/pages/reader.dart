@@ -1,10 +1,13 @@
 // this page use for read comic image
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import "../../api/flutter_call_lua/method.dart";
+import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
+import '../../types/context/net_iamge_context.dart';
 import '../widget/net_image.dart';
 
 class ComicReaderPage extends StatefulWidget {
@@ -63,10 +66,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
-  String _formatImageKey(int index) {
-    return '${widget.extensionName}_${widget.comicId}_${widget.chapterId}_$index';
-  }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -83,8 +82,13 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
             });
           },
           itemBuilder: (context, index) {
-            return NetImage(widget.extensionName, _formatImageKey(index),
-                images[index], widget.extra);
+            return NetImage(
+              NetImageType.reader,
+              NetImageContextReader(widget.extensionName, widget.comicId,
+                  widget.chapterId, images[index], index, widget.extra),
+              1.sw,
+              1.sh,
+            );
           },
         ),
       ),

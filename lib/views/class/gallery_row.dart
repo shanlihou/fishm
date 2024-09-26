@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../const/general_const.dart';
+import '../../types/context/net_iamge_context.dart';
 import '../pages/comic_detail_page.dart';
+import '../widget/net_image.dart';
 import './comic_item.dart';
 
 class GalleryRow {
@@ -13,38 +17,33 @@ class GalleryRow {
 
     for (var item in items) {
       children.add(Expanded(
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                // 在这里添加点击图片时的操作
-                print('点击了图片: ${item.title}');
-                // 这里跳转到详情页
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ComicDetailPage(
-                      item,
-                      extensionName,
-                    ),
-                  ),
-                );
-              },
-              child: Image.network(
-                item.imageUrl,
-                width: 100,
-                height: 100,
-                errorBuilder: (context, error, stackTrace) {
-                  return const SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Icon(CupertinoIcons.xmark),
-                  );
-                },
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => ComicDetailPage(
+                  item,
+                  extensionName,
+                ),
               ),
-            ),
-            Text(item.title),
-          ],
+            );
+          },
+          child: Column(
+            children: [
+              NetImage(
+                NetImageType.cover,
+                NetImageContextCover(
+                  extensionName,
+                  item.comicId,
+                  item.imageUrl,
+                ),
+                0.33.sw,
+                0.33.sw,
+              ),
+              Text(item.title),
+            ],
+          ),
         ),
       ));
     }

@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:toonfu/models/db/comic_model.dart';
 
 import '../../const/db_const.dart';
-import '../../utils/general.dart';
+import '../../utils/utils_general.dart';
 
 class ComicProvider with ChangeNotifier {
   bool _isLoad = false;

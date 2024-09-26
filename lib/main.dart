@@ -14,7 +14,7 @@ import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
-import 'utils/general.dart';
+import 'utils/utils_general.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

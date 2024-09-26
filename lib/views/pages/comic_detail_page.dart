@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
+import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../views/class/comic_item.dart';
+import '../widget/net_image.dart';
 import './reader.dart';
+import '../../types/context/net_iamge_context.dart';
 
 class ComicDetailPage extends StatefulWidget {
   final ComicItem comicItem;
@@ -86,8 +90,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     List<Widget> children = [];
     print('image url is ${widget.comicItem.imageUrl}');
-    children.add(Image.network(widget.comicItem.imageUrl,
-        height: 200, width: double.infinity, fit: BoxFit.cover));
+    children.add(NetImage(
+      NetImageType.cover,
+      NetImageContextCover(
+        widget.extensionName,
+        widget.comicItem.comicId,
+        widget.comicItem.imageUrl,
+      ),
+      1.sw,
+      1.sw,
+    ));
     children.add(Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

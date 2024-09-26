@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:yaml/yaml.dart';
 
-import '../../const/general.dart';
+import '../../const/general_const.dart';
 
 part 'extensions.g.dart';
 
