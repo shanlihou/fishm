@@ -27,7 +27,7 @@ class ComicReaderPage extends StatefulWidget {
 
 class _ComicReaderPageState extends State<ComicReaderPage> {
   int currentIndex = 0;
-  final PreloadPageController controller = PreloadPageController();
+  final PreloadPageController preloadController = PreloadPageController();
   List<String> images = [];
 
   @override
@@ -73,9 +73,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         child: PreloadPageView.builder(
           scrollDirection: Axis.vertical,
           itemCount: images.length,
-          physics: const NeverScrollableScrollPhysics(),
+          physics: null,
           preloadPagesCount: 4,
-          controller: controller,
+          controller: preloadController,
           onPageChanged: (index) {
             setState(() {
               currentIndex = index;

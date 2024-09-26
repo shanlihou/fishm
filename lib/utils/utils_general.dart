@@ -101,3 +101,7 @@ Future<void> initMainLua() async {
 int getTimestamp() {
   return DateTime.now().millisecondsSinceEpoch ~/ 1000;
 }
+
+String getComicUniqueId(String id, String extensionName) {
+  return '$id-$extensionName';
+}

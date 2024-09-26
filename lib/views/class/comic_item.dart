@@ -1,3 +1,5 @@
+import '../../models/db/comic_model.dart';
+
 class ComicItem {
   final String title;
   final String imageUrl;
@@ -17,6 +19,15 @@ class ComicItem {
       imageUrl: json['cover'],
       extra: json['extra'],
       comicId: json['comic_id'],
+    );
+  }
+
+  factory ComicItem.fromComicModel(ComicModel model) {
+    return ComicItem(
+      title: model.title,
+      imageUrl: model.cover,
+      extra: model.extra,
+      comicId: model.id,
     );
   }
 }

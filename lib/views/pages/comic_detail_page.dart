@@ -6,6 +6,7 @@ import '../../api/flutter_call_lua/method.dart';
 import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
+import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
@@ -42,6 +43,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     _isInitWithContext = true;
 
+    ComicModel? comicModel = buildContext.read<ComicProvider>().getComicModel(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+
+    if (comicModel != null) {
+      ComicDetail detail = ComicDetail.fromComicModel(comicModel);
+      updateDetail(detail);
+      return;
+    }
+
     Object ret = await getDetail(
         widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
 
@@ -63,8 +73,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       return;
     }
 
-    updateDetail(ComicDetail.fromJson(ret as Map<String, dynamic>));
-    buildContext.read<ComicProvider>().addComic(comicModel);
+    var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
+    updateDetail(detail);
+    buildContext
+        .read<ComicProvider>()
+        .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
   }
 
   void updateDetail(ComicDetail detail) {

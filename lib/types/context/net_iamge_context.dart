@@ -37,7 +37,8 @@ class NetImageContextCover extends NetImageContext {
       var ret = await dio.download(imageUrl, imagePath);
       return ret.statusCode == 200;
     } catch (e) {
-      Log.instance.e('download net cover image failed: $e');
+      Log.instance.e(
+          'download net cover image failed: $e of url: $imageUrl path: $imagePath');
       return false;
     }
   }
