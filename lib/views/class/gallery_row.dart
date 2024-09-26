@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../pages/comic_detail_page.dart';
 import './comic_item.dart';
 
@@ -22,7 +22,7 @@ class GalleryRow {
                 // 这里跳转到详情页
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => ComicDetailPage(
                       item,
                       extensionName,
@@ -38,7 +38,7 @@ class GalleryRow {
                   return const SizedBox(
                     width: 100,
                     height: 100,
-                    child: Icon(Icons.error),
+                    child: Icon(CupertinoIcons.xmark),
                   );
                 },
               ),

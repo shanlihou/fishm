@@ -1,9 +1,11 @@
 // this page use for read comic image
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import "../../api/flutter_call_lua/method.dart";
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
+
+import '../widget/net_image.dart';
 
 class ComicReaderPage extends StatefulWidget {
   final String chapterId;
@@ -61,32 +63,28 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
-  Widget toImage() {
-    if (currentIndex < 0 || currentIndex >= images.length) {
-      return const SizedBox();
-    }
-
-    return Image.network(
-      images[currentIndex],
-      fit: BoxFit.cover,
-    );
+  String _formatImageKey(int index) {
+    return '${widget.extensionName}_${widget.comicId}_${widget.chapterId}_$index';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
+    return CupertinoPageScaffold(
+      child: SafeArea(
         child: PreloadPageView.builder(
           scrollDirection: Axis.vertical,
           itemCount: images.length,
-          physics: null,
+          physics: const NeverScrollableScrollPhysics(),
           preloadPagesCount: 4,
           controller: controller,
           onPageChanged: (index) {
-            currentIndex = index;
+            setState(() {
+              currentIndex = index;
+            });
           },
           itemBuilder: (context, index) {
-            return Image.network(images[index], fit: BoxFit.cover);
+            return NetImage(widget.extensionName, _formatImageKey(index),
+                images[index], widget.extra);
           },
         ),
       ),

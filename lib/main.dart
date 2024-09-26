@@ -1,7 +1,8 @@
 // import 'dart:isolate';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/types/provider/extension_provider.dart';
 import 'package:toonfu/views/pages/home.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,9 @@ import 'package:toonfu/types/provider/setting_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toonfu/models/db/settings.dart';
 import 'package:toonfu/models/db/extensions.dart';
+import 'package:toonfu/models/db/comic_model.dart';
+import 'package:toonfu/types/provider/comic_provider.dart';
+import 'package:toonfu/views/pages/splash.dart';
 
 import 'utils/general.dart';
 
@@ -26,11 +30,14 @@ Future<void> _main() async {
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ExtensionAdapter());
   Hive.registerAdapter(ExtensionsAdapter());
+  Hive.registerAdapter(ComicModelAdapter());
+  Hive.registerAdapter(ChapterModelAdapter());
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => SettingProvider()),
       ChangeNotifierProvider(create: (_) => ExtensionProvider()),
+      ChangeNotifierProvider(create: (_) => ComicProvider()),
     ],
     child: const MyApp(),
   ));
@@ -42,15 +49,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // call provider
-    context.read<SettingProvider>().loadSettings();
-    context.read<ExtensionProvider>().loadExtensions();
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const Home(),
+    return ScreenUtilInit(
+      designSize: const Size(1179, 2556),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return const CupertinoApp(
+          title: 'ToonFu',
+          theme: CupertinoThemeData(
+            primaryColor: CupertinoColors.systemPurple,
+            brightness: Brightness.light,
+          ),
+          home: SplashScreen(),
+        );
+      },
     );
   }
 }

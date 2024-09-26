@@ -1,3 +1,5 @@
+import '../db/comic_model.dart';
+
 class Chpater {
   final String title;
   final String id;
@@ -8,11 +10,12 @@ class Chpater {
 class ComicDetail {
   String title;
   String id;
+  String cover;
   Map<String, dynamic> extra;
 
   List<Chpater> chapters;
 
-  ComicDetail(this.title, this.chapters, this.id, this.extra);
+  ComicDetail(this.title, this.chapters, this.id, this.extra, this.cover);
 
   static ComicDetail fromJson(Map<String, dynamic> json) {
     List<Chpater> chapters = [];
@@ -21,6 +24,15 @@ class ComicDetail {
         chapters.add(Chpater(item['title'], item['id']));
       }
     }
-    return ComicDetail(json['title'], chapters, json['id'], json['extra']);
+    return ComicDetail(
+        json['title'], chapters, json['id'], json['extra'], json['cover']);
   }
+
+  ComicDetail.fromComicModel(ComicModel comicModel)
+      : title = comicModel.title,
+        id = comicModel.id,
+        cover = comicModel.cover,
+        extra = comicModel.extra,
+        chapters =
+            comicModel.chapters.map((e) => Chpater(e.title, e.id)).toList();
 }

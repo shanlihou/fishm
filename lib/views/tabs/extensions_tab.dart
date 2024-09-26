@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/const/path.dart';
 import 'package:yaml/yaml.dart';
@@ -12,6 +12,7 @@ import '../../const/lua_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
+import '../../utils/general.dart';
 
 class ExtensionsTab extends StatefulWidget {
   const ExtensionsTab({super.key});
@@ -23,10 +24,12 @@ class ExtensionsTab extends StatefulWidget {
 class _ExtensionsTabState extends State<ExtensionsTab> {
   final List<model_extensions.Extension> _remoteExtensions = [];
   bool _isInitContext = false;
+  bool _isLoadingRemote = false;
 
   @override
   void initState() {
     super.initState();
+    _isLoadingRemote = true;
   }
 
   Future<void> _initWithContext(BuildContext context) async {
@@ -36,7 +39,8 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
     _isInitContext = true;
     List<String> sources = context.read<SettingProvider>().sources;
-    _loadRemoteExtensions(sources);
+    await _loadRemoteExtensions(sources);
+    _isLoadingRemote = false;
   }
 
   Future<void> _loadRemoteExtensionsFromNet(String source) async {
@@ -96,21 +100,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
   }
 
   Future<void> _copyLocalExtension(model_extensions.Extension extension) async {
-    final sourceDir = Directory(extension.url);
-    final targetDir = Directory('$pluginDir/${extension.name}');
-
-    if (!await targetDir.exists()) {
-      await targetDir.create(recursive: true);
-    }
-
-    await for (var entity in sourceDir.list(recursive: true)) {
-      if (entity is File) {
-        final relativePath = entity.path.substring(sourceDir.path.length + 1);
-        final newFile = File('${targetDir.path}/$relativePath');
-        await newFile.create(recursive: true);
-        await entity.copy(newFile.path);
-      }
-    }
+    await copyDir(extension.url, '$pluginDir/${extension.name}');
   }
 
   Future<void> _installExtension(
@@ -129,16 +119,16 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
   Future<bool?> _showInstallConfirmDialog(
       model_extensions.Extension extension) async {
-    return await showDialog<bool>(
+    return await showCupertinoDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: Text('Install ${extension.name}?'),
           actions: [
-            TextButton(
+            CupertinoButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text('Cancel')),
-            TextButton(
+            CupertinoButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 child: Text('Install')),
           ],
@@ -201,7 +191,10 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
       children: [
         buildExtensionList(context, 'Installed',
             context.read<ExtensionProvider>().extensions, true),
-        buildExtensionList(context, 'Remote', _remoteExtensions, false),
+        if (_isLoadingRemote)
+          const CupertinoActivityIndicator()
+        else
+          buildExtensionList(context, 'Remote', _remoteExtensions, false),
       ],
     );
   }

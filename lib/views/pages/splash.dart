@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
 import '../../utils/general.dart';
@@ -29,19 +30,20 @@ class _SplashScreenState extends State<SplashScreen> {
     _isInit = true;
     await buildContext.read<SettingProvider>().loadSettings();
     await buildContext.read<ExtensionProvider>().loadExtensions();
+    await buildContext.read<ComicProvider>().loadComics();
     await initMainLua();
 
     Navigator.pushReplacement(
       buildContext,
-      MaterialPageRoute(builder: (context) => const Home()),
+      CupertinoPageRoute(builder: (context) => const Home()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     _init(context);
-    return const Scaffold(
-      body: Center(
+    return const CupertinoPageScaffold(
+      child: Center(
         child: Text('Loading...'),
       ),
     );

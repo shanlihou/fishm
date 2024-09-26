@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../models/db/extensions.dart' as model_extensions;
@@ -92,8 +92,8 @@ class _ExploreTabState extends State<ExploreTab>
               child: Text(extensions[index].name,
                   style: TextStyle(
                       color: index == selectedExtensionIndex
-                          ? Colors.blue
-                          : Colors.black)),
+                          ? const Color(0xFF2196F3) // 蓝色
+                          : const Color(0xFF000000))), // 黑色
             ),
           );
         },

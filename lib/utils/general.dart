@@ -62,8 +62,42 @@ Future<void> downloadMainLua() async {
   }
 }
 
+Future<void> copyDir(String source, String target) async {
+  final sourceDir = Directory(source);
+  final targetDir = Directory(target);
+
+  if (!await targetDir.exists()) {
+    await targetDir.create(recursive: true);
+  }
+
+  await for (var entity in sourceDir.list(recursive: true)) {
+    if (entity is File) {
+      final relativePath = entity.path.substring(sourceDir.path.length + 1);
+      final newFile = File('${targetDir.path}/$relativePath');
+      await newFile.create(recursive: true);
+      await entity.copy(newFile.path);
+    }
+  }
+}
+
+Future<void> copyMainLuaLocal() async {
+  await copyDir(mainReleaseLocal, mainDir);
+}
+
+Future<void> resetMainLua() async {
+  if (mainReleaseLocal.isEmpty) {
+    await downloadMainLua();
+  } else {
+    await copyMainLuaLocal();
+  }
+}
+
 Future<void> initMainLua() async {
   if (!(await File('$mainDir/main.lua').exists())) {
-    await downloadMainLua();
+    await resetMainLua();
   }
+}
+
+int getTimestamp() {
+  return DateTime.now().millisecondsSinceEpoch ~/ 1000;
 }

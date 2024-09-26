@@ -1,12 +1,11 @@
 import 'package:lua_dardo_co/lua.dart';
-import 'package:toonfu/const/path.dart';
 import 'dart:io';
 import '../../types/manager/actions.dart';
 import '../../api/lua_call_flutter/http.dart';
 import '../../api/lua_call_flutter/json.dart';
 import '../../api/lua_call_flutter/crypto.dart';
 import '../../api/lua_call_flutter/bytes.dart';
-import '../../api/lua_call_flutter/utils.dart';
+import '../../api/lua_call_flutter/dart_utils.dart';
 import '../../api/lua_call_flutter/os_ext.dart';
 import '../../api/lua_call_flutter/protobuf/protobuf.dart';
 import '../../common/log.dart';
@@ -61,13 +60,19 @@ class LuaManager {
     } else {
       int idx = 1;
       while (ls.getI(-1, idx) != LuaType.luaNil) {
-        LuaTable response = ls.checkTable(-1)!;
+        if (ls.type(-1) == LuaType.luaTable) {
+          try {
+            LuaTable response = ls.checkTable(-1)!;
+            Map<String, dynamic> map = fromLuaMap(response);
+            int retId = map['retId'];
+            completerManager.commplete(retId, map['data']);
+          } catch (e) {
+            Log.instance.e('loopOnce error: $e');
+          }
+        } else {
+          Log.instance.e('loopOnce type error: ${ls.toStr(-1)}');
+        }
 
-        Map<String, dynamic> map = fromLuaMap(response);
-
-        int retId = map['retId'];
-
-        completerManager.commplete(retId, map['data']);
         idx++;
         ls.pop(1);
       }

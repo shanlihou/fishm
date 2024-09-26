@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:toonfu/views/tabs/explore_tab.dart';
 import 'package:toonfu/views/tabs/bookshelf.dart';
 import '../mixin/lua_mixin.dart';
 import 'settings/main_settings.dart';
 import '../tabs/extensions_tab.dart';
+import '../tabs/history_tab.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,9 +16,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home>
     with SingleTickerProviderStateMixin, LuaMixin {
-  late TabController _tabController;
   final List<String> _tabs = <String>[
     'Bookshelf',
+    'History',
     'Extensions',
     'Explore',
   ];
@@ -27,10 +28,7 @@ class _HomeState extends State<Home>
     super.initState();
     initLua();
 
-    _tabController = TabController(
-      length: _tabs.length,
-      vsync: this,
-    );
+    startLuaLoop();
 
     startLuaLoop();
   }
@@ -43,44 +41,56 @@ class _HomeState extends State<Home>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Home'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.settings),
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(builder: (context) => const MainSettings()),
+            );
+          },
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
           children: [
-            const Expanded(flex: 1, child: Text('Home')),
-            Expanded(flex: 8, child: Container()),
             Expanded(
-              flex: 1,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MainSettings()),
+              child: CupertinoTabView(
+                builder: (context) {
+                  return CupertinoTabScaffold(
+                    tabBar: CupertinoTabBar(
+                      items: [
+                        for (final tab in _tabs)
+                          BottomNavigationBarItem(
+                            icon: Icon(CupertinoIcons.book),
+                            label: tab,
+                          )
+                      ],
+                    ),
+                    tabBuilder: (context, index) {
+                      switch (index) {
+                        case 0:
+                          return const BookShelfTab();
+                        case 1:
+                          return const HistoryTab();
+                        case 2:
+                          return const ExtensionsTab();
+                        case 3:
+                          return const ExploreTab();
+                        default:
+                          return const SizedBox.shrink();
+                      }
+                    },
                   );
                 },
-                icon: const Icon(Icons.settings),
               ),
             ),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-              child: TabBarView(
-            controller: _tabController,
-            children: const <Widget>[
-              BookShelfTab(),
-              ExtensionsTab(),
-              ExploreTab(),
-            ],
-          )),
-          TabBar(
-            controller: _tabController,
-            tabs: [for (final tab in _tabs) Tab(text: tab)],
-          )
-        ],
       ),
     );
   }

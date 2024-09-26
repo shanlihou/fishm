@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toonfu/models/db/settings.dart' as model_settings;
 
@@ -29,6 +29,12 @@ class SettingProvider with ChangeNotifier {
 
   void addSource(String source) {
     _settings?.sources.add(source);
+    _settingsBox.put('settings', _settings!);
+    notifyListeners();
+  }
+
+  void removeSource(String source) {
+    _settings?.sources.remove(source);
     _settingsBox.put('settings', _settings!);
     notifyListeners();
   }

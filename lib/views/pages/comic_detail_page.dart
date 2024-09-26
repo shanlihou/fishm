@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../models/api/comic_detail.dart';
+import '../../models/db/comic_model.dart';
 import '../../views/class/comic_item.dart';
 import './reader.dart';
 
@@ -20,24 +23,56 @@ class ComicDetailPage extends StatefulWidget {
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
   bool isFavorite = false;
-  ComicDetail? detail;
+  ComicDetail? _detail;
+  bool _isInitWithContext = false;
 
   @override
   void initState() {
     super.initState();
-    initAsync();
   }
 
-  Future<void> initAsync() async {
-    Object ret = await getDetail(widget.extensionName, widget.comicItem.extra);
+  Future<void> _initWithContext(BuildContext buildContext) async {
+    if (_isInitWithContext) {
+      return;
+    }
+
+    _isInitWithContext = true;
+
+    Object ret = await getDetail(
+        widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
+
+    if (ret is String) {
+      // 显示提示
+      showCupertinoDialog(
+        context: buildContext,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text('提示'),
+          content: Text(ret),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('确定'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     updateDetail(ComicDetail.fromJson(ret as Map<String, dynamic>));
+    buildContext.read<ComicProvider>().addComic(comicModel);
   }
 
   void updateDetail(ComicDetail detail) {
-    setState(() {
-      this.detail = detail;
-    });
+    if (mounted) {
+      setState(() {
+        _detail = detail;
+      });
+    }
   }
+
+  ComicModel get comicModel =>
+      ComicModel.fromComicDetail(_detail!, widget.extensionName);
 
   void toggleFavorite() {
     setState(() {
@@ -47,8 +82,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [];
+    _initWithContext(context);
 
+    List<Widget> children = [];
+    print('image url is ${widget.comicItem.imageUrl}');
     children.add(Image.network(widget.comicItem.imageUrl,
         height: 200, width: double.infinity, fit: BoxFit.cover));
     children.add(Padding(
@@ -67,43 +104,46 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       ),
     ));
 
-    if (detail != null) {
-      for (int index = 0; index < detail!.chapters.length; index++) {
+    if (_detail != null) {
+      for (int index = 0; index < _detail!.chapters.length; index++) {
         children.add(SizedBox(
           height: 50,
           child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => ComicReaderPage(
                         widget.extensionName,
-                        detail!.chapters[index].id,
-                        detail!.id,
-                        detail!.chapters[index].title,
-                        detail!.extra),
+                        _detail!.chapters[index].id,
+                        _detail!.id,
+                        _detail!.chapters[index].title,
+                        _detail!.extra),
                   ),
                 );
               },
-              child: Text(detail!.chapters[index].title)),
+              child: Text(_detail!.chapters[index].title)),
         ));
       }
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.comicItem.title),
-        actions: [
-          IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: toggleFavorite,
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(widget.comicItem.title),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: toggleFavorite,
+          child: Icon(
+            isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+            color: CupertinoColors.systemRed,
           ),
-        ],
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
         ),
       ),
     );

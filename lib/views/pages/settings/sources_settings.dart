@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:toonfu/types/provider/setting_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,49 +12,78 @@ class SourcesSettings extends StatefulWidget {
 class _SourcesSettingsState extends State<SourcesSettings> {
   final TextEditingController _sourceUrlController = TextEditingController();
 
+  Widget _buildSourceItem(String source) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: CupertinoButton(
+            onPressed: () {
+              context.read<SettingProvider>().removeSource(source);
+            },
+            child: const Icon(CupertinoIcons.minus),
+          ),
+        ),
+        Expanded(
+          flex: 9,
+          child: Text(source),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sources'),
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Sources'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.xmark),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: IconButton(
-                        onPressed: () {
-                          context
-                              .read<SettingProvider>()
-                              .addSource(_sourceUrlController.text);
-                        },
-                        icon: const Icon(Icons.add))),
-                Expanded(
-                    flex: 9,
-                    child: TextField(
-                      controller: _sourceUrlController,
-                      decoration: const InputDecoration(
-                        hintText: 'Source url',
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                    )),
-              ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Row(
+                children: [
+                  Expanded(
+                      flex: 1,
+                      child: CupertinoButton(
+                          onPressed: () {
+                            context
+                                .read<SettingProvider>()
+                                .addSource(_sourceUrlController.text);
+                          },
+                          child: const Icon(CupertinoIcons.add))),
+                  Expanded(
+                      flex: 9,
+                      child: CupertinoTextField(
+                        controller: _sourceUrlController,
+                        placeholder: 'Source url',
+                        placeholderStyle:
+                            const TextStyle(color: CupertinoColors.systemGrey),
+                      )),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 10,
-            child: ListView.builder(
-              itemCount: context.watch<SettingProvider>().sources.length,
-              itemBuilder: (context, index) {
-                return Text(context.watch<SettingProvider>().sources[index]);
-              },
+            Expanded(
+              flex: 10,
+              child: ListView.builder(
+                itemCount: context.watch<SettingProvider>().sources.length,
+                itemBuilder: (context, index) {
+                  return _buildSourceItem(
+                      context.watch<SettingProvider>().sources[index]);
+                },
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
