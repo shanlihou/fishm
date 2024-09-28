@@ -28,8 +28,6 @@ class ComicDetailPage extends StatefulWidget {
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
   bool isFavorite = false;
-  ComicDetail? _detail;
-  bool _isInitWithContext = false;
   BuildContext? _buildContext;
 
   @override
@@ -37,20 +35,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     super.initState();
   }
 
-  Future<void> _initWithContext() async {
-    if (_isInitWithContext) {
-      return;
-    }
-
-    _isInitWithContext = true;
-
-    ComicModel? comicModel = _buildContext!.read<ComicProvider>().getComicModel(
+  Future<ComicDetail?> _getComicDetail(BuildContext buildContext) async {
+    var provider = buildContext.read<ComicProvider>();
+    ComicModel? comicModel = provider.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     if (comicModel != null) {
       ComicDetail detail = ComicDetail.fromComicModel(comicModel);
-      updateDetail(detail);
-      return;
+      _updateComicModel(provider, detail);
+      return detail;
     }
 
     Object ret = await getDetail(
@@ -71,30 +64,20 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           ],
         ),
       );
-      return;
+      return null;
     }
 
     var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
-    updateDetail(detail);
+    _updateComicModel(provider, detail);
+    return detail;
   }
 
-  void updateDetail(ComicDetail detail) {
-    _detail = detail;
-    if (mounted) {
-      setState(() {});
-    }
-
-    _updateComicModel();
+  Future<void> _updateComicModel(
+      ComicProvider provider, ComicDetail detail) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    await provider
+        .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
   }
-
-  Future<void> _updateComicModel() async {
-    await _buildContext!
-        .read<ComicProvider>()
-        .addComic(ComicModel.fromComicDetail(_detail!, widget.extensionName));
-  }
-
-  ComicModel get comicModel =>
-      ComicModel.fromComicDetail(_detail!, widget.extensionName);
 
   void toggleFavorite() {
     setState(() {
@@ -102,10 +85,35 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     });
   }
 
+  Widget _buildChapterList(BuildContext buildContext, ComicDetail detail) {
+    return Column(
+      children: [
+        for (var chapter in detail.chapters)
+          SizedBox(
+            height: 0.1.sh,
+            child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    buildContext,
+                    CupertinoPageRoute(
+                      builder: (context) => ComicReaderPage(
+                          widget.extensionName,
+                          chapter.id,
+                          detail.id,
+                          chapter.title,
+                          detail.extra),
+                    ),
+                  );
+                },
+                child: Text(chapter.title)),
+          )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _buildContext = context;
-    _initWithContext();
 
     List<Widget> children = [];
     print('image url is ${widget.comicItem.imageUrl}');
@@ -135,28 +143,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       ),
     ));
 
-    if (_detail != null) {
-      for (int index = 0; index < _detail!.chapters.length; index++) {
-        children.add(SizedBox(
-          height: 50,
-          child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ComicReaderPage(
-                        widget.extensionName,
-                        _detail!.chapters[index].id,
-                        _detail!.id,
-                        _detail!.chapters[index].title,
-                        _detail!.extra),
-                  ),
-                );
-              },
-              child: Text(_detail!.chapters[index].title)),
-        ));
-      }
-    }
+    children.add(FutureBuilder(
+      future: _getComicDetail(context),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return _buildChapterList(context, snapshot.data!);
+        }
+        return const Center(child: CupertinoActivityIndicator());
+      },
+    ));
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.comicItem.title),

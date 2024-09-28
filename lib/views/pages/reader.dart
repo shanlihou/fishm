@@ -63,8 +63,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
     curChapterId = preChapterId;
     await updateChapterAsync();
-    print(
-        'preChapter idx: ${comicModel.chapters.indexWhere((e) => e.id == preChapterId)} images: ${images.length}');
     preloadController.jumpToPage(images.length - 1);
     return true;
   }
@@ -77,9 +75,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     if (comicModel == null) return false;
     String? nextChapterId = comicModel.nextChapterId(curChapterId);
     if (nextChapterId == null) return false;
-    print(
-        'nextChapter idx: ${comicModel.chapters.indexWhere((e) => e.id == nextChapterId)}');
-
     curChapterId = nextChapterId;
     await updateChapterAsync();
     preloadController.jumpToPage(0);
@@ -116,16 +111,13 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       child: SafeArea(
         child: GestureDetector(
           onPanStart: (details) {
-            print('onPanStart: $details');
             gestureProcessor = GestureProcessor(
                 details.globalPosition, preloadController.position.pixels);
           },
           onPanUpdate: (details) {
-            print('onPanUpdate: $details');
             gestureProcessor?.update(details.globalPosition);
           },
           onPanEnd: (details) {
-            print('onPanEnd: $details');
             gestureProcessor?.end(details.globalPosition);
             var result = gestureProcessor?.getResult();
             if (result == GestureResult.prevTap) {

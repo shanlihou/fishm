@@ -22,7 +22,6 @@ class _HistoryTabState extends State<HistoryTab> {
     return Container(
       child: GestureDetector(
         onTap: () {
-          context.read<ComicProvider>().addComic(comic);
           ComicItem item = ComicItem.fromComicModel(comic);
           Navigator.push(
             buildContext,
