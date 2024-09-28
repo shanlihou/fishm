@@ -7,9 +7,12 @@ class Settings {
   @HiveField(0)
   final List<String> sources;
 
-  Settings(this.sources);
+  @HiveField(1, defaultValue: "")
+  String localMainLuaDeubugPath;
+
+  Settings(this.sources, this.localMainLuaDeubugPath);
 
   static Settings defaultSettings() {
-    return Settings([]);
+    return Settings([], "");
   }
 }

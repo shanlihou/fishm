@@ -28,10 +28,13 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     _isInit = true;
-    await buildContext.read<SettingProvider>().loadSettings();
-    await buildContext.read<ExtensionProvider>().loadExtensions();
-    await buildContext.read<ComicProvider>().loadComics();
-    await initMainLua();
+    var settingProvider = buildContext.read<SettingProvider>();
+    var extensionProvider = buildContext.read<ExtensionProvider>();
+    var comicProvider = buildContext.read<ComicProvider>();
+    await settingProvider.loadSettings();
+    await extensionProvider.loadExtensions();
+    await comicProvider.loadComics();
+    await initMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
     Navigator.pushReplacement(
       buildContext,

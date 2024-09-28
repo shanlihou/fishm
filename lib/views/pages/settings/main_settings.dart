@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/views/pages/settings/sources_settings.dart';
 import 'package:toonfu/views/pages/settings/about_page.dart';
+import 'package:toonfu/views/pages/settings/debug_setting_page.dart';
 
 class MainSettings extends StatefulWidget {
   const MainSettings({super.key});
@@ -11,7 +12,7 @@ class MainSettings extends StatefulWidget {
 }
 
 class _MainSettingsState extends State<MainSettings> {
-  final List<String> settingItems = ['Sources', 'About'];
+  final List<String> settingItems = ['Sources', 'About', 'Debug'];
 
   @override
   void initState() {
@@ -25,6 +26,9 @@ class _MainSettingsState extends State<MainSettings> {
     } else if (page == 'About') {
       await Navigator.push(
           context, CupertinoPageRoute(builder: (context) => AboutPage()));
+    } else if (page == 'Debug') {
+      await Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => DebugSettingPage()));
     }
   }
 

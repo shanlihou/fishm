@@ -18,15 +18,18 @@ class SettingsAdapter extends TypeAdapter<Settings> {
     };
     return Settings(
       (fields[0] as List).cast<String>(),
+      fields[1] == null ? '' : fields[1] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.sources);
+      ..write(obj.sources)
+      ..writeByte(1)
+      ..write(obj.localMainLuaDeubugPath);
   }
 
   @override

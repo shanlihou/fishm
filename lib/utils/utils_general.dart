@@ -80,21 +80,21 @@ Future<void> copyDir(String source, String target) async {
   }
 }
 
-Future<void> copyMainLuaLocal() async {
-  await copyDir(mainReleaseLocal, mainDir);
+Future<void> copyMainLuaLocal(String mainLuaDebugPath) async {
+  await copyDir(mainLuaDebugPath, mainDir);
 }
 
-Future<void> resetMainLua() async {
-  if (mainReleaseLocal.isEmpty) {
+Future<void> resetMainLua(String mainLuaDebugPath) async {
+  if (mainLuaDebugPath.isEmpty) {
     await downloadMainLua();
   } else {
-    await copyMainLuaLocal();
+    await copyMainLuaLocal(mainLuaDebugPath);
   }
 }
 
-Future<void> initMainLua() async {
+Future<void> initMainLua(String mainLuaDebugPath) async {
   if (!(await File('$mainDir/main.lua').exists())) {
-    await resetMainLua();
+    await resetMainLua(mainLuaDebugPath);
   }
 }
 

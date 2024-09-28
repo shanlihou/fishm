@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
 
 import '../../../api/flutter_call_lua/method.dart';
 import '../../../types/manager/actions.dart';
+import '../../../types/provider/setting_provider.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -28,12 +30,13 @@ class _AboutPageState extends State<AboutPage> {
     });
   }
 
-  Future<void> onResetPressed() async {
+  Future<void> _onResetPressed(BuildContext buildContext) async {
     setState(() {
       isResetting = true;
     });
 
-    resetMainLua();
+    var settingProvider = buildContext.read<SettingProvider>();
+    await resetMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
     setState(() {
       isResetting = false;
@@ -62,7 +65,8 @@ class _AboutPageState extends State<AboutPage> {
               children: [
                 Text('Base version: $baseVersion'),
                 CupertinoButton(
-                  onPressed: isResetting ? null : onResetPressed,
+                  onPressed:
+                      isResetting ? null : () => _onResetPressed(context),
                   disabledColor: CupertinoColors.quaternarySystemFill,
                   child: Text('reset'),
                 )
