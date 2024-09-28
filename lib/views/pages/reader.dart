@@ -1,13 +1,18 @@
 // this page use for read comic image
 
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:toonfu/types/provider/comic_provider.dart';
+import 'package:toonfu/utils/utils_general.dart';
 import "../../api/flutter_call_lua/method.dart";
 import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
 import '../../types/context/net_iamge_context.dart';
+import '../../types/gesture_processor.dart';
 import '../widget/net_image.dart';
 
 class ComicReaderPage extends StatefulWidget {
@@ -22,26 +27,63 @@ class ComicReaderPage extends StatefulWidget {
       {super.key});
 
   @override
-  _ComicReaderPageState createState() => _ComicReaderPageState();
+  _ComicReaderPageState createState() => _ComicReaderPageState(chapterId);
 }
 
 class _ComicReaderPageState extends State<ComicReaderPage> {
-  int currentIndex = 0;
+  String curChapterId;
   final PreloadPageController preloadController = PreloadPageController();
   List<String> images = [];
+  GestureProcessor? gestureProcessor;
+
+  _ComicReaderPageState(this.curChapterId);
 
   @override
   void initState() {
     super.initState();
-    initAsync();
+    updateChapterAsync();
   }
 
-  Future<void> initAsync() async {
+  Future<void> updateChapterAsync() async {
     var detail = await getChapterDetail(
-        widget.extensionName, widget.chapterId, widget.comicId, widget.extra);
+        widget.extensionName, curChapterId, widget.comicId, widget.extra);
     ChapterDetail chapterDetail =
         ChapterDetail.fromJson(detail as Map<String, dynamic>);
     updateImages(chapterDetail.images);
+  }
+
+  Future<bool> preChapter(BuildContext buildContext) async {
+    var comicModel = buildContext
+        .read<ComicProvider>()
+        .getComicModel(getComicUniqueId(widget.comicId, widget.extensionName));
+
+    if (comicModel == null) return false;
+    String? preChapterId = comicModel.preChapterId(curChapterId);
+    if (preChapterId == null) return false;
+
+    curChapterId = preChapterId;
+    await updateChapterAsync();
+    print(
+        'preChapter idx: ${comicModel.chapters.indexWhere((e) => e.id == preChapterId)} images: ${images.length}');
+    preloadController.jumpToPage(images.length - 1);
+    return true;
+  }
+
+  Future<bool> nextChapter(BuildContext buildContext) async {
+    var comicModel = buildContext
+        .read<ComicProvider>()
+        .getComicModel(getComicUniqueId(widget.comicId, widget.extensionName));
+
+    if (comicModel == null) return false;
+    String? nextChapterId = comicModel.nextChapterId(curChapterId);
+    if (nextChapterId == null) return false;
+    print(
+        'nextChapter idx: ${comicModel.chapters.indexWhere((e) => e.id == nextChapterId)}');
+
+    curChapterId = nextChapterId;
+    await updateChapterAsync();
+    preloadController.jumpToPage(0);
+    return true;
   }
 
   void updateImages(List<String> newImages) {
@@ -50,19 +92,21 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     });
   }
 
-  void nextPage() {
+  void nextPage(BuildContext buildContext) {
+    int currentIndex = preloadController.page?.toInt() ?? 0;
     if (currentIndex < images.length - 1) {
-      setState(() {
-        currentIndex++;
-      });
+      preloadController.jumpToPage(currentIndex + 1);
+    } else {
+      nextChapter(buildContext);
     }
   }
 
-  void prevPage() {
+  void prevPage(BuildContext buildContext) {
+    int currentIndex = preloadController.page?.toInt() ?? 0;
     if (currentIndex > 0) {
-      setState(() {
-        currentIndex--;
-      });
+      preloadController.jumpToPage(currentIndex - 1);
+    } else {
+      preChapter(buildContext);
     }
   }
 
@@ -70,26 +114,42 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       child: SafeArea(
-        child: PreloadPageView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: images.length,
-          physics: null,
-          preloadPagesCount: 4,
-          controller: preloadController,
-          onPageChanged: (index) {
-            setState(() {
-              currentIndex = index;
-            });
+        child: GestureDetector(
+          onPanStart: (details) {
+            print('onPanStart: $details');
+            gestureProcessor = GestureProcessor(
+                details.globalPosition, preloadController.position.pixels);
           },
-          itemBuilder: (context, index) {
-            return NetImage(
-              NetImageType.reader,
-              NetImageContextReader(widget.extensionName, widget.comicId,
-                  widget.chapterId, images[index], index, widget.extra),
-              1.sw,
-              1.sh,
-            );
+          onPanUpdate: (details) {
+            print('onPanUpdate: $details');
+            gestureProcessor?.update(details.globalPosition);
           },
+          onPanEnd: (details) {
+            print('onPanEnd: $details');
+            gestureProcessor?.end(details.globalPosition);
+            var result = gestureProcessor?.getResult();
+            if (result == GestureResult.prevTap) {
+              prevPage(context);
+            } else if (result == GestureResult.nextTap) {
+              nextPage(context);
+            }
+          },
+          child: PreloadPageView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: images.length,
+            physics: null,
+            preloadPagesCount: 4,
+            controller: preloadController,
+            itemBuilder: (context, index) {
+              return NetImage(
+                NetImageType.reader,
+                NetImageContextReader(widget.extensionName, widget.comicId,
+                    curChapterId, images[index], index, widget.extra),
+                1.sw,
+                1.sh,
+              );
+            },
+          ),
         ),
       ),
     );

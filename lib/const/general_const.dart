@@ -9,3 +9,11 @@ enum NetImageType {
   cover,
   reader,
 }
+
+enum GestureResult {
+  prevTap,
+  nextTap,
+  none,
+}
+
+const double tapThreshold = 10;

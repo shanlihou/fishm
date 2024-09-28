@@ -14,10 +14,12 @@ import './completer.dart';
 import '../../const/lua_const.dart';
 
 class LuaManager {
-  final LuaState ls = LuaState.newState();
+  late LuaState ls;
   bool initOk = false;
 
   Future<void> initLua() async {
+    initOk = false;
+    ls = LuaState.newState();
     print("current path: ${Directory.current.path}");
 
     ls.openLibs();

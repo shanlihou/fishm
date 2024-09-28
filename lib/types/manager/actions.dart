@@ -1,9 +1,9 @@
 import '../../api/flutter_call_lua/action.dart';
 import 'package:lua_dardo_co/lua.dart';
 
-
 class ActionsManager {
   List<Action> actions = [];
+  bool needResetMainLua = false;
 
   void addAction(Action action) {
     actions.add(action);
@@ -11,6 +11,10 @@ class ActionsManager {
 
   bool hasActions() {
     return actions.isNotEmpty;
+  }
+
+  void resetMainLua() {
+    needResetMainLua = true;
   }
 
   void toTableList(LuaState ls) {
@@ -26,4 +30,3 @@ class ActionsManager {
 }
 
 final actionsManager = ActionsManager();
-

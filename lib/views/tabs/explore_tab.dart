@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../api/flutter_call_lua/method.dart';
+import '../../models/api/gallery_result.dart';
 import '../../models/db/extensions.dart' as model_extensions;
 import '../../types/provider/extension_provider.dart';
 import '../class/gallery_row.dart';
@@ -20,6 +21,7 @@ class _ExploreTabState extends State<ExploreTab>
   int selectedExtensionIndex = 0;
   String selectedExtensionName = '';
   bool isInitWithContext = false;
+  bool loadFailed = false;
 
   @override
   void initState() {
@@ -45,9 +47,19 @@ class _ExploreTabState extends State<ExploreTab>
   }
 
   void getGallery(model_extensions.Extension extension) async {
-    List<Object> ret = await gallery(extension.name);
+    var ret = await gallery(extension.name);
+    GalleryResult galleryResult =
+        GalleryResult.fromJson(ret as Map<String, dynamic>);
     // Log.instance.d('get gallery: $ret');
-    updateGallery(ret);
+
+    if (!galleryResult.success) {
+      setState(() {
+        loadFailed = true;
+      });
+      return;
+    }
+
+    updateGallery(galleryResult.data);
   }
 
   void updateGallery(List<Object> data) {
@@ -101,6 +113,36 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
+  Widget _buildLoadFailed(BuildContext buildContext) {
+    return Center(
+      child: Column(
+        children: [
+          Text('加载失败'),
+          CupertinoButton(
+            onPressed: () {
+              setState(() {
+                loadFailed = false;
+              });
+              getGallery(buildContext
+                  .read<ExtensionProvider>()
+                  .extensions[selectedExtensionIndex]);
+            },
+            child: Text('重试'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListView() {
+    return ListView.builder(
+      itemCount: galleryRows.length,
+      itemBuilder: (BuildContext context, int index) {
+        return galleryRows[index].toWidget(context, selectedExtensionName);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     initWithContext(context);
@@ -110,13 +152,7 @@ class _ExploreTabState extends State<ExploreTab>
         buildExtensionTab(context),
         Expanded(
           flex: 9,
-          child: ListView.builder(
-            itemCount: galleryRows.length,
-            itemBuilder: (BuildContext context, int index) {
-              return galleryRows[index]
-                  .toWidget(context, selectedExtensionName);
-            },
-          ),
+          child: loadFailed ? _buildLoadFailed(context) : _buildListView(),
         ),
       ],
     );

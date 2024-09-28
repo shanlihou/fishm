@@ -7,7 +7,7 @@ import "./payload/chapter_detail.dart";
 import "payload/download_image.dart";
 import "payload/get_base_version.dart";
 
-Future<List<Object>> gallery(String extensionName) async {
+Future<Object> gallery(String extensionName) async {
   Completer<Object> completer = Completer<Object>();
   int retId = completerManager.genCompleteId();
 
@@ -15,10 +15,6 @@ Future<List<Object>> gallery(String extensionName) async {
 
   completerManager.addCompleter(retId, completer);
   var ret = await completer.future;
-
-  if (ret is! List<Object>) {
-    return [];
-  }
 
   return ret;
 }

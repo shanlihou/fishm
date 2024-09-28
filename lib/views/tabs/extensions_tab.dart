@@ -10,6 +10,7 @@ import '../../common/log.dart';
 import '../../const/general_const.dart';
 import '../../const/lua_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
+import '../../types/manager/actions.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
 import '../../utils/utils_general.dart';
@@ -25,6 +26,10 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
   final List<model_extensions.Extension> _remoteExtensions = [];
   bool _isInitContext = false;
   bool _isLoadingRemote = false;
+  bool _isInstalling = false; // 添加加载状态变量
+  BuildContext? _buildCtx;
+  final GlobalKey<_ExtensionsTabState> _mykey =
+      GlobalKey<_ExtensionsTabState>();
 
   @override
   void initState() {
@@ -105,6 +110,10 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
   Future<void> _installExtension(
       model_extensions.Extension extension, BuildContext buildContext) async {
+    setState(() {
+      _isInstalling = true; // 开始安装时设置为 true
+    });
+
     if (extension.url.startsWith("http")) {
       await _downloadExtension(extension);
     } else {
@@ -113,8 +122,15 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
     var clone = extension.clone();
     clone.status = extensionStatusInstalled;
-    buildContext.read<ExtensionProvider>().updateExtension(clone);
-    setState(() {});
+
+    if (_buildCtx != null) {
+      print('updateExtension');
+      _buildCtx!.read<ExtensionProvider>().updateExtension(clone);
+    }
+    actionsManager.resetMainLua();
+    setState(() {
+      _isInstalling = false; // 安装完成后设置为 false
+    });
   }
 
   Future<bool?> _showInstallConfirmDialog(
@@ -185,7 +201,12 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
   @override
   Widget build(BuildContext context) {
+    _buildCtx = context;
     _initWithContext(context);
+
+    if (_isInstalling) {
+      return const Center(child: CupertinoActivityIndicator()); // 显示加载指示器
+    }
 
     return Row(
       children: [

@@ -30,20 +30,21 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   bool isFavorite = false;
   ComicDetail? _detail;
   bool _isInitWithContext = false;
+  BuildContext? _buildContext;
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> _initWithContext(BuildContext buildContext) async {
+  Future<void> _initWithContext() async {
     if (_isInitWithContext) {
       return;
     }
 
     _isInitWithContext = true;
 
-    ComicModel? comicModel = buildContext.read<ComicProvider>().getComicModel(
+    ComicModel? comicModel = _buildContext!.read<ComicProvider>().getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     if (comicModel != null) {
@@ -58,7 +59,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     if (ret is String) {
       // 显示提示
       showCupertinoDialog(
-        context: buildContext,
+        context: _buildContext!,
         builder: (context) => CupertinoAlertDialog(
           title: Text('提示'),
           content: Text(ret),
@@ -75,17 +76,21 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
     updateDetail(detail);
-    buildContext
-        .read<ComicProvider>()
-        .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
   }
 
   void updateDetail(ComicDetail detail) {
+    _detail = detail;
     if (mounted) {
-      setState(() {
-        _detail = detail;
-      });
+      setState(() {});
     }
+
+    _updateComicModel();
+  }
+
+  Future<void> _updateComicModel() async {
+    await _buildContext!
+        .read<ComicProvider>()
+        .addComic(ComicModel.fromComicDetail(_detail!, widget.extensionName));
   }
 
   ComicModel get comicModel =>
@@ -99,7 +104,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    _initWithContext(context);
+    _buildContext = context;
+    _initWithContext();
 
     List<Widget> children = [];
     print('image url is ${widget.comicItem.imageUrl}');

@@ -51,7 +51,7 @@ class ComicProvider with ChangeNotifier {
 
     int now = getTimestamp();
     _comicBox.put(now, comic);
-    _historyComics.add((comic, now));
+    _historyComics.insert(0, (comic, now));
     notifyListeners();
   }
 }

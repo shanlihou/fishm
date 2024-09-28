@@ -1,5 +1,5 @@
+import '../../types/manager/actions.dart';
 import '../../types/manager/lua.dart';
-
 
 mixin LuaMixin {
   final LuaManager luaManager = LuaManager();
@@ -9,6 +9,12 @@ mixin LuaMixin {
   }
 
   void loopOnce() {
+    if (actionsManager.needResetMainLua) {
+      actionsManager.needResetMainLua = false;
+      luaManager.initLua();
+      return;
+    }
+
     luaManager.loopOnce();
   }
 }
