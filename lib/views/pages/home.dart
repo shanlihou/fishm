@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:toonfu/views/tabs/explore_tab.dart';
 import 'package:toonfu/views/tabs/bookshelf.dart';
 import '../mixin/lua_mixin.dart';
+import '../tabs/search_tab.dart';
 import 'settings/main_settings.dart';
 import '../tabs/extensions_tab.dart';
 import '../tabs/history_tab.dart';
@@ -21,6 +22,7 @@ class _HomeState extends State<Home>
     'History',
     'Extensions',
     'Explore',
+    'Search',
   ];
 
   @override
@@ -81,6 +83,8 @@ class _HomeState extends State<Home>
                           return const ExtensionsTab();
                         case 3:
                           return const ExploreTab();
+                        case 4:
+                          return const SearchTab();
                         default:
                           return const SizedBox.shrink();
                       }

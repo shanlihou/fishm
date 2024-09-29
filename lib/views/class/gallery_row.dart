@@ -1,9 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../const/general_const.dart';
-import '../../types/context/net_iamge_context.dart';
-import '../pages/comic_detail_page.dart';
-import '../widget/net_image.dart';
+import '../widget/comic_item_widget.dart';
 import './comic_item.dart';
 
 class GalleryRow {
@@ -17,34 +13,7 @@ class GalleryRow {
 
     for (var item in items) {
       children.add(Expanded(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => ComicDetailPage(
-                  item,
-                  extensionName,
-                ),
-              ),
-            );
-          },
-          child: Column(
-            children: [
-              NetImage(
-                NetImageType.cover,
-                NetImageContextCover(
-                  extensionName,
-                  item.comicId,
-                  item.imageUrl,
-                ),
-                0.33.sw,
-                0.33.sw,
-              ),
-              Text(item.title),
-            ],
-          ),
-        ),
+        child: ComicItemWidget(item, extensionName),
       ));
     }
 

@@ -62,7 +62,7 @@ class _ExploreTabState extends State<ExploreTab>
     updateGallery(galleryResult.data);
   }
 
-  void updateGallery(List<Object> data) {
+  void updateGallery(List<ComicItem> data) {
     setState(() {
       galleryRows.clear();
       while (data.isNotEmpty) {
@@ -72,12 +72,8 @@ class _ExploreTabState extends State<ExploreTab>
             break;
           }
 
-          var val = data.removeAt(0) as Map<String, dynamic>;
-          if (!(val.containsKey('cover') && val.containsKey('title'))) {
-            continue;
-          }
-
-          items.add(ComicItem.fromJson(val));
+          var val = data.removeAt(0);
+          items.add(val);
         }
 
         galleryRows.add(GalleryRow(items, maxColumn));

@@ -1,6 +1,8 @@
+import '../../views/class/comic_item.dart';
+
 class GalleryResult {
   final bool success;
-  final List<Object> data;
+  final List<ComicItem> data;
 
   GalleryResult(this.success, this.data);
 
@@ -8,6 +10,12 @@ class GalleryResult {
     if (json['data'] is! List<Object>) {
       return GalleryResult(json['success'], []);
     }
-    return GalleryResult(json['success'], json['data']);
+
+    List<ComicItem> data = [];
+    for (var item in json['data']) {
+      data.add(ComicItem.fromJson(item as Map<String, dynamic>));
+    }
+
+    return GalleryResult(json['success'], data);
   }
 }
