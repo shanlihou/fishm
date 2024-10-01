@@ -14,6 +14,7 @@ import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
+import 'models/db/read_history_model.dart';
 import 'utils/utils_general.dart';
 
 void main() {
@@ -32,6 +33,7 @@ Future<void> _main() async {
   Hive.registerAdapter(ExtensionsAdapter());
   Hive.registerAdapter(ComicModelAdapter());
   Hive.registerAdapter(ChapterModelAdapter());
+  Hive.registerAdapter(ReadHistoryModelAdapter());
 
   runApp(MultiProvider(
     providers: [

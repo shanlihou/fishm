@@ -10,7 +10,10 @@ import 'net_image.dart';
 class ComicItemWidget extends StatelessWidget {
   final ComicItem comicItem;
   final String extensionName;
-  const ComicItemWidget(this.comicItem, this.extensionName, {super.key});
+  final double? width;
+  final double? height;
+  const ComicItemWidget(this.comicItem, this.extensionName,
+      {super.key, this.width, this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +38,8 @@ class ComicItemWidget extends StatelessWidget {
               comicItem.comicId,
               comicItem.imageUrl,
             ),
-            0.33.sw,
-            0.33.sw,
+            width ?? 0.33.sw,
+            height ?? 0.33.sw,
           ),
           Text(comicItem.title),
         ],

@@ -35,6 +35,8 @@ class HttpLib {
         ),
       );
 
+      print('get $url result: $ret');
+
       String data;
       if (ret.data is List || ret.data is Map) {
         data = const JsonEncoder().convert(ret.data);

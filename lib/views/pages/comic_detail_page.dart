@@ -6,6 +6,7 @@ import '../../api/flutter_call_lua/method.dart';
 import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
+import '../../models/db/read_history_model.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/net_image.dart';
@@ -27,8 +28,10 @@ class ComicDetailPage extends StatefulWidget {
 }
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
+  bool isFirstLoad = true;
   bool isFavorite = false;
   BuildContext? _buildContext;
+  ComicDetail? _detail;
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Future<ComicDetail?> _getComicDetail(BuildContext buildContext) async {
     var provider = buildContext.read<ComicProvider>();
-    ComicModel? comicModel = provider.getComicModel(
+    ComicModel? comicModel = provider.getHistoryComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     if (comicModel != null) {
@@ -50,15 +53,14 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
 
     if (ret is String) {
-      // 显示提示
       showCupertinoDialog(
         context: _buildContext!,
         builder: (context) => CupertinoAlertDialog(
-          title: Text('提示'),
+          title: Text('error'),
           content: Text(ret),
           actions: [
             CupertinoDialogAction(
-              child: Text('确定'),
+              child: Text('confirm'),
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -74,6 +76,12 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Future<void> _updateComicModel(
       ComicProvider provider, ComicDetail detail) async {
+    if (!isFirstLoad) {
+      return;
+    }
+    isFirstLoad = false;
+
+    _detail = detail;
     await Future.delayed(const Duration(milliseconds: 100));
     await provider
         .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
@@ -83,6 +91,18 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     setState(() {
       isFavorite = !isFavorite;
     });
+
+    if (_buildContext == null) {
+      return;
+    }
+
+    String uniqueId =
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
+    if (isFavorite) {
+      _buildContext!.read<ComicProvider>().addFavoriteComic(uniqueId);
+    } else {
+      _buildContext!.read<ComicProvider>().removeFavoriteComic(uniqueId);
+    }
   }
 
   Widget _buildChapterList(BuildContext buildContext, ComicDetail detail) {
@@ -111,47 +131,55 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     );
   }
 
+  String _getReadHistory(BuildContext buildContext) {
+    ComicProvider comicProvider = buildContext.watch<ComicProvider>();
+    String? readHistory = comicProvider.getReadHistory(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+    if (readHistory == null) {
+      return '';
+    }
+    return readHistory;
+  }
+
+  void _readComic(BuildContext buildContext) {
+    if (_detail == null) {
+      return;
+    }
+
+    ComicProvider comicProvider = buildContext.read<ComicProvider>();
+    String uniqueId =
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
+    late ReadHistoryModel readHistory;
+    String chapterTitle = '';
+    if (comicProvider.readHistory.containsKey(uniqueId)) {
+      readHistory = comicProvider.readHistory[uniqueId]!;
+      chapterTitle = _detail!.getChapterTitle(readHistory.chapterId);
+    } else {
+      readHistory = ReadHistoryModel(_detail!.chapters.first.id, 0);
+      chapterTitle = _detail!.chapters.first.title;
+    }
+
+    Navigator.push(
+      buildContext,
+      CupertinoPageRoute(
+        builder: (context) => ComicReaderPage(
+          widget.extensionName,
+          readHistory.chapterId,
+          widget.comicItem.comicId,
+          chapterTitle,
+          widget.comicItem.extra,
+          initChapterId: readHistory.chapterId,
+          initPage: readHistory.index,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _buildContext = context;
-
-    List<Widget> children = [];
-    print('image url is ${widget.comicItem.imageUrl}');
-    children.add(NetImage(
-      NetImageType.cover,
-      NetImageContextCover(
-        widget.extensionName,
-        widget.comicItem.comicId,
-        widget.comicItem.imageUrl,
-      ),
-      1.sw,
-      1.sw,
-    ));
-    children.add(Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.comicItem.title),
-          const SizedBox(height: 8),
-          Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
-          const SizedBox(height: 16),
-          const Text('简介:'),
-          const SizedBox(height: 8),
-          Text(widget.comicItem.extra['description'] ?? '暂无简介'),
-        ],
-      ),
-    ));
-
-    children.add(FutureBuilder(
-      future: _getComicDetail(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return _buildChapterList(context, snapshot.data!);
-        }
-        return const Center(child: CupertinoActivityIndicator());
-      },
-    ));
+    isFavorite = context.read<ComicProvider>().favoriteComics.containsKey(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -169,7 +197,48 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
+            children: [
+              NetImage(
+                NetImageType.cover,
+                NetImageContextCover(
+                  widget.extensionName,
+                  widget.comicItem.comicId,
+                  widget.comicItem.imageUrl,
+                ),
+                1.sw,
+                1.sw,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.comicItem.title),
+                    const SizedBox(height: 8),
+                    Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
+                    const SizedBox(height: 16),
+                    const Text('简介:'),
+                    const SizedBox(height: 8),
+                    Text(widget.comicItem.extra['description'] ?? '暂无简介'),
+                    CupertinoButton(
+                      onPressed: () {
+                        _readComic(context);
+                      },
+                      child: Text('read ${_getReadHistory(context)}'),
+                    )
+                  ],
+                ),
+              ),
+              FutureBuilder(
+                future: _getComicDetail(context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return _buildChapterList(context, snapshot.data!);
+                  }
+                  return const Center(child: CupertinoActivityIndicator());
+                },
+              )
+            ],
           ),
         ),
       ),

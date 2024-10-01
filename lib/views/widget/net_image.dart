@@ -17,14 +17,15 @@ class NetImage extends StatefulWidget {
 }
 
 class _NetImageState extends State<NetImage> {
-  bool _isDownloading = false;
+  bool _isDownloaded = false;
+  bool _isDownloadFailed = false;
 
   @override
   void initState() {
     super.initState();
 
     if (File(widget.ctx.imagePath).existsSync()) {
-      _isDownloading = true;
+      _isDownloaded = true;
     } else {
       _downloadImage();
     }
@@ -34,9 +35,9 @@ class _NetImageState extends State<NetImage> {
   void didUpdateWidget(covariant NetImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.ctx.imagePath != widget.ctx.imagePath) {
-      _isDownloading = false;
+      _isDownloaded = false;
       if (File(widget.ctx.imagePath).existsSync()) {
-        _isDownloading = true;
+        _isDownloaded = true;
       } else {
         _downloadImage();
       }
@@ -46,19 +47,32 @@ class _NetImageState extends State<NetImage> {
   Future<void> _downloadImage() async {
     bool success = await widget.ctx.fetchImage();
     if (!success) {
+      setState(() {
+        _isDownloadFailed = true;
+      });
       return;
     }
 
     if (mounted) {
       setState(() {
-        _isDownloading = true;
+        _isDownloaded = true;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isDownloading) {
+    if (_isDownloadFailed) {
+      return SizedBox(
+        width: widget.width,
+        height: widget.height,
+        child: const Center(
+          child: Text('Image download failed'),
+        ),
+      );
+    }
+
+    if (_isDownloaded) {
       return Image.file(
         File(widget.ctx.imagePath),
         fit: BoxFit.cover,

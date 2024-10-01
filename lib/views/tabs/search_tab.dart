@@ -77,7 +77,7 @@ class _SearchTabState extends State<SearchTab> {
         Row(
           children: [
             SizedBox(
-              width: 0.9.sw,
+              width: 0.8.sw,
               child: CupertinoTextField(
                 controller: searchController,
                 placeholder: 'name of comic',
@@ -91,6 +91,8 @@ class _SearchTabState extends State<SearchTab> {
               onPressed: () {
                 _search(searchController.text, 0);
               },
+              padding: EdgeInsets.zero,
+              minSize: 0.1.sw,
               child: const Icon(CupertinoIcons.search),
             ),
           ],

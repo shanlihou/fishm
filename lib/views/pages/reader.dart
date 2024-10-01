@@ -1,5 +1,7 @@
 // this page use for read comic image
 
+import 'dart:async';
+
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,11 +22,13 @@ class ComicReaderPage extends StatefulWidget {
   final String comicId;
   final String chapterTitle;
   final String extensionName;
+  final int? initPage;
+  final String? initChapterId;
   final Map<String, dynamic> extra;
 
   const ComicReaderPage(this.extensionName, this.chapterId, this.comicId,
       this.chapterTitle, this.extra,
-      {super.key});
+      {super.key, this.initPage, this.initChapterId});
 
   @override
   _ComicReaderPageState createState() => _ComicReaderPageState(chapterId);
@@ -35,13 +39,34 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   final PreloadPageController preloadController = PreloadPageController();
   List<String> images = [];
   GestureProcessor? gestureProcessor;
+  bool isFristJump = true;
 
   _ComicReaderPageState(this.curChapterId);
+
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+
     updateChapterAsync();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      recordReadHistory();
+    });
+  }
+
+  Future<void> recordReadHistory() async {
+    ComicProvider comicProvider = context.read<ComicProvider>();
+    comicProvider.recordReadHistory(
+        getComicUniqueId(widget.comicId, widget.extensionName),
+        curChapterId,
+        preloadController.page?.toInt() ?? 0);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<void> updateChapterAsync() async {
@@ -50,12 +75,17 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     ChapterDetail chapterDetail =
         ChapterDetail.fromJson(detail as Map<String, dynamic>);
     updateImages(chapterDetail.images);
+    if (isFristJump &&
+        widget.initChapterId != null &&
+        widget.initChapterId == curChapterId) {
+      preloadController.jumpToPage(widget.initPage ?? 0);
+      isFristJump = false;
+    }
   }
 
   Future<bool> preChapter(BuildContext buildContext) async {
-    var comicModel = buildContext
-        .read<ComicProvider>()
-        .getComicModel(getComicUniqueId(widget.comicId, widget.extensionName));
+    var comicModel = buildContext.read<ComicProvider>().getHistoryComicModel(
+        getComicUniqueId(widget.comicId, widget.extensionName));
 
     if (comicModel == null) return false;
     String? preChapterId = comicModel.preChapterId(curChapterId);
@@ -68,9 +98,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<bool> nextChapter(BuildContext buildContext) async {
-    var comicModel = buildContext
-        .read<ComicProvider>()
-        .getComicModel(getComicUniqueId(widget.comicId, widget.extensionName));
+    var comicModel = buildContext.read<ComicProvider>().getHistoryComicModel(
+        getComicUniqueId(widget.comicId, widget.extensionName));
 
     if (comicModel == null) return false;
     String? nextChapterId = comicModel.nextChapterId(curChapterId);

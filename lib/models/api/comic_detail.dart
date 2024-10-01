@@ -28,6 +28,15 @@ class ComicDetail {
         json['title'], chapters, json['id'], json['extra'], json['cover']);
   }
 
+  String getChapterTitle(String chapterId) {
+    for (var chapter in chapters) {
+      if (chapter.id == chapterId) {
+        return chapter.title;
+      }
+    }
+    return '';
+  }
+
   ComicDetail.fromComicModel(ComicModel comicModel)
       : title = comicModel.title,
         id = comicModel.id,
