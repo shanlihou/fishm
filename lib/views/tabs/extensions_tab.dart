@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/const/path.dart';
@@ -28,8 +29,6 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
   bool _isLoadingRemote = false;
   bool _isInstalling = false; // 添加加载状态变量
   BuildContext? _buildCtx;
-  final GlobalKey<_ExtensionsTabState> _mykey =
-      GlobalKey<_ExtensionsTabState>();
 
   @override
   void initState() {
@@ -46,6 +45,20 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
     List<String> sources = context.read<SettingProvider>().sources;
     await _loadRemoteExtensions(sources);
     _isLoadingRemote = false;
+  }
+
+  Future<void> _onRefresh() async {
+    if (_isLoadingRemote) {
+      return;
+    }
+
+    setState(() {
+      _isLoadingRemote = true;
+    });
+    await _loadRemoteExtensions(context.read<SettingProvider>().sources);
+    setState(() {
+      _isLoadingRemote = false;
+    });
   }
 
   Future<void> _loadRemoteExtensionsFromNet(String source) async {
@@ -75,7 +88,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
           await _loadRemoteExtensionsFromFile(src);
         }
       } catch (e) {
-        Log.instance.e('error: $e');
+        Log.instance.e('_loadRemoteExtensions error $src: $e');
       }
     }
 
@@ -114,10 +127,18 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
       _isInstalling = true; // 开始安装时设置为 true
     });
 
-    if (extension.url.startsWith("http")) {
-      await _downloadExtension(extension);
-    } else {
-      await _copyLocalExtension(extension);
+    try {
+      if (extension.url.startsWith("http")) {
+        await _downloadExtension(extension);
+      } else {
+        await _copyLocalExtension(extension);
+      }
+    } catch (e) {
+      Log.instance.e('_installExtension error $extension: $e');
+      setState(() {
+        _isInstalling = false; // 安装完成后设置为 false
+      });
+      return;
     }
 
     var clone = extension.clone();
@@ -187,11 +208,14 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
           Expanded(flex: 1, child: Text(title)),
           Expanded(
             flex: 9,
-            child: ListView.builder(
-              itemCount: exts?.length ?? 0,
-              itemBuilder: (context, index) {
-                return buildExtensionItem(exts![index], isInstalled, context);
-              },
+            child: EasyRefresh(
+              onRefresh: _onRefresh,
+              child: ListView.builder(
+                itemCount: exts?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return buildExtensionItem(exts![index], isInstalled, context);
+                },
+              ),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -175,6 +176,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     );
   }
 
+  Future<void> _onRefresh() async {
+    print('onRefresh');
+  }
+
   @override
   Widget build(BuildContext context) {
     _buildContext = context;
@@ -194,51 +199,54 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         ),
       ),
       child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              NetImage(
-                NetImageType.cover,
-                NetImageContextCover(
-                  widget.extensionName,
-                  widget.comicItem.comicId,
-                  widget.comicItem.imageUrl,
+        child: EasyRefresh(
+          onRefresh: _onRefresh,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NetImage(
+                  NetImageType.cover,
+                  NetImageContextCover(
+                    widget.extensionName,
+                    widget.comicItem.comicId,
+                    widget.comicItem.imageUrl,
+                  ),
+                  1.sw,
+                  1.sw,
                 ),
-                1.sw,
-                1.sw,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.comicItem.title),
-                    const SizedBox(height: 8),
-                    Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
-                    const SizedBox(height: 16),
-                    const Text('简介:'),
-                    const SizedBox(height: 8),
-                    Text(widget.comicItem.extra['description'] ?? '暂无简介'),
-                    CupertinoButton(
-                      onPressed: () {
-                        _readComic(context);
-                      },
-                      child: Text('read ${_getReadHistory(context)}'),
-                    )
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(widget.comicItem.title),
+                      const SizedBox(height: 8),
+                      Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
+                      const SizedBox(height: 16),
+                      const Text('简介:'),
+                      const SizedBox(height: 8),
+                      Text(widget.comicItem.extra['description'] ?? '暂无简介'),
+                      CupertinoButton(
+                        onPressed: () {
+                          _readComic(context);
+                        },
+                        child: Text('read ${_getReadHistory(context)}'),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              FutureBuilder(
-                future: _getComicDetail(context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data != null) {
-                    return _buildChapterList(context, snapshot.data!);
-                  }
-                  return const Center(child: CupertinoActivityIndicator());
-                },
-              )
-            ],
+                FutureBuilder(
+                  future: _getComicDetail(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      return _buildChapterList(context, snapshot.data!);
+                    }
+                    return const Center(child: CupertinoActivityIndicator());
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

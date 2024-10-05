@@ -4,8 +4,10 @@ import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yaml/yaml.dart';
 
 import '../common/log.dart';
+import '../const/general_const.dart';
 import '../const/lua_const.dart';
 import '../const/path.dart';
 
@@ -41,9 +43,33 @@ Future<void> initDirectory() async {
 }
 
 Future<void> downloadMainLua() async {
+  Dio dio = Dio();
+  for (var url in mainRelease) {
+    try {
+      await dio.download(url, mainYamlDownloadPath);
+    } catch (e) {
+      Log.instance.e('downloadMainLuaTmp down yaml error: $e');
+      continue;
+    }
+
+    final mainContent = await File(mainYamlDownloadPath).readAsString();
+    var doc = loadYaml(mainContent);
+    for (var data in doc[yamlMainKey]) {
+      try {
+        await downloadMainLuaByUrl(data['url']);
+        return;
+      } catch (e) {
+        Log.instance.e('downloadMainLuaTmp down url error: $e');
+        continue;
+      }
+    }
+  }
+}
+
+Future<void> downloadMainLuaByUrl(String mainUrl) async {
   // download repo zip and then unzip to code, the url is mainRelease
   Dio dio = Dio();
-  await dio.download(mainRelease, mainReleaseDownloadPath);
+  await dio.download(mainUrl, mainReleaseDownloadPath);
   // unzip to code without first class folder
   final bytes = await File(mainReleaseDownloadPath).readAsBytes();
   final archive = ZipDecoder().decodeBytes(bytes);

@@ -13,6 +13,7 @@ import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
+import '../../models/db/read_history_model.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../../types/gesture_processor.dart';
 import '../widget/net_image.dart';
@@ -40,6 +41,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   List<String> images = [];
   GestureProcessor? gestureProcessor;
   bool isFristJump = true;
+  ReadHistoryModel? lastRecordHistory;
 
   _ComicReaderPageState(this.curChapterId);
 
@@ -51,8 +53,25 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
     updateChapterAsync();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!updateReadHistory()) {
+        return;
+      }
+
       recordReadHistory();
+      setState(() {});
     });
+  }
+
+  bool updateReadHistory() {
+    if (lastRecordHistory != null &&
+        lastRecordHistory!.chapterId == curChapterId &&
+        lastRecordHistory!.index == preloadController.page?.toInt()) {
+      return false;
+    }
+
+    lastRecordHistory =
+        ReadHistoryModel(curChapterId, preloadController.page?.toInt() ?? 0);
+    return true;
   }
 
   Future<void> recordReadHistory() async {
@@ -134,6 +153,14 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
+  String getPageText() {
+    try {
+      return '${(preloadController.page?.toInt() ?? 0) + 1}/${images.length}';
+    } catch (e) {
+      return '0/0';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -155,21 +182,40 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
               nextPage(context);
             }
           },
-          child: PreloadPageView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: images.length,
-            physics: null,
-            preloadPagesCount: 4,
-            controller: preloadController,
-            itemBuilder: (context, index) {
-              return NetImage(
-                NetImageType.reader,
-                NetImageContextReader(widget.extensionName, widget.comicId,
-                    curChapterId, images[index], index, widget.extra),
-                1.sw,
-                1.sh,
-              );
-            },
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: PreloadPageView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: images.length,
+                  physics: null,
+                  preloadPagesCount: 4,
+                  controller: preloadController,
+                  itemBuilder: (context, index) {
+                    return NetImage(
+                      NetImageType.reader,
+                      NetImageContextReader(
+                          widget.extensionName,
+                          widget.comicId,
+                          curChapterId,
+                          images[index],
+                          index,
+                          widget.extra),
+                      1.sw,
+                      1.sh,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Text(
+                  getPageText(),
+                  style: TextStyle(color: CupertinoColors.black),
+                ),
+              )
+            ],
           ),
         ),
       ),

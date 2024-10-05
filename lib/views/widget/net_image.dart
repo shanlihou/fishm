@@ -75,7 +75,7 @@ class _NetImageState extends State<NetImage> {
     if (_isDownloaded) {
       return Image.file(
         File(widget.ctx.imagePath),
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
         width: widget.width,
         height: widget.height,
       );
