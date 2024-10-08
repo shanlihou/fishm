@@ -29,7 +29,7 @@ class ComicDetailPage extends StatefulWidget {
 }
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
-  bool isFirstLoad = true;
+  bool _isAsyncInit = false;
   bool isFavorite = false;
   BuildContext? _buildContext;
   ComicDetail? _detail;
@@ -39,15 +39,25 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     super.initState();
   }
 
-  Future<ComicDetail?> _getComicDetail(BuildContext buildContext) async {
-    var provider = buildContext.read<ComicProvider>();
-    ComicModel? comicModel = provider.getHistoryComicModel(
+  Future<void> _initWithContext() async {
+    if (_isAsyncInit) {
+      return;
+    }
+    _isAsyncInit = true;
+    var provider = context.read<ComicProvider>();
+    ComicModel? comicModel = provider.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     if (comicModel != null) {
       ComicDetail detail = ComicDetail.fromComicModel(comicModel);
-      _updateComicModel(provider, detail);
-      return detail;
+      setState(() {
+        _detail = detail;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 100));
+      await provider
+          .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
+      return;
     }
 
     Object ret = await getDetail(
@@ -67,22 +77,14 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           ],
         ),
       );
-      return null;
+      return;
     }
 
     var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
-    _updateComicModel(provider, detail);
-    return detail;
-  }
+    setState(() {
+      _detail = detail;
+    });
 
-  Future<void> _updateComicModel(
-      ComicProvider provider, ComicDetail detail) async {
-    if (!isFirstLoad) {
-      return;
-    }
-    isFirstLoad = false;
-
-    _detail = detail;
     await Future.delayed(const Duration(milliseconds: 100));
     await provider
         .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
@@ -177,11 +179,35 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   Future<void> _onRefresh() async {
-    print('onRefresh');
+    Object ret = await getDetail(
+        widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
+
+    if (ret is String) {
+      showCupertinoDialog(
+        context: _buildContext!,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text('error'),
+          content: Text(ret),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('confirm'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
+    setState(() {
+      _detail = detail;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    _initWithContext();
     _buildContext = context;
     isFavorite = context.read<ComicProvider>().favoriteComics.containsKey(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
@@ -236,15 +262,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     ],
                   ),
                 ),
-                FutureBuilder(
-                  future: _getComicDetail(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return _buildChapterList(context, snapshot.data!);
-                    }
-                    return const Center(child: CupertinoActivityIndicator());
-                  },
-                )
+                _detail == null
+                    ? const Center(child: CupertinoActivityIndicator())
+                    : _buildChapterList(context, _detail!)
               ],
             ),
           ),

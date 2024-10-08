@@ -35,8 +35,6 @@ class HttpLib {
         ),
       );
 
-      print('get $url result: $ret');
-
       String data;
       if (ret.data is List || ret.data is Map) {
         data = const JsonEncoder().convert(ret.data);
@@ -88,7 +86,6 @@ class HttpLib {
       return 0;
     }
 
-    Log.instance.d('will get $url');
     _get(url, cbid, query, headers, responseType);
     return 0;
   }
@@ -97,9 +94,7 @@ class HttpLib {
       int cbid, String url, String downloadPath) async {
     try {
       Dio dio = Dio();
-      print('download $url to $downloadPath');
       var ret = await dio.download(url, downloadPath);
-      print('download $url to $downloadPath result: $ret');
 
       int code = ret.statusCode ?? 0;
       actionsManager.addAction(HttpResponse.toAction('success', code, cbid));

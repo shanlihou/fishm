@@ -77,6 +77,15 @@ class ComicProvider with ChangeNotifier {
     return null;
   }
 
+  ComicModel? getComicModel(String uniqueId) {
+    ComicModel? comic = getHistoryComicModel(uniqueId);
+    if (comic != null) {
+      return comic;
+    }
+
+    return favoriteComics[uniqueId];
+  }
+
   Future<void> addComic(ComicModel comic) async {
     for (var i = _historyComics.length - 1; i >= 0; i--) {
       if (_historyComics[i].$1.uniqueId == comic.uniqueId) {
