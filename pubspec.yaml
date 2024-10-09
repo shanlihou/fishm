@@ -31,9 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.2
-  # lua_dardo: ^0.0.5
-  lua_dardo_co:
-    path: /Users/hoshily/custom/git/flutter/LuaDardo
+  lua_dardo_co: ^0.0.9
+  # lua_dardo_co:
+  #   path: /Users/hoshily/custom/git/flutter/LuaDardo
   dio: ^5.6.0
   logger: ^1.4.0
   crypto: ^3.0.5
@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.4
   flutter_screenutil: ^5.9.3
   easy_refresh: ^3.4.0
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:

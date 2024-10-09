@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
@@ -42,6 +43,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   GestureProcessor? gestureProcessor;
   bool isFristJump = true;
   ReadHistoryModel? lastRecordHistory;
+  bool lockSwap = false;
 
   _ComicReaderPageState(this.curChapterId);
 
@@ -165,34 +167,29 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       child: SafeArea(
-        child: GestureDetector(
-          onPanStart: (details) {
-            gestureProcessor = GestureProcessor(
-                details.globalPosition, preloadController.position.pixels);
-          },
-          onPanUpdate: (details) {
-            gestureProcessor?.update(details.globalPosition);
-          },
-          onPanEnd: (details) {
-            gestureProcessor?.end(details.globalPosition);
-            var result = gestureProcessor?.getResult();
-            if (result == GestureResult.prevTap) {
-              prevPage(context);
-            } else if (result == GestureResult.nextTap) {
-              nextPage(context);
-            }
-          },
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: PreloadPageView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: images.length,
-                  physics: null,
-                  preloadPagesCount: 4,
-                  controller: preloadController,
-                  itemBuilder: (context, index) {
-                    return NetImage(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: PreloadPageView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: images.length,
+                physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
+                preloadPagesCount: 4,
+                controller: preloadController,
+                itemBuilder: (context, index) {
+                  return PhotoView.customChild(
+                    wantKeepAlive: true,
+                    minScale: 1.0,
+                    initialScale: 1.0,
+                    onScaleEnd: (context, details, e) {
+                      print('onScaleEnd: $details, $e');
+                      bool oldLockSwap = lockSwap;
+                      lockSwap = (e.scale ?? 1) > 1.0;
+                      if (oldLockSwap != lockSwap) {
+                        setState(() {});
+                      }
+                    },
+                    child: NetImage(
                       NetImageType.reader,
                       NetImageContextReader(
                           widget.extensionName,
@@ -203,20 +200,20 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                           widget.extra),
                       1.sw,
                       1.sh,
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Text(
-                  getPageText(),
-                  style: TextStyle(color: CupertinoColors.black),
-                ),
-              )
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Text(
+                getPageText(),
+                style: TextStyle(color: CupertinoColors.black),
+              ),
+            )
+          ],
         ),
       ),
     );
