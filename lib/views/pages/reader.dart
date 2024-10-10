@@ -45,6 +45,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   bool isFristJump = true;
   ReadHistoryModel? lastRecordHistory;
   bool lockSwap = false;
+  final PageController pageController = PageController();
 
   _ComicReaderPageState(this.curChapterId);
 
@@ -170,64 +171,66 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       scrollPhysics: const BouncingScrollPhysics(),
       builder: (BuildContext context, int index) {
         return PhotoViewGalleryPageOptions(
-          imageProvider: NetImage(
-              NetImageType.reader,
-              NetImageContextReader(widget.extensionName, widget.comicId,
-                  curChapterId, images[index], index, widget.extra),
-              1.sw,
-              1.sh),
-          initialScale: PhotoViewComputedScale.contained * 0.8,
-          heroAttributes: PhotoViewHeroAttributes(tag: galleryItems[index].id),
-        );
+            imageProvider: NetImageProvider(
+          NetImageContextReader(widget.extensionName, widget.comicId,
+              curChapterId, images[index], index, widget.extra),
+        ));
       },
       itemCount: images.length,
       loadingBuilder: (context, event) => Center(
         child: Container(
           width: 20.0,
           height: 20.0,
-          child: CircularProgressIndicator(
-            value: event == null
-                ? 0
-                : event.cumulativeBytesLoaded / event.expectedTotalBytes,
-          ),
+          child: const CupertinoActivityIndicator(),
         ),
       ),
-      backgroundDecoration: widget.backgroundDecoration,
-      pageController: widget.pageController,
-      onPageChanged: onPageChanged,
+      backgroundDecoration: BoxDecoration(
+        color: CupertinoColors.black,
+      ),
+      pageController: pageController,
+      onPageChanged: (index) {
+        print('onPageChanged: $index');
+      },
     ));
   }
 
   Widget buildPageView1() {
     return PreloadPageView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: images.length,
-      physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
-      preloadPagesCount: 4,
-      controller: preloadController,
-      itemBuilder: (context, index) {
-        return PhotoView.customChild(
-          wantKeepAlive: true,
-          minScale: 1.0,
-          initialScale: 1.0,
-          onScaleEnd: (context, details, e) {
-            print('onScaleEnd: $details, $e');
-            bool oldLockSwap = lockSwap;
-            lockSwap = (e.scale ?? 1) > 1.0;
-            if (oldLockSwap != lockSwap) {
-              setState(() {});
-            }
-          },
-          child: NetImage(
-            NetImageType.reader,
-            NetImageContextReader(widget.extensionName, widget.comicId,
-                curChapterId, images[index], index, widget.extra),
-            1.sw,
-            1.sh,
-          ),
-        );
-      },
-    );
+        scrollDirection: Axis.vertical,
+        itemCount: images.length,
+        physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
+        preloadPagesCount: 4,
+        controller: preloadController,
+        itemBuilder: (context, index) {
+          return PhotoView.customChild(
+            wantKeepAlive: true,
+            minScale: 1.0,
+            initialScale: 1.0,
+            onScaleEnd: (context, details, e) {
+              print('onScaleEnd: $details, $e');
+              bool oldLockSwap = lockSwap;
+              lockSwap = (e.scale ?? 1) > 1.0;
+              if (oldLockSwap != lockSwap) {
+                setState(() {});
+              }
+            },
+            child: Image(
+              image: NetImageProvider(NetImageContextReader(
+                  widget.extensionName,
+                  widget.comicId,
+                  curChapterId,
+                  images[index],
+                  index,
+                  widget.extra)),
+            ),
+            // child: NetImage(
+            //   NetImageType.reader,
+            //   NetImageContextReader(widget.extensionName, widget.comicId,
+            //       curChapterId, images[index], index, widget.extra),
+            //   1.sw,
+            // 1.sh,
+          );
+        });
   }
 
   @override

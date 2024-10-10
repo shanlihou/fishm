@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,31 +8,37 @@ import 'package:toonfu/const/general_const.dart';
 import '../../types/context/net_iamge_context.dart';
 
 class NetImageProvider extends ImageProvider {
-  final NetImageType type;
   final NetImageContext ctx;
-  final double width;
-  final double height;
-  const NetImageProvider(this.type, this.ctx, this.width, this.height);
+  const NetImageProvider(this.ctx);
 
   @override
-  Future<NetImageProvider> obtainKey(ImageConfiguration configuration) async {
-    return SynchronousFuture<NetImageProvider>(this);
+  Future<NetImageContext> obtainKey(ImageConfiguration configuration) async {
+    return ctx;
   }
 
   @override
-  ImageStreamCompleter load(
-    NetImageProvider key,
-  ) {
-    return ImageStreamCompleter(
-      codec: _loadAsync(key, configuration),
+  ImageStreamCompleter loadImage(Object key, ImageDecoderCallback decode) {
+    return MultiFrameImageStreamCompleter(
+      codec: _loadAsync(key as NetImageContext, decode),
       scale: 1.0,
     );
   }
 
   static Future<Codec> _loadAsync(
-      NetImageProvider key, ImageConfiguration configuration) async {
-    return await PaintingBinding.instance
-        .instantiateImageCodec(key.ctx.imageBytes);
+      NetImageContext key, ImageDecoderCallback decode) async {
+    final File imageFile = File(key.imagePath);
+
+    if (!await imageFile.exists()) {
+      // 如果文件不存在，先下载到本地
+      bool success = await key.fetchImage();
+      if (!success) {
+        throw Exception('下载图片失败: ${key.imageUrl}');
+      }
+    }
+
+    // 从本地文件读取图片数据
+    final Uint8List bytes = await imageFile.readAsBytes();
+    return decode(await ImmutableBuffer.fromUint8List(bytes));
   }
 }
 
