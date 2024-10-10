@@ -232,7 +232,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 NetImage(
-                  NetImageType.cover,
                   NetImageContextCover(
                     widget.extensionName,
                     widget.comicItem.comicId,

@@ -7,19 +7,20 @@ import 'package:toonfu/const/general_const.dart';
 
 import '../../types/context/net_iamge_context.dart';
 
-class NetImageProvider extends ImageProvider {
+class NetImageProvider extends ImageProvider<NetImageProvider> {
   final NetImageContext ctx;
   const NetImageProvider(this.ctx);
 
   @override
-  Future<NetImageContext> obtainKey(ImageConfiguration configuration) async {
-    return ctx;
+  Future<NetImageProvider> obtainKey(ImageConfiguration configuration) async {
+    return SynchronousFuture<NetImageProvider>(this);
   }
 
   @override
-  ImageStreamCompleter loadImage(Object key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(
+      NetImageProvider key, ImageDecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key as NetImageContext, decode),
+      codec: _loadAsync(key.ctx, decode),
       scale: 1.0,
     );
   }
@@ -45,9 +46,8 @@ class NetImageProvider extends ImageProvider {
 class NetImage extends StatefulWidget {
   final double width;
   final double height;
-  final NetImageType type;
   final NetImageContext ctx;
-  const NetImage(this.type, this.ctx, this.width, this.height, {super.key});
+  const NetImage(this.ctx, this.width, this.height, {super.key});
 
   @override
   State<NetImage> createState() => _NetImageState();

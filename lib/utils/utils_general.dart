@@ -131,3 +131,15 @@ int getTimestamp() {
 String getComicUniqueId(String id, String extensionName) {
   return '$id-$extensionName';
 }
+
+int bitSet(int flags, int flag, bool value) {
+  if (value) {
+    return flags | (1 << flag);
+  } else {
+    return flags & ~(1 << flag);
+  }
+}
+
+bool bitGet(int flags, int flag) {
+  return (flags & (1 << flag)) != 0;
+}

@@ -46,6 +46,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ReadHistoryModel? lastRecordHistory;
   bool lockSwap = false;
   final PageController pageController = PageController();
+  int fingerNum = 0;
+  int flags = 0;
 
   _ComicReaderPageState(this.curChapterId);
 
@@ -165,72 +167,119 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
-  Widget buildPageView() {
-    return Container(
-        child: PhotoViewGallery.builder(
-      scrollPhysics: const BouncingScrollPhysics(),
-      builder: (BuildContext context, int index) {
-        return PhotoViewGalleryPageOptions(
-            imageProvider: NetImageProvider(
-          NetImageContextReader(widget.extensionName, widget.comicId,
-              curChapterId, images[index], index, widget.extra),
-        ));
-      },
-      itemCount: images.length,
-      loadingBuilder: (context, event) => Center(
-        child: Container(
-          width: 20.0,
-          height: 20.0,
-          child: const CupertinoActivityIndicator(),
-        ),
-      ),
-      backgroundDecoration: BoxDecoration(
-        color: CupertinoColors.black,
-      ),
-      pageController: pageController,
-      onPageChanged: (index) {
-        print('onPageChanged: $index');
-      },
-    ));
+  // Widget buildPageView() {
+  //   return Container(
+  //       child: PhotoViewGallery.builder(
+  //     builder: (BuildContext context, int index) {
+  //       return PhotoViewGalleryPageOptions(
+  //           imageProvider: NetImageProvider(
+  //         NetImageContextReader(widget.extensionName, widget.comicId,
+  //             curChapterId, images[index], index, widget.extra),
+  //       ));
+  //     },
+  //     itemCount: images.length,
+  //     loadingBuilder: (context, event) => Center(
+  //       child: Container(
+  //         width: 20.0,
+  //         height: 20.0,
+  //         child: const CupertinoActivityIndicator(),
+  //       ),
+  //     ),
+  //     backgroundDecoration: BoxDecoration(
+  //       color: CupertinoColors.black,
+  //     ),
+  //     pageController: pageController,
+  //     onPageChanged: (index) {
+  //       print('onPageChanged: $index');
+  //     },
+  //   ));
+  // }
+
+  void _updateFingers() {
+    bool oldLockSwap = lockSwap;
+    if (fingerNum > 1) {
+      flags = bitSet(flags, readerFlagsFinger, true);
+    } else {
+      flags = bitSet(flags, readerFlagsFinger, false);
+    }
+
+    _updateLockSwap();
+    if (oldLockSwap != lockSwap) {
+      setState(() {});
+    }
   }
 
-  Widget buildPageView1() {
-    return PreloadPageView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: images.length,
-        physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
-        preloadPagesCount: 4,
-        controller: preloadController,
-        itemBuilder: (context, index) {
-          return PhotoView.customChild(
-            wantKeepAlive: true,
-            minScale: 1.0,
-            initialScale: 1.0,
-            onScaleEnd: (context, details, e) {
-              print('onScaleEnd: $details, $e');
-              bool oldLockSwap = lockSwap;
-              lockSwap = (e.scale ?? 1) > 1.0;
-              if (oldLockSwap != lockSwap) {
-                setState(() {});
-              }
-            },
-            child: Image(
-              image: NetImageProvider(NetImageContextReader(
-                  widget.extensionName,
-                  widget.comicId,
-                  curChapterId,
-                  images[index],
-                  index,
-                  widget.extra)),
-            ),
-            // child: NetImage(
-            //   NetImageType.reader,
-            //   NetImageContextReader(widget.extensionName, widget.comicId,
-            //       curChapterId, images[index], index, widget.extra),
-            //   1.sw,
-            // 1.sh,
-          );
-        });
+  void _updateLockSwap() {
+    if (bitGet(flags, readerFlagsScale) || bitGet(flags, readerFlagsFinger)) {
+      lockSwap = true;
+    } else {
+      lockSwap = false;
+    }
+  }
+
+  Widget buildPageView() {
+    return Listener(
+      onPointerSignal: (event) {},
+      onPointerDown: (event) {
+        fingerNum++;
+        _updateFingers();
+      },
+      onPointerUp: (event) {
+        fingerNum--;
+        if (fingerNum < 0) {
+          fingerNum = 0;
+        }
+        _updateFingers();
+      },
+      onPointerMove: (event) {
+        // print('onPointerMove: $event');
+      },
+      onPointerCancel: (event) {
+        fingerNum--;
+        if (fingerNum < 0) {
+          fingerNum = 0;
+        }
+        _updateFingers();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: PreloadPageView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: images.length,
+          physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
+          preloadPagesCount: 4,
+          controller: preloadController,
+          itemBuilder: (context, index) {
+            return PhotoView.customChild(
+                wantKeepAlive: true,
+                minScale: 1.0,
+                initialScale: 1.0,
+                onScaleEnd: (context, details, e) {
+                  // print('onScaleEnd: $details, $e');
+                  bool oldLockSwap = lockSwap;
+                  bool isSetFlags = (e.scale ?? 1) > 1.0;
+                  flags = bitSet(flags, readerFlagsScale, isSetFlags);
+                  _updateLockSwap();
+                  if (oldLockSwap != lockSwap) {
+                    setState(() {});
+                  }
+                },
+                // child: Image(
+                //   image: NetImageProvider(NetImageContextReader(
+                //       widget.extensionName,
+                //       widget.comicId,
+                //       curChapterId,
+                //       images[index],
+                //       index,
+                //       widget.extra)),
+                // ),
+                child: NetImage(
+                  NetImageContextReader(widget.extensionName, widget.comicId,
+                      curChapterId, images[index], index, widget.extra),
+                  1.sw,
+                  1.sh,
+                ));
+          }),
+    );
   }
 
   @override

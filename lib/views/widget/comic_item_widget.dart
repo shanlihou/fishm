@@ -32,7 +32,6 @@ class ComicItemWidget extends StatelessWidget {
       child: Column(
         children: [
           NetImage(
-            NetImageType.cover,
             NetImageContextCover(
               extensionName,
               comicItem.comicId,
