@@ -109,11 +109,15 @@ class ComicProvider with ChangeNotifier {
 
     await _favoriteComicBox.put(comic.uniqueId, comic);
     favoriteComics[comic.uniqueId] = comic;
+
+    notifyListeners();
   }
 
   Future<void> removeFavoriteComic(String uniqueId) async {
     await _favoriteComicBox.delete(uniqueId);
     favoriteComics.remove(uniqueId);
+
+    notifyListeners();
   }
 
   Future<void> recordReadHistory(

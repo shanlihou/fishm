@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
-import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
@@ -30,7 +29,7 @@ class ComicDetailPage extends StatefulWidget {
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
   bool _isAsyncInit = false;
-  bool isFavorite = false;
+  bool? isFavorite;
   BuildContext? _buildContext;
   ComicDetail? _detail;
 
@@ -92,7 +91,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   void toggleFavorite() {
     setState(() {
-      isFavorite = !isFavorite;
+      isFavorite = !isFavorite!;
     });
 
     if (_buildContext == null) {
@@ -101,7 +100,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     String uniqueId =
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
-    if (isFavorite) {
+    if (isFavorite != null && isFavorite!) {
       _buildContext!.read<ComicProvider>().addFavoriteComic(uniqueId);
     } else {
       _buildContext!.read<ComicProvider>().removeFavoriteComic(uniqueId);
@@ -158,7 +157,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       readHistory = comicProvider.readHistory[uniqueId]!;
       chapterTitle = _detail!.getChapterTitle(readHistory.chapterId);
     } else {
-      readHistory = ReadHistoryModel(_detail!.chapters.first.id, 0);
+      readHistory = ReadHistoryModel(_detail!.chapters.last.id, 0);
       chapterTitle = _detail!.chapters.first.title;
     }
 
@@ -209,8 +208,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   Widget build(BuildContext context) {
     _initWithContext();
     _buildContext = context;
-    isFavorite = context.read<ComicProvider>().favoriteComics.containsKey(
-        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+    if (isFavorite == null) {
+      isFavorite = context.read<ComicProvider>().favoriteComics.containsKey(
+            getComicUniqueId(widget.comicItem.comicId, widget.extensionName),
+          );
+    }
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -219,7 +221,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           padding: EdgeInsets.zero,
           onPressed: toggleFavorite,
           child: Icon(
-            isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+            isFavorite! ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
             color: CupertinoColors.systemRed,
           ),
         ),

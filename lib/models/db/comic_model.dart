@@ -48,14 +48,14 @@ class ComicModel {
             detail.chapters.map((e) => ChapterModel(e.id, e.title)).toList(),
         cover = detail.cover;
 
-  String? preChapterId(String curChapterId) {
+  String? nextChapterId(String curChapterId) {
     int index = chapters.indexWhere((e) => e.id == curChapterId);
     if (index == -1) return null;
     if (index == 0) return null;
     return chapters[index - 1].id;
   }
 
-  String? nextChapterId(String curChapterId) {
+  String? preChapterId(String curChapterId) {
     int index = chapters.indexWhere((e) => e.id == curChapterId);
     if (index == -1) return null;
     if (index == chapters.length - 1) return null;

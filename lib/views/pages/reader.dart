@@ -45,7 +45,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   bool isFristJump = true;
   ReadHistoryModel? lastRecordHistory;
   bool lockSwap = false;
-  final PageController pageController = PageController();
+  // final PageController pageController = PageController();
   int fingerNum = 0;
   int flags = 0;
 
@@ -71,12 +71,11 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   bool updateReadHistory() {
     if (lastRecordHistory != null &&
         lastRecordHistory!.chapterId == curChapterId &&
-        lastRecordHistory!.index == preloadController.page?.toInt()) {
+        lastRecordHistory!.index == _page) {
       return false;
     }
 
-    lastRecordHistory =
-        ReadHistoryModel(curChapterId, preloadController.page?.toInt() ?? 0);
+    lastRecordHistory = ReadHistoryModel(curChapterId, _page);
     return true;
   }
 
@@ -85,7 +84,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     comicProvider.recordReadHistory(
         getComicUniqueId(widget.comicId, widget.extensionName),
         curChapterId,
-        preloadController.page?.toInt() ?? 0);
+        _page);
   }
 
   @override
@@ -141,8 +140,13 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     });
   }
 
+  int get _page {
+    // round to int
+    return (preloadController.page ?? 0).round();
+  }
+
   void nextPage(BuildContext buildContext) {
-    int currentIndex = preloadController.page?.toInt() ?? 0;
+    int currentIndex = _page;
     if (currentIndex < images.length - 1) {
       preloadController.jumpToPage(currentIndex + 1);
     } else {
@@ -151,7 +155,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   void prevPage(BuildContext buildContext) {
-    int currentIndex = preloadController.page?.toInt() ?? 0;
+    int currentIndex = _page;
     if (currentIndex > 0) {
       preloadController.jumpToPage(currentIndex - 1);
     } else {
@@ -161,7 +165,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   String getPageText() {
     try {
-      return '${(preloadController.page?.toInt() ?? 0) + 1}/${images.length}';
+      return '${_page + 1}/${images.length}';
     } catch (e) {
       return '0/0';
     }
@@ -248,6 +252,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
           physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
           preloadPagesCount: 4,
           controller: preloadController,
+          onPageChanged: (index) {
+            print('onPageChanged: $index');
+          },
           itemBuilder: (context, index) {
             return PhotoView.customChild(
                 wantKeepAlive: true,
@@ -290,6 +297,37 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
           children: [
             Positioned.fill(
               child: buildPageView(),
+            ),
+            Positioned.fill(
+              child: Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          prevPage(context);
+                        },
+                        child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: CupertinoColors.transparent),
+                      )),
+                  Expanded(flex: 6, child: Container()),
+                  Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          nextPage(context);
+                        },
+                        child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: CupertinoColors.transparent),
+                      ))
+                ],
+              ),
             ),
             Positioned(
               bottom: 0,

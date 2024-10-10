@@ -1,3 +1,4 @@
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,15 @@ import '../../api/flutter_call_lua/method.dart';
 import '../../models/api/gallery_result.dart';
 import '../../types/provider/extension_provider.dart';
 import '../widget/comic_item_widget.dart';
+
+class SearchResult {
+  final String extensionName;
+  final GalleryResult galleryResult;
+  final String keyword;
+  int page = 0;
+
+  SearchResult(this.extensionName, this.galleryResult, this.keyword);
+}
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
@@ -17,7 +27,8 @@ class SearchTab extends StatefulWidget {
 class _SearchTabState extends State<SearchTab> {
   ExtensionProvider? extensionProvider;
   TextEditingController searchController = TextEditingController();
-  List<(String, GalleryResult)> searchResults = [];
+  List<SearchResult> searchResults = [];
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -34,32 +45,55 @@ class _SearchTabState extends State<SearchTab> {
       return;
     }
 
+    if (isSearching) {
+      return;
+    }
+
+    isSearching = true;
+
+    setState(() {
+      searchResults.clear();
+    });
+
     for (var extension in extensionProvider!.extensions) {
       var ret = await search(extension.name, keyword, page);
       GalleryResult galleryResult =
           GalleryResult.fromJson(ret as Map<String, dynamic>);
       setState(() {
-        searchResults.add((extension.name, galleryResult));
+        searchResults.add(SearchResult(extension.name, galleryResult, keyword));
       });
     }
+
+    isSearching = false;
   }
 
-  Widget _buildExtensionResult(
-      String extensionName, GalleryResult galleryResult) {
+  Future<void> _loadMore(SearchResult searchResult) async {
+    searchResult.page++;
+    var ret = await search(
+        searchResult.extensionName, searchResult.keyword, searchResult.page);
+    print(ret);
+  }
+
+  Widget _buildExtensionResult(SearchResult searchResult) {
     return Column(
       children: [
-        Text(extensionName),
-        if (galleryResult.success)
+        Text(searchResult.extensionName),
+        if (searchResult.galleryResult.success)
           SizedBox(
             height: 0.4.sw,
             width: 1.sw,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: galleryResult.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ComicItemWidget(
-                    galleryResult.data[index], extensionName);
+            child: EasyRefresh(
+              onLoad: () async {
+                await _loadMore(searchResult);
               },
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: searchResult.galleryResult.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ComicItemWidget(searchResult.galleryResult.data[index],
+                      searchResult.extensionName);
+                },
+              ),
             ),
           )
         else
@@ -101,8 +135,7 @@ class _SearchTabState extends State<SearchTab> {
           child: ListView.builder(
             itemCount: searchResults.length,
             itemBuilder: (BuildContext context, int index) {
-              return _buildExtensionResult(
-                  searchResults[index].$1, searchResults[index].$2);
+              return _buildExtensionResult(searchResults[index]);
             },
           ),
         ),
