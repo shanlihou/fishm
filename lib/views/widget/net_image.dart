@@ -1,9 +1,39 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:toonfu/const/general_const.dart';
 
 import '../../types/context/net_iamge_context.dart';
+
+class NetImageProvider extends ImageProvider {
+  final NetImageType type;
+  final NetImageContext ctx;
+  final double width;
+  final double height;
+  const NetImageProvider(this.type, this.ctx, this.width, this.height);
+
+  @override
+  Future<NetImageProvider> obtainKey(ImageConfiguration configuration) async {
+    return SynchronousFuture<NetImageProvider>(this);
+  }
+
+  @override
+  ImageStreamCompleter load(
+    NetImageProvider key,
+  ) {
+    return ImageStreamCompleter(
+      codec: _loadAsync(key, configuration),
+      scale: 1.0,
+    );
+  }
+
+  static Future<Codec> _loadAsync(
+      NetImageProvider key, ImageConfiguration configuration) async {
+    return await PaintingBinding.instance
+        .instantiateImageCodec(key.ctx.imageBytes);
+  }
+}
 
 class NetImage extends StatefulWidget {
   final double width;

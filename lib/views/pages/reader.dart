@@ -6,6 +6,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
@@ -163,6 +164,72 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
+  Widget buildPageView() {
+    return Container(
+        child: PhotoViewGallery.builder(
+      scrollPhysics: const BouncingScrollPhysics(),
+      builder: (BuildContext context, int index) {
+        return PhotoViewGalleryPageOptions(
+          imageProvider: NetImage(
+              NetImageType.reader,
+              NetImageContextReader(widget.extensionName, widget.comicId,
+                  curChapterId, images[index], index, widget.extra),
+              1.sw,
+              1.sh),
+          initialScale: PhotoViewComputedScale.contained * 0.8,
+          heroAttributes: PhotoViewHeroAttributes(tag: galleryItems[index].id),
+        );
+      },
+      itemCount: images.length,
+      loadingBuilder: (context, event) => Center(
+        child: Container(
+          width: 20.0,
+          height: 20.0,
+          child: CircularProgressIndicator(
+            value: event == null
+                ? 0
+                : event.cumulativeBytesLoaded / event.expectedTotalBytes,
+          ),
+        ),
+      ),
+      backgroundDecoration: widget.backgroundDecoration,
+      pageController: widget.pageController,
+      onPageChanged: onPageChanged,
+    ));
+  }
+
+  Widget buildPageView1() {
+    return PreloadPageView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: images.length,
+      physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
+      preloadPagesCount: 4,
+      controller: preloadController,
+      itemBuilder: (context, index) {
+        return PhotoView.customChild(
+          wantKeepAlive: true,
+          minScale: 1.0,
+          initialScale: 1.0,
+          onScaleEnd: (context, details, e) {
+            print('onScaleEnd: $details, $e');
+            bool oldLockSwap = lockSwap;
+            lockSwap = (e.scale ?? 1) > 1.0;
+            if (oldLockSwap != lockSwap) {
+              setState(() {});
+            }
+          },
+          child: NetImage(
+            NetImageType.reader,
+            NetImageContextReader(widget.extensionName, widget.comicId,
+                curChapterId, images[index], index, widget.extra),
+            1.sw,
+            1.sh,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -170,40 +237,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: PreloadPageView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: images.length,
-                physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
-                preloadPagesCount: 4,
-                controller: preloadController,
-                itemBuilder: (context, index) {
-                  return PhotoView.customChild(
-                    wantKeepAlive: true,
-                    minScale: 1.0,
-                    initialScale: 1.0,
-                    onScaleEnd: (context, details, e) {
-                      print('onScaleEnd: $details, $e');
-                      bool oldLockSwap = lockSwap;
-                      lockSwap = (e.scale ?? 1) > 1.0;
-                      if (oldLockSwap != lockSwap) {
-                        setState(() {});
-                      }
-                    },
-                    child: NetImage(
-                      NetImageType.reader,
-                      NetImageContextReader(
-                          widget.extensionName,
-                          widget.comicId,
-                          curChapterId,
-                          images[index],
-                          index,
-                          widget.extra),
-                      1.sw,
-                      1.sh,
-                    ),
-                  );
-                },
-              ),
+              child: buildPageView(),
             ),
             Positioned(
               bottom: 0,

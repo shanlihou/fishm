@@ -45,12 +45,5 @@ app.*.map.json
 # common
 .metadata
 analysis_options.yaml
-pubspec.lock
-android
-ios
-linux
-macos
-windows
-web
 .tmp
 build.sh
