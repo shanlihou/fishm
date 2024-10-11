@@ -45,7 +45,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   bool isFristJump = true;
   ReadHistoryModel? lastRecordHistory;
   bool lockSwap = false;
-  // final PageController pageController = PageController();
   int fingerNum = 0;
   int flags = 0;
 
@@ -146,6 +145,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   void nextPage(BuildContext buildContext) {
+    if (lockSwap) return;
+
     int currentIndex = _page;
     if (currentIndex < images.length - 1) {
       preloadController.jumpToPage(currentIndex + 1);
@@ -155,6 +156,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   void prevPage(BuildContext buildContext) {
+    if (lockSwap) return;
+
     int currentIndex = _page;
     if (currentIndex > 0) {
       preloadController.jumpToPage(currentIndex - 1);
@@ -170,34 +173,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       return '0/0';
     }
   }
-
-  // Widget buildPageView() {
-  //   return Container(
-  //       child: PhotoViewGallery.builder(
-  //     builder: (BuildContext context, int index) {
-  //       return PhotoViewGalleryPageOptions(
-  //           imageProvider: NetImageProvider(
-  //         NetImageContextReader(widget.extensionName, widget.comicId,
-  //             curChapterId, images[index], index, widget.extra),
-  //       ));
-  //     },
-  //     itemCount: images.length,
-  //     loadingBuilder: (context, event) => Center(
-  //       child: Container(
-  //         width: 20.0,
-  //         height: 20.0,
-  //         child: const CupertinoActivityIndicator(),
-  //       ),
-  //     ),
-  //     backgroundDecoration: BoxDecoration(
-  //       color: CupertinoColors.black,
-  //     ),
-  //     pageController: pageController,
-  //     onPageChanged: (index) {
-  //       print('onPageChanged: $index');
-  //     },
-  //   ));
-  // }
 
   void _updateFingers() {
     bool oldLockSwap = lockSwap;
@@ -257,6 +232,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
           },
           itemBuilder: (context, index) {
             return PhotoView.customChild(
+                backgroundDecoration: BoxDecoration(
+                  color: CupertinoColors.white,
+                ),
                 wantKeepAlive: true,
                 minScale: 1.0,
                 initialScale: 1.0,
