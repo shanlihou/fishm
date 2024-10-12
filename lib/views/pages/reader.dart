@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/types/common/reader_chapters.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
 import "../../api/flutter_call_lua/method.dart";
@@ -19,6 +20,13 @@ import '../../models/db/read_history_model.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../../types/gesture_processor.dart';
 import '../widget/net_image.dart';
+
+enum InitOption {
+  none,
+  init,
+  pre,
+  next,
+}
 
 class ComicReaderPage extends StatefulWidget {
   final String chapterId;
@@ -39,7 +47,7 @@ class ComicReaderPage extends StatefulWidget {
 
 class _ComicReaderPageState extends State<ComicReaderPage> {
   String curChapterId;
-  final PreloadPageController preloadController = PreloadPageController();
+  PreloadPageController? preloadController;
   List<String> images = [];
   GestureProcessor? gestureProcessor;
   bool isFristJump = true;
@@ -47,6 +55,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   bool lockSwap = false;
   int fingerNum = 0;
   int flags = 0;
+  Map<String, ChapterDetail> chapterDetailMap = {};
+  final ReaderChapters readerChapters = ReaderChapters();
+  InitOption initOption = InitOption.none;
 
   _ComicReaderPageState(this.curChapterId);
 
@@ -55,16 +66,36 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   @override
   void initState() {
     super.initState();
-
-    updateChapterAsync();
+    initOption = InitOption.init;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!updateReadHistory()) {
-        return;
-      }
+      // if (!updateReadHistory()) {
+      //   return;
+      // }
 
-      recordReadHistory();
-      setState(() {});
+      // recordReadHistory();
+      // setState(() {});
     });
+  }
+
+  Future<bool> _initAsync() async {
+    print('initAsync: $curChapterId, $initOption');
+    int curCount = readerChapters.imageCount;
+    if (initOption == InitOption.init) {
+      ChapterDetail detail = await _getChapterDetails(curChapterId);
+      readerChapters.addChapter(detail, curChapterId);
+      preloadController = PreloadPageController(initialPage: 10);
+    } else if (initOption == InitOption.pre) {
+      int curPage = _page;
+      await _supplementChapter(false);
+      preloadController = PreloadPageController(
+          initialPage: curPage + readerChapters.imageCount - curCount);
+    } else if (initOption == InitOption.next) {
+      await _supplementChapter(true);
+    }
+
+    print('count change from $curCount to ${readerChapters.imageCount}');
+    initOption = InitOption.none;
+    return true;
   }
 
   bool updateReadHistory() {
@@ -92,6 +123,12 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     super.dispose();
   }
 
+  Future<ChapterDetail> _getChapterDetails(String chapterId) async {
+    var detail = await getChapterDetail(
+        widget.extensionName, curChapterId, widget.comicId, widget.extra);
+    return ChapterDetail.fromJson(detail as Map<String, dynamic>);
+  }
+
   Future<void> updateChapterAsync() async {
     var detail = await getChapterDetail(
         widget.extensionName, curChapterId, widget.comicId, widget.extra);
@@ -101,7 +138,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     if (isFristJump &&
         widget.initChapterId != null &&
         widget.initChapterId == curChapterId) {
-      preloadController.jumpToPage(widget.initPage ?? 0);
+      preloadController?.jumpToPage(widget.initPage ?? 0);
       isFristJump = false;
     }
   }
@@ -116,7 +153,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
     curChapterId = preChapterId;
     await updateChapterAsync();
-    preloadController.jumpToPage(images.length - 1);
+    preloadController?.jumpToPage(images.length - 1);
     return true;
   }
 
@@ -129,7 +166,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     if (nextChapterId == null) return false;
     curChapterId = nextChapterId;
     await updateChapterAsync();
-    preloadController.jumpToPage(0);
+    preloadController?.jumpToPage(0);
     return true;
   }
 
@@ -141,7 +178,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   int get _page {
     // round to int
-    return (preloadController.page ?? 0).round();
+    return (preloadController?.page ?? 0).round();
   }
 
   void nextPage(BuildContext buildContext) {
@@ -149,7 +186,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
     int currentIndex = _page;
     if (currentIndex < images.length - 1) {
-      preloadController.jumpToPage(currentIndex + 1);
+      preloadController?.jumpToPage(currentIndex + 1);
     } else {
       nextChapter(buildContext);
     }
@@ -160,7 +197,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
     int currentIndex = _page;
     if (currentIndex > 0) {
-      preloadController.jumpToPage(currentIndex - 1);
+      preloadController?.jumpToPage(currentIndex - 1);
     } else {
       preChapter(buildContext);
     }
@@ -196,6 +233,69 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
+  Widget _buildImage(BuildContext context, int index) {
+    var ret = readerChapters.imageUrl(index);
+
+    if (ret == null) {
+      return SizedBox(
+        width: 1.sw,
+        height: 1.sh,
+        child: Center(
+          child: Text('middle'),
+        ),
+      );
+    }
+
+    return PhotoView.customChild(
+        backgroundDecoration: const BoxDecoration(
+          color: CupertinoColors.white,
+        ),
+        wantKeepAlive: true,
+        minScale: 1.0,
+        initialScale: 1.0,
+        onScaleEnd: (context, details, e) {
+          // print('onScaleEnd: $details, $e');
+          bool oldLockSwap = lockSwap;
+          bool isSetFlags = (e.scale ?? 1) > 1.0;
+          flags = bitSet(flags, readerFlagsScale, isSetFlags);
+          _updateLockSwap();
+          if (oldLockSwap != lockSwap) {
+            setState(() {});
+          }
+        },
+        child: NetImage(
+          NetImageContextReader(widget.extensionName, widget.comicId,
+              curChapterId, ret.$1, ret.$2, widget.extra),
+          1.sw,
+          1.sh,
+        ));
+  }
+
+  Future<void> _supplementChapter(bool isNext) async {
+    var comicModel = context.read<ComicProvider>().getHistoryComicModel(
+        getComicUniqueId(widget.comicId, widget.extensionName));
+
+    if (comicModel == null) return;
+
+    if (isNext) {
+      String last = readerChapters.lastChapterId();
+      String? nextChapterId = comicModel.nextChapterId(last);
+      if (nextChapterId == null) return;
+      ChapterDetail detail = await _getChapterDetails(nextChapterId);
+      readerChapters.addChapter(detail, nextChapterId);
+      print('add next title: ${comicModel.getChapterTitle(nextChapterId)}');
+    } else {
+      String first = readerChapters.firstChapterId();
+      String? preChapterId = comicModel.preChapterId(first);
+      if (preChapterId == null) return;
+      ChapterDetail detail = await _getChapterDetails(preChapterId);
+      readerChapters.addChapterHead(detail, preChapterId);
+      print('add pre title: ${comicModel.getChapterTitle(preChapterId)}');
+    }
+
+    setState(() {});
+  }
+
   Widget buildPageView() {
     return Listener(
       onPointerSignal: (event) {},
@@ -223,47 +323,21 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       behavior: HitTestBehavior.translucent,
       child: PreloadPageView.builder(
           scrollDirection: Axis.vertical,
-          itemCount: images.length,
+          itemCount: readerChapters.imageCount,
           physics: lockSwap ? const NeverScrollableScrollPhysics() : null,
           preloadPagesCount: 4,
           controller: preloadController,
           onPageChanged: (index) {
             print('onPageChanged: $index');
+            if (index == 0) {
+              initOption = InitOption.pre;
+              setState(() {});
+            } else if (index == readerChapters.imageCount - 1) {
+              initOption = InitOption.next;
+              setState(() {});
+            }
           },
-          itemBuilder: (context, index) {
-            return PhotoView.customChild(
-                backgroundDecoration: BoxDecoration(
-                  color: CupertinoColors.white,
-                ),
-                wantKeepAlive: true,
-                minScale: 1.0,
-                initialScale: 1.0,
-                onScaleEnd: (context, details, e) {
-                  // print('onScaleEnd: $details, $e');
-                  bool oldLockSwap = lockSwap;
-                  bool isSetFlags = (e.scale ?? 1) > 1.0;
-                  flags = bitSet(flags, readerFlagsScale, isSetFlags);
-                  _updateLockSwap();
-                  if (oldLockSwap != lockSwap) {
-                    setState(() {});
-                  }
-                },
-                // child: Image(
-                //   image: NetImageProvider(NetImageContextReader(
-                //       widget.extensionName,
-                //       widget.comicId,
-                //       curChapterId,
-                //       images[index],
-                //       index,
-                //       widget.extra)),
-                // ),
-                child: NetImage(
-                  NetImageContextReader(widget.extensionName, widget.comicId,
-                      curChapterId, images[index], index, widget.extra),
-                  1.sw,
-                  1.sh,
-                ));
-          }),
+          itemBuilder: _buildImage),
     );
   }
 
@@ -274,7 +348,20 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: buildPageView(),
+              child: FutureBuilder(
+                future: _initAsync(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return Text('loading');
+                  } else if (snapshot.hasError) {
+                    return Text('error');
+                  } else if (!(snapshot.data ?? false)) {
+                    return Text('no data');
+                  } else {
+                    return buildPageView();
+                  }
+                },
+              ),
             ),
             Positioned.fill(
               child: Row(

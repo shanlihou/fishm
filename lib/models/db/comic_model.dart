@@ -55,6 +55,12 @@ class ComicModel {
     return chapters[index - 1].id;
   }
 
+  String? getChapterTitle(String chapterId) {
+    int index = chapters.indexWhere((e) => e.id == chapterId);
+    if (index == -1) return null;
+    return chapters[index].title;
+  }
+
   String? preChapterId(String curChapterId) {
     int index = chapters.indexWhere((e) => e.id == curChapterId);
     if (index == -1) return null;
