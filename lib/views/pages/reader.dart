@@ -67,13 +67,17 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     super.initState();
     _initOption = InitOption.init;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!_needUpdateReadHistory()) {
-        return;
-      }
-
-      _recordReadHistory();
-      _pageText.value = _getPageText();
+      _updateReadHistory();
     });
+  }
+
+  void _updateReadHistory() {
+    if (!_needUpdateReadHistory()) {
+      return;
+    }
+
+    _recordReadHistory();
+    _pageText.value = _getPageText();
   }
 
   Future<bool> _initAsync() async {
@@ -299,7 +303,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                   _initOption = InitOption.next;
                   setState(() {});
                 } else {
-                  _pageText.value = _getPageText();
+                  _updateReadHistory();
                 }
               },
               itemBuilder: _buildImage);
@@ -367,7 +371,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
             ),
             Positioned(
               bottom: 0,
-              right: 0,
+              right: 0.1.sw,
               child: ValueListenableBuilder(
                 valueListenable: _pageText,
                 builder: (context, value, child) {
