@@ -50,6 +50,7 @@ class _ReaderPageViewState extends State<ReaderPageView> {
   @override
   void initState() {
     super.initState();
+    _initOption = InitOption.init;
   }
 
   int get _page {

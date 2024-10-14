@@ -134,6 +134,13 @@ class ComicProvider with ChangeNotifier {
       return null;
     }
 
-    return 'chapter: ${readHistory.chapterId} page: ${readHistory.index}';
+    var comicModel = getComicModel(uniqueId);
+    if (comicModel == null) {
+      return null;
+    }
+
+    var chapterTitle = comicModel.getChapterTitle(readHistory.chapterId);
+
+    return 'chapter: $chapterTitle page: ${readHistory.index}';
   }
 }

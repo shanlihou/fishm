@@ -11,6 +11,24 @@ class ReaderChapters {
     chapterIds.add(id);
   }
 
+  void frontPop() {
+    while (chapters.length > 2) {
+      chapters.removeAt(0);
+      chapterIds.removeAt(0);
+    }
+  }
+
+  void backPop() {
+    while (chapters.length > 2) {
+      chapters.removeAt(chapters.length - 1);
+      chapterIds.removeAt(chapterIds.length - 1);
+    }
+  }
+
+  int firstMiddlePageIndex() {
+    return chapters.first.images.length + 1;
+  }
+
   void addChapterHead(ChapterDetail detail, String id) {
     chapters.insert(0, detail);
     chapterIds.insert(0, id);
