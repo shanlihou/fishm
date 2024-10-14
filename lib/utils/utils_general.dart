@@ -59,7 +59,7 @@ Future<void> downloadMainLua() async {
         await downloadMainLuaByUrl(data['url']);
         return;
       } catch (e) {
-        Log.instance.e('downloadMainLuaTmp down url error: $e');
+        Log.instance.e('downloadMainLuaTmp down url: ${data['url']} error: $e');
         continue;
       }
     }

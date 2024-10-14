@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../const/general_const.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../class/comic_item.dart';
 import '../pages/comic_detail_page.dart';

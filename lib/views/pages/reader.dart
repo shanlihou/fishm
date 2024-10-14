@@ -1,12 +1,11 @@
 // this page use for read comic image
 
 import 'dart:async';
+import 'dart:ffi';
 
-import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/common/reader_chapters.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
@@ -68,7 +67,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     super.initState();
     initOption = InitOption.init;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // if (!updateReadHistory()) {
+      // if (!needUpdateReadHistory()) {
       //   return;
       // }
 
@@ -98,14 +97,17 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     return true;
   }
 
-  bool updateReadHistory() {
+  bool needUpdateReadHistory() {
+    var ret = readerChapters.imageUrl(_page);
+    if (ret == null) return false;
+
     if (lastRecordHistory != null &&
-        lastRecordHistory!.chapterId == curChapterId &&
-        lastRecordHistory!.index == _page) {
+        lastRecordHistory!.chapterId == ret.$3 &&
+        lastRecordHistory!.index == ret.$2) {
       return false;
     }
 
-    lastRecordHistory = ReadHistoryModel(curChapterId, _page);
+    lastRecordHistory = ReadHistoryModel(ret.$3, ret.$2);
     return true;
   }
 
@@ -113,8 +115,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     ComicProvider comicProvider = context.read<ComicProvider>();
     comicProvider.recordReadHistory(
         getComicUniqueId(widget.comicId, widget.extensionName),
-        curChapterId,
-        _page);
+        lastRecordHistory!.chapterId,
+        lastRecordHistory!.index);
   }
 
   @override
@@ -124,9 +126,18 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<ChapterDetail> _getChapterDetails(String chapterId) async {
+    if (chapterDetailMap.containsKey(chapterId)) {
+      return chapterDetailMap[chapterId]!;
+    }
+
     var detail = await getChapterDetail(
-        widget.extensionName, curChapterId, widget.comicId, widget.extra);
-    return ChapterDetail.fromJson(detail as Map<String, dynamic>);
+        widget.extensionName, chapterId, widget.comicId, widget.extra);
+
+    ChapterDetail chapterDetail =
+        ChapterDetail.fromJson(detail as Map<String, dynamic>);
+    chapterDetailMap[chapterId] = chapterDetail;
+
+    return chapterDetail;
   }
 
   Future<void> updateChapterAsync() async {
@@ -182,30 +193,39 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   void nextPage(BuildContext buildContext) {
-    if (lockSwap) return;
+    // if (lockSwap) return;
 
-    int currentIndex = _page;
-    if (currentIndex < images.length - 1) {
-      preloadController?.jumpToPage(currentIndex + 1);
-    } else {
-      nextChapter(buildContext);
-    }
+    // int currentIndex = _page;
+    // if (currentIndex < images.length - 1) {
+    //   preloadController?.jumpToPage(currentIndex + 1);
+    // } else {
+    //   nextChapter(buildContext);
+    // }
   }
 
   void prevPage(BuildContext buildContext) {
-    if (lockSwap) return;
+    // return;
+    // if (lockSwap) return;
 
-    int currentIndex = _page;
-    if (currentIndex > 0) {
-      preloadController?.jumpToPage(currentIndex - 1);
-    } else {
-      preChapter(buildContext);
-    }
+    // int currentIndex = _page;
+    // if (currentIndex > 0) {
+    //   preloadController?.jumpToPage(currentIndex - 1);
+    // } else {
+    //   preChapter(buildContext);
+    // }
   }
 
   String getPageText() {
+    return '0/0';
+    var ret = readerChapters.imageUrl(_page);
+    if (ret == null) return '0/0';
+
+    var comicModel = context.read<ComicProvider>().getHistoryComicModel(
+        getComicUniqueId(widget.comicId, widget.extensionName));
+    if (comicModel == null) return '0/0';
+    String chapterTitle = comicModel.getChapterTitle(ret.$3) ?? '';
     try {
-      return '${_page + 1}/${images.length}';
+      return ' $chapterTitle ${ret.$2 + 1}/${ret.$4}';
     } catch (e) {
       return '0/0';
     }
@@ -352,7 +372,11 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                 future: _initAsync(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
-                    return Text('loading');
+                    return SizedBox(
+                      width: 1.sw,
+                      height: 1.sh,
+                      child: Center(child: Text('middle')),
+                    );
                   } else if (snapshot.hasError) {
                     return Text('error');
                   } else if (!(snapshot.data ?? false)) {

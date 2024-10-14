@@ -1,5 +1,7 @@
 import 'package:toonfu/models/api/chapter_detail.dart';
 
+import '../../common/log.dart';
+
 class ReaderChapters {
   final List<ChapterDetail> chapters = [];
   final List<String> chapterIds = [];
@@ -22,6 +24,16 @@ class ReaderChapters {
     return chapterIds.last;
   }
 
+  void debugPrint() {
+    for (var chapter in chapters) {
+      for (var image in chapter.images) {
+        Log.instance.d('image: $image');
+      }
+
+      Log.instance.d('--------------------------------');
+    }
+  }
+
   int get imageCount {
     int count = 0;
     for (var chapter in chapters) {
@@ -30,16 +42,22 @@ class ReaderChapters {
     return count + 1 + chapters.length;
   }
 
-  (String, int)? imageUrl(int index) {
+  (String, int, String, int)? imageUrl(int index) {
     if (index == 0) {
       return null;
     }
 
     index--;
 
-    for (var chapter in chapters) {
+    for (var i = 0; i < chapters.length; i++) {
+      var chapter = chapters[i];
       if (index < chapter.images.length) {
-        return (chapter.images[index], index);
+        return (
+          chapter.images[index],
+          index,
+          chapterIds[i],
+          chapter.images.length
+        );
       }
       index -= chapter.images.length;
 

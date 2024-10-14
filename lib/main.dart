@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/types/provider/extension_provider.dart';
-import 'package:toonfu/views/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/setting_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
