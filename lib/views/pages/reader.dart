@@ -81,7 +81,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<bool> _initAsync() async {
-    int curCount = _readerChapters.imageCount;
     if (_initOption == InitOption.init) {
       ChapterDetail detail = await _getChapterDetails(widget.chapterId);
       _readerChapters.addChapter(detail, widget.chapterId);
@@ -89,13 +88,18 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
           PreloadPageController(initialPage: widget.initPage ?? 1);
     } else if (_initOption == InitOption.pre) {
       int newPage = await _supplementChapter(false);
+      if (newPage == -1) {
+        newPage = 0;
+      }
       _preloadController = PreloadPageController(initialPage: newPage);
     } else if (_initOption == InitOption.next) {
       int newPage = await _supplementChapter(true);
+      if (newPage == -1) {
+        newPage = _readerChapters.imageCount - 1;
+      }
       _preloadController = PreloadPageController(initialPage: newPage);
     }
 
-    print('count change from $curCount to ${_readerChapters.imageCount}');
     _initOption = InitOption.none;
     return true;
   }
@@ -159,9 +163,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       if (currentIndex < _readerChapters.imageCount - 1) {
         _preloadController?.jumpToPage(currentIndex + 1);
       }
-    } catch (e) {
-      Log.instance.e('error: $e');
-    }
+    } catch (e) {}
   }
 
   void _prevPage(BuildContext buildContext) {
@@ -172,9 +174,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       if (currentIndex > 0) {
         _preloadController?.jumpToPage(currentIndex - 1);
       }
-    } catch (e) {
-      Log.instance.e('error: $e');
-    }
+    } catch (e) {}
   }
 
   String _getPageText() {
@@ -202,6 +202,37 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     _updateLockSwap();
   }
 
+  (String?, String?) _buildMiddleText(BuildContext context, int index) {
+    var preRet = _readerChapters.imageUrl(index - 1);
+    var nextRet = _readerChapters.imageUrl(index + 1);
+    var comicModel = context.read<ComicProvider>().getHistoryComicModel(
+        getComicUniqueId(widget.comicId, widget.extensionName));
+
+    if (comicModel == null) return (null, null);
+
+    if (preRet == null && nextRet == null) {
+      return (null, null);
+    }
+
+    if (preRet == null) {
+      String preChapterId = comicModel.preChapterId(nextRet!.$3) ?? '';
+      String? preChapterTitle = comicModel.getChapterTitle(preChapterId);
+      String? nextChapterTitle = comicModel.getChapterTitle(nextRet.$3);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    if (nextRet == null) {
+      String nextChapterId = comicModel.nextChapterId(preRet.$3) ?? '';
+      String? preChapterTitle = comicModel.getChapterTitle(preRet.$3);
+      String? nextChapterTitle = comicModel.getChapterTitle(nextChapterId);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    String? preChapterTitle = comicModel.getChapterTitle(preRet.$3);
+    String? nextChapterTitle = comicModel.getChapterTitle(nextRet.$3);
+    return (preChapterTitle, nextChapterTitle);
+  }
+
   void _updateLockSwap() {
     if (bitGet(_flags, readerFlagsScale) || bitGet(_flags, readerFlagsFinger)) {
       _lockSwap.value = true;
@@ -214,11 +245,17 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     var ret = _readerChapters.imageUrl(index);
 
     if (ret == null) {
+      var (pre, next) = _buildMiddleText(context, index);
       return SizedBox(
         width: 1.sw,
         height: 1.sh,
         child: Center(
-          child: Text('middle'),
+          child: Column(
+            children: [
+              Text(pre ?? ''),
+              Text(next ?? ''),
+            ],
+          ),
         ),
       );
     }
@@ -295,7 +332,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
               preloadPagesCount: 4,
               controller: _preloadController,
               onPageChanged: (index) {
-                print('onPageChanged: $index');
                 if (index == 0) {
                   _initOption = InitOption.pre;
                   setState(() {});

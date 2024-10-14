@@ -61,7 +61,7 @@ class ReaderChapters {
   }
 
   (String, int, String, int)? imageUrl(int index) {
-    if (index == 0) {
+    if (index <= 0) {
       return null;
     }
 
