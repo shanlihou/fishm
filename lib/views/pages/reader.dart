@@ -59,6 +59,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   // value notifier
   ValueNotifier<String> _pageText = ValueNotifier('0/0');
   ValueNotifier<bool> _lockSwap = ValueNotifier(false);
+  ValueNotifier<bool> _displayMenu = ValueNotifier(false);
 
   _ComicReaderPageState();
 
@@ -305,6 +306,40 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
+  Widget _buildMenu() {
+    return Column(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(
+            color: CupertinoColors.systemRed,
+          ),
+        ),
+        Expanded(
+          flex: 6,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              _displayMenu.value = false;
+            },
+            child: Container(
+              color: CupertinoColors.transparent,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: CupertinoSlider(
+            value: 0,
+            onChanged: (value) {
+              print(value);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPageView() {
     return Listener(
       onPointerSignal: (event) {},
@@ -389,7 +424,23 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                             height: double.infinity,
                             color: CupertinoColors.transparent),
                       )),
-                  Expanded(flex: 6, child: Container()),
+                  Expanded(
+                      flex: 6,
+                      child: Center(
+                        child: SizedBox(
+                          width: 0.1.sw,
+                          height: 0.1.sh,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              _displayMenu.value = true;
+                            },
+                            child: Container(
+                              color: CupertinoColors.transparent,
+                            ),
+                          ),
+                        ),
+                      )),
                   Expanded(
                       flex: 2,
                       child: GestureDetector(
@@ -417,7 +468,19 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                   );
                 },
               ),
-            )
+            ),
+            Positioned.fill(
+              child: ValueListenableBuilder(
+                valueListenable: _displayMenu,
+                builder: (context, value, child) {
+                  if (!value) {
+                    return Container();
+                  }
+
+                  return _buildMenu();
+                },
+              ),
+            ),
           ],
         ),
       ),
