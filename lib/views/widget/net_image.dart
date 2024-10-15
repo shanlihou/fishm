@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../const/general_const.dart';
 import '../../types/context/net_iamge_context.dart';
 
 class NetImageProvider extends ImageProvider<NetImageProvider> {
@@ -29,14 +30,12 @@ class NetImageProvider extends ImageProvider<NetImageProvider> {
     final File imageFile = File(key.imagePath);
 
     if (!await imageFile.exists()) {
-      // 如果文件不存在，先下载到本地
       bool success = await key.fetchImage();
       if (!success) {
-        throw Exception('下载图片失败: ${key.imageUrl}');
+        throw Exception('Failed to download image: ${key.imageUrl}');
       }
     }
 
-    // 从本地文件读取图片数据
     final Uint8List bytes = await imageFile.readAsBytes();
     return decode(await ImmutableBuffer.fromUint8List(bytes));
   }
@@ -98,6 +97,16 @@ class _NetImageState extends State<NetImage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isDebug) {
+      return SizedBox(
+        width: widget.width,
+        height: widget.height,
+        child: const Center(
+          child: Text('Debug'),
+        ),
+      );
+    }
+
     if (_isDownloadFailed) {
       return SizedBox(
         width: widget.width,

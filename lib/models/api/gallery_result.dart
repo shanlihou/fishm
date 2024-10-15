@@ -18,4 +18,8 @@ class GalleryResult {
 
     return GalleryResult(json['success'], data);
   }
+
+  void extend(GalleryResult galleryResult) {
+    data.addAll(galleryResult.data);
+  }
 }

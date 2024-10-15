@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../api/flutter_call_lua/method.dart';
+import '../../common/log.dart';
 import '../../models/api/gallery_result.dart';
 import '../../types/provider/extension_provider.dart';
 import '../widget/comic_item_widget.dart';
@@ -12,8 +13,8 @@ class SearchResult {
   final String extensionName;
   final GalleryResult galleryResult;
   final String keyword;
+  bool allLoaded = false;
   int page = 0;
-
   SearchResult(this.extensionName, this.galleryResult, this.keyword);
 }
 
@@ -67,11 +68,37 @@ class _SearchTabState extends State<SearchTab> {
     isSearching = false;
   }
 
-  Future<void> _loadMore(SearchResult searchResult) async {
+  Future<IndicatorResult> _loadMore(SearchResult searchResult) async {
+    if (searchResult.allLoaded) {
+      return IndicatorResult.noMore;
+    }
+
     searchResult.page++;
-    var ret = await search(
-        searchResult.extensionName, searchResult.keyword, searchResult.page);
-    print(ret);
+    late GalleryResult galleryResult;
+    try {
+      var ret = await search(
+          searchResult.extensionName, searchResult.keyword, searchResult.page);
+      print(ret);
+      galleryResult = GalleryResult.fromJson(ret as Map<String, dynamic>);
+    } catch (e) {
+      Log.instance.e(e.toString());
+      return IndicatorResult.fail;
+    }
+
+    if (!galleryResult.success) {
+      return IndicatorResult.fail;
+    }
+
+    if (galleryResult.data.isEmpty) {
+      searchResult.allLoaded = true;
+      return IndicatorResult.noMore;
+    }
+
+    setState(() {
+      searchResult.galleryResult.extend(galleryResult);
+    });
+
+    return IndicatorResult.success;
   }
 
   Widget _buildExtensionResult(SearchResult searchResult) {

@@ -21,3 +21,5 @@ const double tapThreshold = 10;
 
 const int readerFlagsFinger = 0;
 const int readerFlagsScale = 1;
+
+const bool isDebug = false;
