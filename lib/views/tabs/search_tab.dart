@@ -2,6 +2,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/types/common/search_footer.dart';
 
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
@@ -110,6 +111,7 @@ class _SearchTabState extends State<SearchTab> {
             height: 0.4.sw,
             width: 1.sw,
             child: EasyRefresh(
+              footer: SearchFooter(),
               onLoad: () async {
                 await _loadMore(searchResult);
               },
