@@ -15,6 +15,8 @@ import 'package:toonfu/views/pages/splash.dart';
 
 import 'models/db/read_history_model.dart';
 import 'utils/utils_general.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +58,16 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return const CupertinoApp(
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [
+            Locale('en'),
+            Locale('zh'),
+          ],
           title: 'ToonFu',
           theme: CupertinoThemeData(
             primaryColor: CupertinoColors.systemPurple,

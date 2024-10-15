@@ -7,6 +7,7 @@ import '../tabs/search_tab.dart';
 import 'settings/main_settings.dart';
 import '../tabs/extensions_tab.dart';
 import '../tabs/history_tab.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,14 +18,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home>
     with SingleTickerProviderStateMixin, LuaMixin {
-  final List<String> _tabs = <String>[
-    'Bookshelf',
-    'History',
-    'Extensions',
-    'Explore',
-    'Search',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -67,11 +60,26 @@ class _HomeState extends State<Home>
                   return CupertinoTabScaffold(
                     tabBar: CupertinoTabBar(
                       items: [
-                        for (final tab in _tabs)
-                          BottomNavigationBarItem(
-                            icon: Icon(CupertinoIcons.book),
-                            label: tab,
-                          )
+                        BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.star),
+                          label: AppLocalizations.of(context)!.favorite,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.clock),
+                          label: AppLocalizations.of(context)!.history,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.square_grid_2x2),
+                          label: AppLocalizations.of(context)!.extensions,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.globe),
+                          label: AppLocalizations.of(context)!.explore,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.search),
+                          label: AppLocalizations.of(context)!.search,
+                        ),
                       ],
                     ),
                     tabBuilder: (context, index) {
