@@ -18,6 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home>
     with SingleTickerProviderStateMixin, LuaMixin {
+  ValueNotifier<String> curLabel = ValueNotifier('');
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,13 @@ class _HomeState extends State<Home>
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Home'),
+        middle: ValueListenableBuilder(
+          valueListenable: curLabel,
+          builder: (context, value, child) {
+            return Text(
+                value == '' ? AppLocalizations.of(context)!.favorite : value);
+          },
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.settings),
@@ -59,6 +67,30 @@ class _HomeState extends State<Home>
                 builder: (context) {
                   return CupertinoTabScaffold(
                     tabBar: CupertinoTabBar(
+                      onTap: (index) {
+                        switch (index) {
+                          case 0:
+                            curLabel.value =
+                                AppLocalizations.of(context)!.favorite;
+                            break;
+                          case 1:
+                            curLabel.value =
+                                AppLocalizations.of(context)!.history;
+                            break;
+                          case 2:
+                            curLabel.value =
+                                AppLocalizations.of(context)!.extensions;
+                            break;
+                          case 3:
+                            curLabel.value =
+                                AppLocalizations.of(context)!.explore;
+                            break;
+                          case 4:
+                            curLabel.value =
+                                AppLocalizations.of(context)!.search;
+                            break;
+                        }
+                      },
                       items: [
                         BottomNavigationBarItem(
                           icon: Icon(CupertinoIcons.star),

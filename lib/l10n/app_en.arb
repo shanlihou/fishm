@@ -4,5 +4,24 @@
   "extensions": "Extensions",
   "explore": "Explore",
   "search": "Search",
-  "bookshelf": "Bookshelf"
+  "bookshelf": "Bookshelf",
+
+  "general": "General",
+  "@general": {
+    "description": "General settings"
+  },
+  "sources": "Sources",
+  "@sources": {
+    "description": "Sources settings"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About settings"
+  },
+  "debug": "Debug",
+  "@debug": {
+    "description": "Debug settings"
+  },
+  "language": "Language",
+  "cancel": "Cancel"
 }

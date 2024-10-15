@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/views/pages/settings/sources_settings.dart';
 import 'package:toonfu/views/pages/settings/about_page.dart';
 import 'package:toonfu/views/pages/settings/debug_setting_page.dart';
+import 'package:toonfu/views/pages/settings/general_settings.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class MainSettings extends StatefulWidget {
   const MainSettings({super.key});
@@ -12,7 +14,7 @@ class MainSettings extends StatefulWidget {
 }
 
 class _MainSettingsState extends State<MainSettings> {
-  final List<String> settingItems = ['Sources', 'About', 'Debug'];
+  final List<String> settingItems = ['Sources', 'About', 'Debug', 'General'];
 
   @override
   void initState() {
@@ -29,7 +31,24 @@ class _MainSettingsState extends State<MainSettings> {
     } else if (page == 'Debug') {
       await Navigator.push(context,
           CupertinoPageRoute(builder: (context) => DebugSettingPage()));
+    } else if (page == 'General') {
+      await Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => GeneralSettings()));
     }
+  }
+
+  String _getSettingLabel(String key) {
+    if (key == 'Sources') {
+      return AppLocalizations.of(context)!.sources;
+    } else if (key == 'About') {
+      return AppLocalizations.of(context)!.about;
+    } else if (key == 'Debug') {
+      return AppLocalizations.of(context)!.debug;
+    } else if (key == 'General') {
+      return AppLocalizations.of(context)!.general;
+    }
+
+    return '';
   }
 
   @override
@@ -56,7 +75,7 @@ class _MainSettingsState extends State<MainSettings> {
               child: SizedBox(
                 height: 0.1.sh,
                 width: double.infinity,
-                child: Text(item),
+                child: Text(_getSettingLabel(item)),
               ),
             );
           }).toList(),

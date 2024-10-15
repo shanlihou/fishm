@@ -10,9 +10,12 @@ class Settings {
   @HiveField(1, defaultValue: "")
   String localMainLuaDeubugPath;
 
-  Settings(this.sources, this.localMainLuaDeubugPath);
+  @HiveField(2, defaultValue: "")
+  String language;
+
+  Settings(this.sources, this.localMainLuaDeubugPath, this.language);
 
   static Settings defaultSettings() {
-    return Settings([], "");
+    return Settings([], "", "");
   }
 }

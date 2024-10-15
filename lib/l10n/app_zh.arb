@@ -3,5 +3,11 @@
     "history": "历史",
     "extensions": "扩展",
     "explore": "浏览",
-    "search": "搜索"
+    "search": "搜索",
+    "sources": "源",
+    "about": "关于",
+    "debug": "调试",
+    "general": "通用",
+    "language": "语言",
+    "cancel": "取消"
 }

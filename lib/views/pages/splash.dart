@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
+import '../../types/provider/local_provider.dart';
 import '../../types/provider/setting_provider.dart';
 import '../../utils/utils_general.dart';
 import 'home.dart';
@@ -35,6 +36,15 @@ class _SplashScreenState extends State<SplashScreen> {
     await extensionProvider.loadExtensions();
     await comicProvider.loadComics();
     await initMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
+
+    if (settingProvider.settings?.language == "") {
+      String language = Localizations.localeOf(buildContext).languageCode;
+      context.read<LocalProvider>().setLocale(Locale(language));
+    } else {
+      context
+          .read<LocalProvider>()
+          .setLocale(Locale(settingProvider.settings?.language ?? "en"));
+    }
 
     Navigator.pushReplacement(
       buildContext,
