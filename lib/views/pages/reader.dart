@@ -1,10 +1,10 @@
 // this page use for read comic image
-
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +60,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ValueNotifier<String> _pageText = ValueNotifier('0/0');
   ValueNotifier<bool> _lockSwap = ValueNotifier(false);
   ValueNotifier<bool> _displayMenu = ValueNotifier(false);
-
+  ValueNotifier<double> _sliderValue = ValueNotifier(1);
   _ComicReaderPageState();
 
   @override
@@ -311,7 +311,24 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     }
   }
 
+  void _jumpToPage(int curPage, String chapterId) {
+    int? page = _readerChapters.calcPage(chapterId, curPage);
+    if (page == null) return;
+    _preloadController?.jumpToPage(page);
+  }
+
   Widget _buildMenu() {
+    if (_lastRecordHistory == null) {
+      return Container();
+    }
+
+    var ret = _readerChapters.imageUrl(_lastRecordHistory!.index);
+    if (ret == null) {
+      return Container();
+    }
+
+    _sliderValue.value = ret.$2.toDouble() + 1;
+
     return Column(
       children: [
         Expanded(
@@ -334,11 +351,47 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         ),
         Expanded(
           flex: 2,
-          child: CupertinoSlider(
-            value: 0,
-            onChanged: (value) {
-              print(value);
-            },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 0.1.sw),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(CupertinoIcons.back),
+                ),
+                Expanded(
+                  child: Material(
+                    child: SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 2,
+                        overlayShape: SliderComponentShape.noOverlay,
+                        thumbShape: SliderComponentShape.noThumb,
+                      ),
+                      child: ValueListenableBuilder(
+                        valueListenable: _sliderValue,
+                        builder: (context, value, child) {
+                          return Slider(
+                            min: 1,
+                            max: ret.$4.toDouble(),
+                            divisions: ret.$4 - 1,
+                            value: value,
+                            label: value.toInt().toString(),
+                            onChanged: (value) {
+                              _sliderValue.value = value;
+                              _jumpToPage(value.toInt(), ret.$3);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(CupertinoIcons.forward),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -433,8 +486,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                       flex: 6,
                       child: Center(
                         child: SizedBox(
-                          width: 0.1.sw,
-                          height: 0.1.sh,
+                          width: 0.2.sw,
+                          height: 0.2.sh,
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {

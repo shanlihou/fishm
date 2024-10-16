@@ -60,6 +60,21 @@ class ReaderChapters {
     return count + 1 + chapters.length;
   }
 
+  int? calcPage(String chapterId, int page) {
+    int ret = 1;
+    for (int i = 0; i < chapters.length; i++) {
+      var chapter = chapters[i];
+      if (chapterIds[i] == chapterId) {
+        return ret + page - 1;
+      }
+
+      ret += chapter.images.length;
+      ret += 1;
+    }
+    return null;
+  }
+
+  // imageUrl, index, chapterId, count
   (String, int, String, int)? imageUrl(int index) {
     if (index <= 0) {
       return null;
