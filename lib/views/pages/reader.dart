@@ -1,6 +1,5 @@
 // this page use for read comic image
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -12,14 +11,12 @@ import 'package:toonfu/types/common/reader_chapters.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
 import "../../api/flutter_call_lua/method.dart";
-import '../../common/log.dart';
 import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
 import '../../models/db/read_history_model.dart';
 import '../../types/context/net_iamge_context.dart';
-import '../../types/gesture_processor.dart';
 import '../widget/net_image.dart';
 
 enum InitOption {
@@ -27,6 +24,16 @@ enum InitOption {
   init,
   pre,
   next,
+  preChapter,
+  nextChapter,
+}
+
+class MenuPageValue {
+  final String chapterId;
+  final bool show;
+  final int page;
+
+  MenuPageValue(this.chapterId, this.show, this.page);
 }
 
 class ComicReaderPage extends StatefulWidget {
@@ -58,8 +65,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   // value notifier
   ValueNotifier<String> _pageText = ValueNotifier('0/0');
+  ValueNotifier<MenuPageValue> _menuPage =
+      ValueNotifier(MenuPageValue("", false, 0));
   ValueNotifier<bool> _lockSwap = ValueNotifier(false);
-  ValueNotifier<bool> _displayMenu = ValueNotifier(false);
   ValueNotifier<double> _sliderValue = ValueNotifier(1);
   _ComicReaderPageState();
 
@@ -104,6 +112,20 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         newPage = _readerChapters.imageCount - 1;
       }
       _preloadController = PreloadPageController(initialPage: newPage);
+    } else if (_initOption == InitOption.preChapter) {
+      await _supplementChapter(false);
+      _preloadController = PreloadPageController(initialPage: 1);
+
+      _menuPage.value =
+          MenuPageValue(_readerChapters.firstChapterId(), true, 1);
+    } else if (_initOption == InitOption.nextChapter) {
+      await _supplementChapter(true);
+      int page = _readerChapters
+          .getChapterIamgeRange(_readerChapters.lastChapterId())!
+          .$1;
+      _preloadController = PreloadPageController(initialPage: page);
+
+      _menuPage.value = MenuPageValue(_readerChapters.lastChapterId(), true, 1);
     }
 
     _initOption = InitOption.none;
@@ -286,6 +308,46 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         ));
   }
 
+  void _preChapter(String curChapterId) {
+    var preChapterId = context
+        .read<ComicProvider>()
+        .getHistoryComicModel(
+            getComicUniqueId(widget.comicId, widget.extensionName))
+        ?.preChapterId(curChapterId);
+
+    if (preChapterId == null) return;
+
+    int? page = _readerChapters.chapterFirstPageIndex(preChapterId);
+    if (page == null) {
+      _initOption = InitOption.preChapter;
+      setState(() {});
+      return;
+    }
+
+    _preloadController?.jumpToPage(page);
+    _menuPage.value = MenuPageValue(preChapterId, true, 1);
+  }
+
+  void _nextChapter(String curChapterId) {
+    var nextChapterId = context
+        .read<ComicProvider>()
+        .getHistoryComicModel(
+            getComicUniqueId(widget.comicId, widget.extensionName))
+        ?.nextChapterId(curChapterId);
+
+    if (nextChapterId == null) return;
+
+    int? page = _readerChapters.chapterFirstPageIndex(nextChapterId);
+    if (page == null) {
+      _initOption = InitOption.nextChapter;
+      setState(() {});
+      return;
+    }
+
+    _preloadController?.jumpToPage(page);
+    _menuPage.value = MenuPageValue(nextChapterId, true, 1);
+  }
+
   Future<int> _supplementChapter(bool isNext) async {
     var comicModel = context.read<ComicProvider>().getHistoryComicModel(
         getComicUniqueId(widget.comicId, widget.extensionName));
@@ -318,16 +380,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Widget _buildMenu() {
-    if (_lastRecordHistory == null) {
-      return Container();
-    }
-
-    var ret = _readerChapters.imageUrl(_lastRecordHistory!.index);
-    if (ret == null) {
-      return Container();
-    }
-
-    _sliderValue.value = ret.$2.toDouble() + 1;
+    _sliderValue.value = _menuPage.value.page.toDouble();
+    int imageCount =
+        _readerChapters.getChapterImageCount(_menuPage.value.chapterId);
 
     return Column(
       children: [
@@ -342,7 +397,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              _displayMenu.value = false;
+              _menuPage.value = MenuPageValue("", false, 0);
             },
             child: Container(
               color: CupertinoColors.transparent,
@@ -356,7 +411,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _preChapter(_menuPage.value.chapterId);
+                  },
                   icon: Icon(CupertinoIcons.back),
                 ),
                 Expanded(
@@ -372,13 +429,14 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                         builder: (context, value, child) {
                           return Slider(
                             min: 1,
-                            max: ret.$4.toDouble(),
-                            divisions: ret.$4 - 1,
+                            max: imageCount.toDouble(),
+                            divisions: imageCount - 1,
                             value: value,
                             label: value.toInt().toString(),
                             onChanged: (value) {
                               _sliderValue.value = value;
-                              _jumpToPage(value.toInt(), ret.$3);
+                              _jumpToPage(
+                                  value.toInt(), _menuPage.value.chapterId);
                             },
                           );
                         },
@@ -387,7 +445,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _nextChapter(_menuPage.value.chapterId);
+                  },
                   icon: Icon(CupertinoIcons.forward),
                 ),
               ],
@@ -491,7 +551,10 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              _displayMenu.value = true;
+                              _menuPage.value = MenuPageValue(
+                                  _lastRecordHistory!.chapterId,
+                                  true,
+                                  _lastRecordHistory!.index);
                             },
                             child: Container(
                               color: CupertinoColors.transparent,
@@ -529,9 +592,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
             ),
             Positioned.fill(
               child: ValueListenableBuilder(
-                valueListenable: _displayMenu,
+                valueListenable: _menuPage,
                 builder: (context, value, child) {
-                  if (!value) {
+                  if (!value.show) {
                     return Container();
                   }
 
