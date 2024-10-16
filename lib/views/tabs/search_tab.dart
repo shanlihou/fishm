@@ -7,6 +7,7 @@ import 'package:toonfu/types/common/search_footer.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../models/api/gallery_result.dart';
+import '../../types/common/search_header.dart';
 import '../../types/provider/extension_provider.dart';
 import '../widget/comic_item_widget.dart';
 
@@ -16,6 +17,9 @@ class SearchResult {
   final String keyword;
   bool allLoaded = false;
   int page = 0;
+  final EasyRefreshController easyRefreshController =
+      EasyRefreshController(controlFinishLoad: true);
+
   SearchResult(this.extensionName, this.galleryResult, this.keyword);
 }
 
@@ -69,9 +73,10 @@ class _SearchTabState extends State<SearchTab> {
     isSearching = false;
   }
 
-  Future<IndicatorResult> _loadMore(SearchResult searchResult) async {
+  Future<void> _loadMore(SearchResult searchResult) async {
     if (searchResult.allLoaded) {
-      return IndicatorResult.noMore;
+      searchResult.easyRefreshController.finishLoad(IndicatorResult.noMore);
+      return;
     }
 
     searchResult.page++;
@@ -83,23 +88,26 @@ class _SearchTabState extends State<SearchTab> {
       galleryResult = GalleryResult.fromJson(ret as Map<String, dynamic>);
     } catch (e) {
       Log.instance.e(e.toString());
-      return IndicatorResult.fail;
+      searchResult.easyRefreshController.finishLoad(IndicatorResult.fail);
+      return;
     }
 
     if (!galleryResult.success) {
-      return IndicatorResult.fail;
+      searchResult.easyRefreshController.finishLoad(IndicatorResult.fail);
+      return;
     }
 
     if (galleryResult.data.isEmpty) {
       searchResult.allLoaded = true;
-      return IndicatorResult.noMore;
+      searchResult.easyRefreshController.finishLoad(IndicatorResult.noMore);
+      return;
     }
 
     setState(() {
       searchResult.galleryResult.extend(galleryResult);
     });
 
-    return IndicatorResult.success;
+    searchResult.easyRefreshController.finishLoad();
   }
 
   Widget _buildExtensionResult(SearchResult searchResult) {
@@ -111,6 +119,8 @@ class _SearchTabState extends State<SearchTab> {
             height: 0.4.sw,
             width: 1.sw,
             child: EasyRefresh(
+              controller: searchResult.easyRefreshController,
+              header: SearchHeader(),
               footer: SearchFooter(),
               onLoad: () async {
                 await _loadMore(searchResult);
