@@ -85,8 +85,13 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     if (_initOption == InitOption.init) {
       ChapterDetail detail = await _getChapterDetails(widget.chapterId);
       _readerChapters.addChapter(detail, widget.chapterId);
-      _preloadController =
-          PreloadPageController(initialPage: widget.initPage ?? 1);
+      int initPage = widget.initPage ?? 1;
+
+      if (_readerChapters.imageUrl(initPage) == null) {
+        initPage = 1;
+      }
+
+      _preloadController = PreloadPageController(initialPage: initPage);
     } else if (_initOption == InitOption.pre) {
       int newPage = await _supplementChapter(false);
       if (newPage == -1) {
