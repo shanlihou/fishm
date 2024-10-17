@@ -1,11 +1,21 @@
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../models/api/gallery_result.dart';
 import '../../models/db/extensions.dart' as model_extensions;
 import '../../types/provider/extension_provider.dart';
-import '../class/gallery_row.dart';
 import '../class/comic_item.dart';
+import '../widget/comic_item_widget.dart';
+
+class ComicContext {
+  int page = 0;
+  ComicContext();
+
+  void reset() {
+    page = 0;
+  }
+}
 
 class ExploreTab extends StatefulWidget {
   const ExploreTab({super.key});
@@ -17,73 +27,46 @@ class ExploreTab extends StatefulWidget {
 class _ExploreTabState extends State<ExploreTab>
     with SingleTickerProviderStateMixin {
   final int maxColumn = 3;
-  List<GalleryRow> galleryRows = [];
   int selectedExtensionIndex = 0;
-  String selectedExtensionName = '';
-  bool isInitWithContext = false;
-  bool loadFailed = false;
+  final ComicContext comicContext = ComicContext();
+  final EasyRefreshController easyRefreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+    controlFinishLoad: true,
+  );
+
+  ValueNotifier<List<ComicItem>> comics = ValueNotifier([]);
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> initWithContext(BuildContext buildContext) async {
-    if (isInitWithContext) {
+  int get rowCount => (comics.value.length / maxColumn).ceil();
+
+  Future<void> _onLoad() async {
+    var provider = context.read<ExtensionProvider>();
+    if (provider.extensions.isEmpty) {
+      easyRefreshController.finishLoad(IndicatorResult.noMore);
       return;
     }
 
-    isInitWithContext = true;
-
-    List<model_extensions.Extension> extensions =
-        buildContext.read<ExtensionProvider>().extensions;
-
-    if (selectedExtensionIndex >= extensions.length) {
-      return;
-    }
-    selectedExtensionName = extensions[selectedExtensionIndex].name;
-
-    getGallery(extensions[selectedExtensionIndex]);
-  }
-
-  void getGallery(model_extensions.Extension extension) async {
-    var ret = await gallery(extension.name);
+    String extensionName = provider.extensions[selectedExtensionIndex].name;
+    var ret = await gallery(extensionName, comicContext.page);
     GalleryResult galleryResult =
         GalleryResult.fromJson(ret as Map<String, dynamic>);
-    // Log.instance.d('get gallery: $ret');
-
     if (!galleryResult.success) {
-      setState(() {
-        loadFailed = true;
-      });
+      easyRefreshController.finishLoad(IndicatorResult.fail);
       return;
     }
 
-    updateGallery(galleryResult.data);
-  }
-
-  void updateGallery(List<ComicItem> data) {
-    setState(() {
-      galleryRows.clear();
-      while (data.isNotEmpty) {
-        List<ComicItem> items = [];
-        for (int i = 0; i < maxColumn; i++) {
-          if (data.isEmpty) {
-            break;
-          }
-
-          var val = data.removeAt(0);
-          items.add(val);
-        }
-
-        galleryRows.add(GalleryRow(items, maxColumn));
-      }
-    });
+    comicContext.page++;
+    comics.value = comics.value + galleryResult.data;
+    easyRefreshController.finishLoad(IndicatorResult.success);
   }
 
   Widget buildExtensionTab(BuildContext buildContext) {
     List<model_extensions.Extension> extensions =
-        buildContext.read<ExtensionProvider>().extensions;
+        buildContext.watch<ExtensionProvider>().extensions;
     return Expanded(
       flex: 1,
       child: ListView.builder(
@@ -91,9 +74,14 @@ class _ExploreTabState extends State<ExploreTab>
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
+              if (index == selectedExtensionIndex) {
+                return;
+              }
+
               setState(() {
                 selectedExtensionIndex = index;
-                selectedExtensionName = extensions[index].name;
+                comics.value = [];
+                comicContext.reset();
               });
             },
             child: Container(
@@ -109,46 +97,51 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-  Widget _buildLoadFailed(BuildContext buildContext) {
-    return Center(
-      child: Column(
-        children: [
-          Text('加载失败'),
-          CupertinoButton(
-            onPressed: () {
-              setState(() {
-                loadFailed = false;
-              });
-              getGallery(buildContext
-                  .read<ExtensionProvider>()
-                  .extensions[selectedExtensionIndex]);
-            },
-            child: Text('重试'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildListView() {
-    return ListView.builder(
-      itemCount: galleryRows.length,
-      itemBuilder: (BuildContext context, int index) {
-        return galleryRows[index].toWidget(context, selectedExtensionName);
+    String? extensionName;
+    var provider = context.read<ExtensionProvider>();
+    if (provider.extensions.isNotEmpty) {
+      extensionName = provider.extensions[selectedExtensionIndex].name;
+    }
+
+    return ValueListenableBuilder(
+      valueListenable: comics,
+      builder: (BuildContext context, List<ComicItem> value, Widget? child) {
+        return EasyRefresh(
+          controller: easyRefreshController,
+          onLoad: _onLoad,
+          child: ListView.builder(
+            itemCount: rowCount,
+            itemBuilder: (BuildContext context, int index) {
+              List<Widget> children = [];
+              for (int i = 0; i < maxColumn; i++) {
+                var trulyIndex = index * maxColumn + i;
+                if (trulyIndex >= value.length) {
+                  break;
+                }
+
+                var item = value[trulyIndex];
+                children.add(ComicItemWidget(item, extensionName!));
+              }
+
+              return Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(children: children));
+            },
+          ),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    initWithContext(context);
-
     return Column(
       children: [
         buildExtensionTab(context),
         Expanded(
           flex: 9,
-          child: loadFailed ? _buildLoadFailed(context) : _buildListView(),
+          child: _buildListView(),
         ),
       ],
     );

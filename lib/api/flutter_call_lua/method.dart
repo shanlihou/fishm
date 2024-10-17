@@ -8,11 +8,11 @@ import "payload/download_image.dart";
 import "payload/get_base_version.dart";
 import "payload/search.dart";
 
-Future<Object> gallery(String extensionName) async {
+Future<Object> gallery(String extensionName, int page) async {
   Completer<Object> completer = Completer<Object>();
   int retId = completerManager.genCompleteId();
 
-  actionsManager.addAction(Gallery.toAction(retId, extensionName));
+  actionsManager.addAction(Gallery.toAction(retId, extensionName, page));
 
   completerManager.addCompleter(retId, completer);
   var ret = await completer.future;

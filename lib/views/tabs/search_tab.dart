@@ -88,11 +88,13 @@ class _SearchTabState extends State<SearchTab> {
       galleryResult = GalleryResult.fromJson(ret as Map<String, dynamic>);
     } catch (e) {
       Log.instance.e(e.toString());
+      searchResult.page--;
       searchResult.easyRefreshController.finishLoad(IndicatorResult.fail);
       return;
     }
 
     if (!galleryResult.success) {
+      searchResult.page--;
       searchResult.easyRefreshController.finishLoad(IndicatorResult.fail);
       return;
     }
