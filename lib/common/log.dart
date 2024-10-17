@@ -1,6 +1,6 @@
 // lib/logger.dart
 
-import 'package:logger/logger.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class Log {
   // Private constructor to prevent multiple instances
@@ -9,29 +9,28 @@ class Log {
   // Singleton instance of the logger
   static final Log _instance = Log._privateConstructor();
 
+  Talker? _talker;
+
   // Create a logger instance
-  final Logger _logger = Logger(
-    printer: PrettyPrinter(
-      methodCount: 0,
-      printEmojis: false,
-      colors: true,
-      noBoxingByDefault: true,
-    ), // Customize the log format as needed
-  );
+  Talker get talker {
+    if (_talker == null) {
+      _talker = TalkerFlutter.init();
+    }
+    return _talker!;
+  }
 
   // Getter to access the singleton logger instance
   static Log get instance => _instance;
 
   // Add methods to log messages with different levels
 
-  void v(String message) => _logger.v(message);
+  void v(String message) => talker.verbose(message);
 
-  void d(String message) => _logger.d(message);
+  void d(String message) => talker.debug(message);
 
-  void i(String message) => _logger.i(message);
+  void i(String message) => talker.info(message);
 
-  void w(String message) => _logger.w(message);
+  void w(String message) => talker.warning(message);
 
-  void e(String message) => _logger.e(message);
+  void e(String message) => talker.error(message);
 }
-

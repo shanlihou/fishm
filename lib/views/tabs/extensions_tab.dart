@@ -4,6 +4,7 @@ import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/const/path.dart';
 import 'package:yaml/yaml.dart';
@@ -15,6 +16,10 @@ import '../../types/manager/actions.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/setting_provider.dart';
 import '../../utils/utils_general.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
+
+import 'extension/extension_installed_tab.dart';
+import 'extension/extension_store_tab.dart';
 
 class ExtensionsTab extends StatefulWidget {
   const ExtensionsTab({super.key});
@@ -27,8 +32,10 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
   final List<model_extensions.Extension> _remoteExtensions = [];
   bool _isInitContext = false;
   bool _isLoadingRemote = false;
-  bool _isInstalling = false; // 添加加载状态变量
   BuildContext? _buildCtx;
+  List<String> _tabs = ['installed', 'store'];
+
+  ValueNotifier<int> _curPage = ValueNotifier(0);
 
   @override
   void initState() {
@@ -123,9 +130,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
 
   Future<void> _installExtension(
       model_extensions.Extension extension, BuildContext buildContext) async {
-    setState(() {
-      _isInstalling = true; // 开始安装时设置为 true
-    });
+    setState(() {});
 
     try {
       if (extension.url.startsWith("http")) {
@@ -135,9 +140,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
       }
     } catch (e) {
       Log.instance.e('_installExtension error $extension: $e');
-      setState(() {
-        _isInstalling = false; // 安装完成后设置为 false
-      });
+      setState(() {});
       return;
     }
 
@@ -149,9 +152,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
       _buildCtx!.read<ExtensionProvider>().updateExtension(clone);
     }
     actionsManager.resetMainLua();
-    setState(() {
-      _isInstalling = false; // 安装完成后设置为 false
-    });
+    setState(() {});
   }
 
   Future<bool?> _showInstallConfirmDialog(
@@ -223,23 +224,65 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
     );
   }
 
+  String _getTabTitle(int index) {
+    String title = _tabs[index];
+    if (title == 'installed') {
+      return AppLocalizations.of(context)!.installed;
+    } else if (title == 'store') {
+      return AppLocalizations.of(context)!.store;
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
-    _buildCtx = context;
-    _initWithContext(context);
-
-    if (_isInstalling) {
-      return const Center(child: CupertinoActivityIndicator()); // 显示加载指示器
+    List<Widget> tabs = [];
+    for (int i = 0; i < _tabs.length; i++) {
+      tabs.add(GestureDetector(
+        onTap: () {
+          _curPage.value = i;
+        },
+        child: Center(
+          child: Column(
+            children: [
+              Text(_getTabTitle(i)),
+              ValueListenableBuilder(
+                valueListenable: _curPage,
+                builder: (context, value, child) {
+                  return Container(
+                    height: 1,
+                    width: 0.1.sw,
+                    color: value == i
+                        ? CupertinoColors.black
+                        : CupertinoColors.transparent,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ));
     }
 
-    return Row(
+    return Column(
       children: [
-        buildExtensionList(context, 'Installed',
-            context.read<ExtensionProvider>().extensions, true),
-        if (_isLoadingRemote)
-          const CupertinoActivityIndicator()
-        else
-          buildExtensionList(context, 'Remote', _remoteExtensions, false),
+        Expanded(
+          flex: 1,
+          child: Row(
+            children: tabs,
+          ),
+        ),
+        Expanded(
+          flex: 9,
+          child: PageView(
+            controller: PageController(),
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              const ExtensionInstalledTab(),
+              const ExtensionStoreTab(),
+            ],
+          ),
+        ),
       ],
     );
   }

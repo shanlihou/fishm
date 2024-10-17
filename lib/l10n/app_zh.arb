@@ -9,5 +9,7 @@
     "debug": "调试",
     "general": "通用",
     "language": "语言",
-    "cancel": "取消"
+    "cancel": "取消",
+    "installed": "已安装",
+    "store": "商店"
 }

@@ -23,5 +23,7 @@
     "description": "Debug settings"
   },
   "language": "Language",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "installed": "Installed",
+  "store": "Store"
 }
