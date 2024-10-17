@@ -143,3 +143,22 @@ int bitSet(int flags, int flag, bool value) {
 bool bitGet(int flags, int flag) {
   return (flags & (1 << flag)) != 0;
 }
+
+/// return 1 if version1 > version2, -1 if version1 < version2, 0 if version1 == version2
+int judgeVersion(String version1, String version2) {
+  var v1 = version1.split('.');
+  var v2 = version2.split('.');
+  if (v1.length != v2.length) {
+    return v1.length - v2.length;
+  }
+
+  for (var i = 0; i < v1.length; i++) {
+    if (int.parse(v1[i]) > int.parse(v2[i])) {
+      return 1;
+    } else if (int.parse(v1[i]) < int.parse(v2[i])) {
+      return -1;
+    }
+  }
+
+  return 0;
+}
