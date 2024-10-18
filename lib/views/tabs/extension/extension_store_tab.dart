@@ -4,6 +4,7 @@ import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yaml/yaml.dart';
 
@@ -12,12 +13,13 @@ import '../../../const/general_const.dart';
 import '../../../const/lua_const.dart';
 import '../../../const/path.dart';
 import '../../../models/db/extensions.dart' as model_extensions;
+import '../../../types/common/alias.dart';
 import '../../../types/manager/actions.dart';
 import '../../../types/provider/extension_provider.dart';
 import '../../../types/provider/setting_provider.dart';
 import '../../../utils/utils_general.dart';
-
-typedef Exts = List<model_extensions.Extension>;
+import '../../dialog/install_confirm_dialog.dart';
+import '../../dialog/loading_dialog.dart';
 
 class ExtensionStoreTab extends StatefulWidget {
   const ExtensionStoreTab({super.key});
@@ -29,164 +31,79 @@ class ExtensionStoreTab extends StatefulWidget {
 class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
   final EasyRefreshController _easyRefreshController =
       EasyRefreshController(controlFinishRefresh: true);
-  final ValueNotifier<Exts> _extensions = ValueNotifier([]);
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<Exts> _loadRemoteExtensionsFromNet(String source) async {
-    Exts extensions = [];
-    Dio dio = Dio();
-    await dio.download(source, tempSrcDownloadPath);
-    final srcFileContent = await File(tempSrcDownloadPath).readAsString();
-    Log.instance.d('srcFileContent: $srcFileContent');
-    var doc = loadYaml(srcFileContent);
-    for (var ext in doc[yamlExtensionKey]) {
-      extensions.add(model_extensions.Extension.fromYaml(ext));
-    }
-    return extensions;
-  }
-
-  Future<Exts> _loadRemoteExtensionsFromFile(String path) async {
-    Exts extensions = [];
-    final srcFileContent = await File(path).readAsString();
-    var doc = loadYaml(srcFileContent);
-    for (var ext in doc[yamlExtensionKey]) {
-      extensions.add(model_extensions.Extension.fromYaml(ext));
-    }
-    return extensions;
-  }
-
-  Future<Exts> _loadRemoteExtensions(List<String> sources) async {
-    Exts extensions = [];
-    for (var src in sources) {
-      try {
-        if (src.startsWith('http')) {
-          extensions = _mergeExtensions(
-              extensions, await _loadRemoteExtensionsFromNet(src));
-        } else {
-          extensions = _mergeExtensions(
-              extensions, await _loadRemoteExtensionsFromFile(src));
-        }
-      } catch (e, s) {
-        Log.instance.e('_loadRemoteExtensions error $src: $e, stackTrace: $s');
-      }
-    }
-    return extensions;
-  }
-
-  List<model_extensions.Extension> _mergeExtensions(
-      List<model_extensions.Extension> extensions1,
-      List<model_extensions.Extension> extensions2) {
-    for (var ext in extensions2) {
-      int index = extensions1.indexWhere((e) => e.name == ext.name);
-      if (index != -1) {
-        if (judgeVersion(extensions1[index].version, ext.version) < 0) {
-          extensions1[index] = ext;
-        }
+  Widget _buildExtensionItem(
+      model_extensions.Extension extension, ExtensionProvider p) {
+    ExtensionStatus status = ExtensionStatus.notInstalled;
+    int index = p.extensions.indexWhere((e) => e.name == extension.name);
+    if (index != -1) {
+      if (p.extensions[index].version == extension.version) {
+        status = ExtensionStatus.installed;
       } else {
-        extensions1.add(ext);
+        status = ExtensionStatus.needUpdate;
       }
     }
-    return extensions1;
-  }
 
-  Future<void> _downloadExtension(model_extensions.Extension extension) async {
-    Dio dio = Dio();
-    await dio.download(extension.url, tempExtDownloadPath);
-    final bytes = await File(tempExtDownloadPath).readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive) {
-      String filename = file.name;
-      if (filename.contains('/')) {
-        filename = filename.substring(filename.indexOf('/') + 1);
-      }
-      if (file.isFile) {
-        final data = file.content as List<int>;
-        File('$pluginDir/${extension.name}/$filename')
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
-      }
-    }
-  }
+    return Row(
+      children: [
+        Expanded(flex: 2, child: Text(extension.name)),
+        Expanded(flex: 6, child: Text(extension.version)),
+        Expanded(
+            flex: 2,
+            child: GestureDetector(
+              onTap: () async {
+                if (status == ExtensionStatus.installed) {
+                  return;
+                }
 
-  Future<void> _copyLocalExtension(model_extensions.Extension extension) async {
-    await copyDir(extension.url, '$pluginDir/${extension.name}');
-  }
-
-  Future<void> _installExtension(
-      model_extensions.Extension extension, BuildContext buildContext) async {
-    ExtensionProvider extensionProvider =
-        buildContext.read<ExtensionProvider>();
-
-    try {
-      if (extension.url.startsWith("http")) {
-        await _downloadExtension(extension);
-      } else {
-        await _copyLocalExtension(extension);
-      }
-    } catch (e) {
-      Log.instance.e('_installExtension error $extension: $e');
-      setState(() {});
-      return;
-    }
-
-    var clone = extension.clone();
-    clone.status = extensionStatusInstalled;
-
-    extensionProvider.updateExtension(clone);
-    actionsManager.resetMainLua();
-    Log.instance.d('installExtension: ok');
-  }
-
-  Future<bool?> _showInstallConfirmDialog(
-      model_extensions.Extension extension) async {
-    return await showCupertinoDialog<bool>(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: Text('Install ${extension.name}?'),
-          actions: [
-            CupertinoButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel')),
-            CupertinoButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Install')),
-          ],
-        );
-      },
+                if (await showInstallConfirmDialog(context, extension) ??
+                    false) {
+                  var entry = showLoadingDialog(context);
+                  var ext = await installExtension(extension);
+                  if (ext != null) {
+                    p.updateExtension(ext);
+                    actionsManager.resetMainLua();
+                  }
+                  entry.remove();
+                }
+              },
+              child: status == ExtensionStatus.notInstalled
+                  ? Icon(Icons.download)
+                  : status == ExtensionStatus.needUpdate
+                      ? Icon(Icons.update)
+                      : Icon(Icons.check),
+            )),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return EasyRefresh(
+        refreshOnStart: true,
         controller: _easyRefreshController,
         onRefresh: () async {
-          Exts extensions = await _loadRemoteExtensions(
+          ExtensionProvider p = context.read<ExtensionProvider>();
+          Exts extensions = await loadRemoteExtensions(
               context.read<SettingProvider>().sources);
-          _extensions.value = _mergeExtensions(extensions, _extensions.value);
+
+          p.updateExtensionStore(extensions);
           _easyRefreshController.finishRefresh(IndicatorResult.success);
         },
-        child: ValueListenableBuilder(
-          valueListenable: _extensions,
-          builder: (context, extensions, child) {
+        child: Consumer<ExtensionProvider>(
+          builder: (context, extensionProvider, child) {
+            Exts extensions = extensionProvider.extensionsStore;
+            print(extensions);
             return ListView.builder(
               itemCount: extensions.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () async {
-                    if (await _showInstallConfirmDialog(extensions[index]) ??
-                        false) {
-                      _installExtension(extensions[index], context);
-                    }
-                  },
-                  child: Text(
-                      '${extensions[index].name}: ${extensions[index].version}'),
-                );
+                return _buildExtensionItem(
+                    extensions[index], extensionProvider);
               },
             );
           },

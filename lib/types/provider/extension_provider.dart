@@ -3,11 +3,13 @@ import 'package:hive/hive.dart';
 
 import '../../const/db_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
+import '../../utils/utils_general.dart';
 
 class ExtensionProvider with ChangeNotifier {
   bool _isLoad = false;
   late Box<model_extensions.Extensions> _extensionsBox;
   model_extensions.Extensions? _extensions;
+  model_extensions.Extensions? _extensionsStore;
 
   ExtensionProvider();
 
@@ -19,10 +21,17 @@ class ExtensionProvider with ChangeNotifier {
     _isLoad = true;
     _extensionsBox =
         await Hive.openBox<model_extensions.Extensions>(extensionKey);
+
     _extensions = _extensionsBox.get(extensionKey);
     if (_extensions == null) {
       _extensions = model_extensions.Extensions.defaultExtensions();
       await _extensionsBox.put(extensionKey, _extensions!);
+    }
+
+    _extensionsStore = _extensionsBox.get(extensionStoreKey);
+    if (_extensionsStore == null) {
+      _extensionsStore = model_extensions.Extensions.defaultExtensions();
+      await _extensionsBox.put(extensionStoreKey, _extensionsStore!);
     }
 
     notifyListeners();
@@ -46,6 +55,15 @@ class ExtensionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateExtensionStore(List<model_extensions.Extension> extensions) {
+    mergeExtensions(_extensionsStore!.extensions, extensions);
+    _extensionsBox.put(extensionStoreKey, _extensionsStore!);
+    notifyListeners();
+  }
+
   List<model_extensions.Extension> get extensions =>
       _extensions?.extensions ?? [];
+
+  List<model_extensions.Extension> get extensionsStore =>
+      _extensionsStore?.extensions ?? [];
 }
