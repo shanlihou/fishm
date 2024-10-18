@@ -19,8 +19,8 @@ void openAppSettings() {
 
 Future<bool> getStoragePermission() async {
   late PermissionStatus status;
-  status = await Permission.storage.request();
   if (Platform.isAndroid) {
+    status = await Permission.storage.request();
   } else {
     // TODO: check iOS permission
     return true;
