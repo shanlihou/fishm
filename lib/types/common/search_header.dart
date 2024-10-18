@@ -3,6 +3,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 class SearchHeader extends ClassicHeader {
   String idleText;
   String loadingText;
+  @override
   String noMoreText;
   String failText;
 

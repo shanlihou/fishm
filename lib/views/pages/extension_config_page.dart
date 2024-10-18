@@ -13,13 +13,13 @@ class _ExtensionConfigPageState extends State<ExtensionConfigPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(AppLocalizations.of(context)!.config),
+      ),
       child: Column(
         children: [
           Text(AppLocalizations.of(context)!.config),
         ],
-      ),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(AppLocalizations.of(context)!.config),
       ),
     );
   }

@@ -93,23 +93,23 @@ class _HomeState extends State<Home>
                       },
                       items: [
                         BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.star),
+                          icon: const Icon(CupertinoIcons.star),
                           label: AppLocalizations.of(context)!.favorite,
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.clock),
+                          icon: const Icon(CupertinoIcons.clock),
                           label: AppLocalizations.of(context)!.history,
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.square_grid_2x2),
+                          icon: const Icon(CupertinoIcons.square_grid_2x2),
                           label: AppLocalizations.of(context)!.extensions,
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.globe),
+                          icon: const Icon(CupertinoIcons.globe),
                           label: AppLocalizations.of(context)!.explore,
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.search),
+                          icon: const Icon(CupertinoIcons.search),
                           label: AppLocalizations.of(context)!.search,
                         ),
                       ],

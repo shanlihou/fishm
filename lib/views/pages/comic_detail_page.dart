@@ -66,11 +66,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       showCupertinoDialog(
         context: _buildContext!,
         builder: (context) => CupertinoAlertDialog(
-          title: Text('error'),
+          title: const Text('error'),
           content: Text(ret),
           actions: [
             CupertinoDialogAction(
-              child: Text('confirm'),
+              child: const Text('confirm'),
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -185,11 +185,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       showCupertinoDialog(
         context: _buildContext!,
         builder: (context) => CupertinoAlertDialog(
-          title: Text('error'),
+          title: const Text('error'),
           content: Text(ret),
           actions: [
             CupertinoDialogAction(
-              child: Text('confirm'),
+              child: const Text('confirm'),
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -208,11 +208,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   Widget build(BuildContext context) {
     _initWithContext();
     _buildContext = context;
-    if (isFavorite == null) {
-      isFavorite = context.read<ComicProvider>().favoriteComics.containsKey(
-            getComicUniqueId(widget.comicItem.comicId, widget.extensionName),
-          );
-    }
+    isFavorite ??= context.read<ComicProvider>().favoriteComics.containsKey(
+          getComicUniqueId(widget.comicItem.comicId, widget.extensionName),
+        );
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(

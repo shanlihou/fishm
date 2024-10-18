@@ -64,22 +64,22 @@ class MyApp extends StatelessWidget {
             builder: (context, localProvider, child) {
               return CupertinoApp(
                 locale: localProvider.locale,
-                localizationsDelegates: [
+                localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                 ],
-                supportedLocales: [
+                supportedLocales: const [
                   Locale('en'),
                   Locale('zh'),
                 ],
                 title: 'ToonFu',
-                theme: CupertinoThemeData(
+                theme: const CupertinoThemeData(
                   primaryColor: CupertinoColors.systemPurple,
                   brightness: Brightness.light,
                 ),
-                home: SplashScreen(),
+                home: const SplashScreen(),
               );
             },
           ),

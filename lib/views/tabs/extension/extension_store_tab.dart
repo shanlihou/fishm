@@ -73,10 +73,10 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
                 }
               },
               child: status == ExtensionStatus.notInstalled
-                  ? Icon(Icons.download)
+                  ? const Icon(Icons.download)
                   : status == ExtensionStatus.needUpdate
-                      ? Icon(Icons.update)
-                      : Icon(Icons.check),
+                      ? const Icon(Icons.update)
+                      : const Icon(Icons.check),
             )),
       ],
     );

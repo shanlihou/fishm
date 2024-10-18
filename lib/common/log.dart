@@ -13,9 +13,7 @@ class Log {
 
   // Create a logger instance
   Talker get talker {
-    if (_talker == null) {
-      _talker = TalkerFlutter.init();
-    }
+    _talker ??= TalkerFlutter.init();
     return _talker!;
   }
 

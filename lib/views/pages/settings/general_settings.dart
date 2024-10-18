@@ -31,20 +31,24 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     title: Text(AppLocalizations.of(context)!.language),
                     actions: <CupertinoActionSheetAction>[
                       CupertinoActionSheetAction(
-                        child: Text('中文'),
+                        child: const Text('中文'),
                         onPressed: () {
                           Navigator.pop(context);
-                          context.read<LocalProvider>().setLocale(Locale('zh'));
+                          context
+                              .read<LocalProvider>()
+                              .setLocale(const Locale('zh'));
                           context.read<SettingProvider>().settings?.language =
                               "zh";
                           context.read<SettingProvider>().saveSettings();
                         },
                       ),
                       CupertinoActionSheetAction(
-                        child: Text('English'),
+                        child: const Text('English'),
                         onPressed: () {
                           Navigator.pop(context);
-                          context.read<LocalProvider>().setLocale(Locale('en'));
+                          context
+                              .read<LocalProvider>()
+                              .setLocale(const Locale('en'));
                           context.read<SettingProvider>().settings?.language =
                               "en";
                           context.read<SettingProvider>().saveSettings();

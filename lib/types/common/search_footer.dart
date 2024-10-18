@@ -4,9 +4,12 @@ import 'package:easy_refresh/easy_refresh.dart';
 class SearchFooter extends ClassicFooter {
   final String idleText; // 空闲时的文本
   final String loadingText; // 加载中的文本
+  @override
   final String noMoreText; // 没有更多数据的文本
   final String failText; // 加载失败的文本
+  @override
   final String processedText; // 加载成功的文本
+  @override
   final String readyText; // 准备加载的文本
 
   SearchFooter({
@@ -30,9 +33,4 @@ class SearchFooter extends ClassicFooter {
           hapticFeedback: true,
           showText: false,
         );
-
-  @override
-  Widget build(BuildContext context, IndicatorState state) {
-    return super.build(context, state);
-  }
 }

@@ -14,8 +14,8 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('Debug'),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Debug'),
       ),
       child: SafeArea(
         child: GestureDetector(
@@ -49,7 +49,7 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
     await showCupertinoDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text('edit path'),
+        title: const Text('edit path'),
         content: CupertinoTextField(
           placeholder: 'input path',
           onChanged: (value) {
@@ -58,14 +58,14 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
         ),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
-            child: Text('cancel'),
+            child: const Text('cancel'),
             onPressed: () {
               result = "";
               Navigator.pop(context);
             },
           ),
           CupertinoDialogAction(
-            child: Text('confirm'),
+            child: const Text('confirm'),
             onPressed: () {
               Navigator.pop(context);
             },

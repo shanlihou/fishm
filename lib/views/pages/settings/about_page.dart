@@ -68,7 +68,7 @@ class _AboutPageState extends State<AboutPage> {
                   onPressed:
                       isResetting ? null : () => _onResetPressed(context),
                   disabledColor: CupertinoColors.quaternarySystemFill,
-                  child: Text('reset'),
+                  child: const Text('reset'),
                 )
               ],
             ),

@@ -138,7 +138,7 @@ class _SearchTabState extends State<SearchTab> {
             ),
           )
         else
-          Text('error'),
+          const Text('error'),
       ],
     );
   }

@@ -58,17 +58,17 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ReadHistoryModel? _lastRecordHistory;
   int _fingerNum = 0;
   int _flags = 0;
-  Map<String, ChapterDetail> _chapterDetailMap = {};
+  final Map<String, ChapterDetail> _chapterDetailMap = {};
   final ReaderChapters _readerChapters = ReaderChapters();
   InitOption _initOption = InitOption.none;
   Timer? _timer;
 
   // value notifier
-  ValueNotifier<String> _pageText = ValueNotifier('0/0');
-  ValueNotifier<MenuPageValue> _menuPage =
+  final ValueNotifier<String> _pageText = ValueNotifier('0/0');
+  final ValueNotifier<MenuPageValue> _menuPage =
       ValueNotifier(MenuPageValue("", false, 0));
-  ValueNotifier<bool> _lockSwap = ValueNotifier(false);
-  ValueNotifier<double> _sliderValue = ValueNotifier(1);
+  final ValueNotifier<bool> _lockSwap = ValueNotifier(false);
+  final ValueNotifier<double> _sliderValue = ValueNotifier(1);
   _ComicReaderPageState();
 
   @override
@@ -296,8 +296,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         minScale: 1.0,
         initialScale: 1.0,
         onScaleEnd: (context, details, e) {
-          bool isSet_flags = (e.scale ?? 1) > 1.0;
-          _flags = bitSet(_flags, readerFlagsScale, isSet_flags);
+          bool issetFlags = (e.scale ?? 1) > 1.0;
+          _flags = bitSet(_flags, readerFlagsScale, issetFlags);
           _updateLockSwap();
         },
         child: NetImage(
@@ -414,7 +414,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                   onPressed: () {
                     _preChapter(_menuPage.value.chapterId);
                   },
-                  icon: Icon(CupertinoIcons.back),
+                  icon: const Icon(CupertinoIcons.back),
                 ),
                 Expanded(
                   child: Material(
@@ -448,7 +448,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                   onPressed: () {
                     _nextChapter(_menuPage.value.chapterId);
                   },
-                  icon: Icon(CupertinoIcons.forward),
+                  icon: const Icon(CupertinoIcons.forward),
                 ),
               ],
             ),
@@ -515,12 +515,12 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                     return SizedBox(
                       width: 1.sw,
                       height: 1.sh,
-                      child: Center(child: Text('loading...')),
+                      child: const Center(child: Text('loading...')),
                     );
                   } else if (snapshot.hasError) {
-                    return Text('error');
+                    return const Text('error');
                   } else if (!(snapshot.data ?? false)) {
-                    return Text('no data');
+                    return const Text('no data');
                   } else {
                     return _buildPageView();
                   }
@@ -585,7 +585,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                 builder: (context, value, child) {
                   return Text(
                     value,
-                    style: TextStyle(color: CupertinoColors.black),
+                    style: const TextStyle(color: CupertinoColors.black),
                   );
                 },
               ),

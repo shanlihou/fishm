@@ -1,21 +1,5 @@
-import 'dart:io';
-
-import 'package:archive/archive.dart';
-import 'package:dio/dio.dart';
-import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:toonfu/const/path.dart';
-import 'package:yaml/yaml.dart';
-import '../../common/log.dart';
-import '../../const/general_const.dart';
-import '../../const/lua_const.dart';
-import '../../models/db/extensions.dart' as model_extensions;
-import '../../types/manager/actions.dart';
-import '../../types/provider/extension_provider.dart';
-import '../../types/provider/setting_provider.dart';
-import '../../utils/utils_general.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 import 'extension/extension_installed_tab.dart';

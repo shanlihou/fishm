@@ -23,17 +23,17 @@ class _MainSettingsState extends State<MainSettings> {
 
   Future<void> _navigateToPage(String page) async {
     if (page == 'Sources') {
-      await Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => SourcesSettings()));
+      await Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => const SourcesSettings()));
     } else if (page == 'About') {
       await Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => AboutPage()));
+          context, CupertinoPageRoute(builder: (context) => const AboutPage()));
     } else if (page == 'Debug') {
       await Navigator.push(context,
-          CupertinoPageRoute(builder: (context) => DebugSettingPage()));
+          CupertinoPageRoute(builder: (context) => const DebugSettingPage()));
     } else if (page == 'General') {
-      await Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => GeneralSettings()));
+      await Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => const GeneralSettings()));
     }
   }
 

@@ -65,8 +65,8 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
                 }
               },
               child: status == ExtensionStatus.needUpdate
-                  ? Icon(Icons.update)
-                  : Icon(Icons.check),
+                  ? const Icon(Icons.update)
+                  : const Icon(Icons.check),
             )),
       ],
     );
