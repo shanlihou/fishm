@@ -19,8 +19,8 @@ void openAppSettings() {
 
 Future<bool> getStoragePermission() async {
   late PermissionStatus status;
+  status = await Permission.storage.request();
   if (Platform.isAndroid) {
-    status = await Permission.storage.request();
   } else {
     // TODO: check iOS permission
     return true;
@@ -39,6 +39,10 @@ Future<void> initDirectory() async {
     var externalDir = await getExternalStorageDirectory();
     var applicationDir = await getApplicationDocumentsDirectory();
     Directory.current = externalDir ?? applicationDir;
+  } else if (Platform.isWindows) {
+    // var externalDir = await getExternalStorageDirectory();
+    // var applicationDir = await getApplicationDocumentsDirectory();
+    // Log.instance.d('external: $externalDir, application: $applicationDir');
   }
 
   Log.instance.d('external: ${Directory.current}');

@@ -1,10 +1,10 @@
 {
+  "@@locale": "en",
   "favorite": "Favorite",
   "history": "History",
   "extensions": "Extensions",
   "explore": "Explore",
   "search": "Search",
-  "bookshelf": "Bookshelf",
 
   "general": "General",
   "@general": {
@@ -25,5 +25,6 @@
   "language": "Language",
   "cancel": "Cancel",
   "installed": "Installed",
-  "store": "Store"
+  "store": "Store",
+  "config": "Config"
 }
