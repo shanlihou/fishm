@@ -125,7 +125,7 @@ class _ExploreTabState extends State<ExploreTab>
               }
 
               return Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: Row(children: children));
             },
           ),

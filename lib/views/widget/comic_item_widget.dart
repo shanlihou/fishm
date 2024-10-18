@@ -39,7 +39,7 @@ class ComicItemWidget extends StatelessWidget {
             width ?? 0.3.sw,
             height ?? 0.3.sw,
           ),
-          Text(comicItem.title),
+          SizedBox(width: 0.3.sw, child: Text(maxLines: 1, comicItem.title)),
         ],
       ),
     );
