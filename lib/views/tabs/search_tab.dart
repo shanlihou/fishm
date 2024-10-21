@@ -84,7 +84,6 @@ class _SearchTabState extends State<SearchTab> {
     try {
       var ret = await search(
           searchResult.extensionName, searchResult.keyword, searchResult.page);
-      print(ret);
       galleryResult = GalleryResult.fromJson(ret as Map<String, dynamic>);
     } catch (e) {
       Log.instance.e(e.toString());

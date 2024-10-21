@@ -11,6 +11,8 @@ import '../../dialog/install_confirm_dialog.dart';
 import '../../dialog/loading_dialog.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import '../../pages/extension_config_page.dart';
+
 class ExtensionInstalledTab extends StatefulWidget {
   const ExtensionInstalledTab({super.key});
 
@@ -43,7 +45,13 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
         Expanded(
             flex: 2,
             child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ExtensionConfigPage(
+                              extensionName: extension.name)));
+                },
                 child: Text(AppLocalizations.of(context)!.config))),
         Expanded(
             flex: 2,

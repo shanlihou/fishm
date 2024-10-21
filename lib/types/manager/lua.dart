@@ -20,7 +20,7 @@ class LuaManager {
   Future<void> initLua() async {
     initOk = false;
     ls = LuaState.newState();
-    print("current path: ${Directory.current.path}");
+    Log.instance.i("current path: ${Directory.current.path}");
 
     ls.openLibs();
     ls.requireF('dart_http', HttpLib.openHttpLib, true);

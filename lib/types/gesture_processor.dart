@@ -12,7 +12,6 @@ class GestureProcessor {
   GestureProcessor(this.startOffset, this.scrollPos);
 
   void update(Offset pos) {
-    print('update: $pos');
     currentOffset = pos;
 
     // if the distance of two points is beyond the threshold, then we need to update the scroll position
@@ -26,7 +25,6 @@ class GestureProcessor {
   }
 
   void end(Offset pos) {
-    print('end: $pos');
     currentOffset = pos;
   }
 

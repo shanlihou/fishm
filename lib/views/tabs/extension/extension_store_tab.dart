@@ -98,7 +98,6 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
         child: Consumer<ExtensionProvider>(
           builder: (context, extensionProvider, child) {
             Exts extensions = extensionProvider.extensionsStore;
-            print(extensions);
             return ListView.builder(
               itemCount: extensions.length,
               itemBuilder: (context, index) {

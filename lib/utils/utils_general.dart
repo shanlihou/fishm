@@ -84,7 +84,7 @@ Future<void> downloadMainLuaByUrl(String mainUrl) async {
     if (filename.contains('/')) {
       filename = filename.substring(filename.indexOf('/') + 1);
     }
-    print(filename);
+    Log.instance.d('downloadMainLuaByUrl: $filename');
     if (file.isFile) {
       final data = file.content as List<int>;
       File('$mainDir/$filename')

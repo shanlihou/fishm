@@ -67,7 +67,6 @@ class _MainSettingsState extends State<MainSettings> {
       child: SafeArea(
         child: Column(
           children: settingItems.map((item) {
-            print(item);
             return GestureDetector(
               onTap: () {
                 _navigateToPage(item);
