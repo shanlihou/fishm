@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../../common/log.dart';
 
-const int TIME_OUT = 10;
+const int TIME_OUT = 60;
 
 class CompleterData {
   Completer<Object> completer;
