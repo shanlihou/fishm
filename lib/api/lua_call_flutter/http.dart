@@ -91,10 +91,15 @@ class HttpLib {
   }
 
   static Future<void> _download(
-      int cbid, String url, String downloadPath) async {
+    int cbid,
+    String url,
+    String downloadPath,
+    Map<String, dynamic> headers,
+  ) async {
     try {
       Dio dio = Dio();
-      var ret = await dio.download(url, downloadPath);
+      var ret = await dio.download(url, downloadPath,
+          options: Options(headers: headers));
 
       int code = ret.statusCode ?? 0;
       actionsManager.addAction(HttpResponse.toAction('success', code, cbid));
@@ -108,8 +113,16 @@ class HttpLib {
     int cbid = ls.checkInteger(1)!;
     String url = ls.checkString(2)!;
     String downloadPath = ls.checkString(3)!;
+    Map<String, dynamic> headers = {};
 
-    _download(cbid, url, downloadPath);
+    if (ls.type(4) == LuaType.luaTable) {
+      if (ls.getField(4, 'headers') == LuaType.luaTable) {
+        headers = fromLuaMap(ls.checkTable(-1)!);
+      }
+      ls.pop(1);
+    }
+
+    _download(cbid, url, downloadPath, headers);
     return 0;
   }
 }

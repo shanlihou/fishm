@@ -94,6 +94,21 @@ Future<void> downloadMainLuaByUrl(String mainUrl) async {
   }
 }
 
+bool isStartWithDot(String path) {
+  List<String> pathes;
+  if (Platform.isWindows) {
+    pathes = path.split('\\');
+  } else {
+    pathes = path.split('/');
+  }
+  for (var p in pathes) {
+    if (p.startsWith('.')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Future<void> copyDir(String source, String target) async {
   final sourceDir = Directory(source);
   final targetDir = Directory(target);
@@ -105,7 +120,19 @@ Future<void> copyDir(String source, String target) async {
   await for (var entity in sourceDir.list(recursive: true)) {
     if (entity is File) {
       final relativePath = entity.path.substring(sourceDir.path.length + 1);
-      final newFile = File('${targetDir.path}/$relativePath');
+
+      String fullPath;
+      if (Platform.isWindows) {
+        fullPath = '${targetDir.path}\\$relativePath';
+      } else {
+        fullPath = '${targetDir.path}/$relativePath';
+      }
+
+      if (isStartWithDot(relativePath)) {
+        continue;
+      }
+
+      final newFile = File(fullPath);
       if (await newFile.exists()) {
         await newFile.delete();
       }

@@ -1,11 +1,15 @@
 import 'package:lua_dardo_co/lua.dart';
 import 'dart:io';
 
+import '../../common/log.dart';
+import '../../types/manager/actions.dart';
+import '../flutter_call_lua/payload/delay_reponse.dart';
 
 class OsExtensionLib {
   static const Map<String, DartFunction> _osExtensionFuncs = {
     "listdir": _listdir,
     "isdir": _isdir,
+    "delay": _delay,
   };
 
   static int openOsExtensionLib(LuaState ls) {
@@ -35,5 +39,17 @@ class OsExtensionLib {
     Directory dir = Directory(path);
     ls.pushBoolean(dir.existsSync());
     return 1;
+  }
+
+  static Future<void> _delayAsync(int ms, int cbid) async {
+    await Future.delayed(Duration(milliseconds: ms));
+    actionsManager.addAction(DelayResponse.toAction(cbid));
+  }
+
+  static int _delay(LuaState ls) {
+    int? cbid = ls.checkInteger(1);
+    int ms = ls.checkInteger(2)!;
+    _delayAsync(ms, cbid!);
+    return 0;
   }
 }
