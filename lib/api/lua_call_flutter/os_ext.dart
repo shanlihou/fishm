@@ -1,7 +1,6 @@
 import 'package:lua_dardo_co/lua.dart';
 import 'dart:io';
 
-import '../../common/log.dart';
 import '../../types/manager/actions.dart';
 import '../flutter_call_lua/payload/delay_reponse.dart';
 

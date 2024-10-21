@@ -52,6 +52,8 @@ class LuaManager {
   }
 
   void loopOnce() {
+    completerManager.clearTimeOut();
+
     if (!initOk) return;
     if (!actionsManager.hasActions()) return;
 

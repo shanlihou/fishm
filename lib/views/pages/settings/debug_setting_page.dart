@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
+import '../../../common/log.dart';
 import '../../../types/provider/setting_provider.dart';
 
 class DebugSettingPage extends StatefulWidget {
@@ -18,27 +21,38 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
         middle: Text('Debug'),
       ),
       child: SafeArea(
-        child: GestureDetector(
-          onTap: () async {
-            var provider = context.read<SettingProvider>();
-            var path = await _showEditPathDialog(context);
-            if (path != "") {
-              provider.settings?.localMainLuaDeubugPath = path;
-              await provider.saveSettings();
-            }
-          },
-          child: Center(
-            child: Row(
-              children: [
-                const Text('debug path: '),
-                Text(context
-                        .watch<SettingProvider>()
-                        .settings
-                        ?.localMainLuaDeubugPath ??
-                    ""),
-              ],
+        child: Column(
+          children: [
+            CupertinoButton(
+              child: const Text('console'),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      TalkerScreen(talker: Log.instance.talker),
+                ));
+              },
             ),
-          ),
+            GestureDetector(
+              onTap: () async {
+                var provider = context.read<SettingProvider>();
+                var path = await _showEditPathDialog(context);
+                if (path != "") {
+                  provider.settings?.localMainLuaDeubugPath = path;
+                  await provider.saveSettings();
+                }
+              },
+              child: Row(
+                children: [
+                  const Text('debug path: '),
+                  Text(context
+                          .watch<SettingProvider>()
+                          .settings
+                          ?.localMainLuaDeubugPath ??
+                      ""),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

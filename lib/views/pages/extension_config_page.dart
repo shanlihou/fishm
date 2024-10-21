@@ -13,7 +13,7 @@ class ExtensionConfigPage extends StatefulWidget {
 }
 
 class _ExtensionConfigPageState extends State<ExtensionConfigPage> {
-  ValueNotifier<List<String>> _configs = ValueNotifier([]);
+  final ValueNotifier<List<String>> _configs = ValueNotifier([]);
 
   @override
   void initState() {
