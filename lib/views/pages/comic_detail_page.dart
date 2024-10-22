@@ -54,8 +54,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       });
 
       await Future.delayed(const Duration(milliseconds: 100));
-      await provider
-          .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
+      await provider.addComic(comicModel);
       return;
     }
 
@@ -105,6 +104,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     } else {
       _buildContext!.read<ComicProvider>().removeFavoriteComic(uniqueId);
     }
+  }
+
+  Widget _buildChapterItem(BuildContext buildContext, ChapterModel chapter) {
+    return Text(chapter.title);
   }
 
   Widget _buildChapterList(BuildContext buildContext, ComicDetail detail) {

@@ -19,17 +19,23 @@ class ChapterModelAdapter extends TypeAdapter<ChapterModel> {
     return ChapterModel(
       fields[0] as String,
       fields[1] as String,
+      fields[2] == null ? [] : (fields[2] as List).cast<String>(),
+      fields[3] == null ? {} : (fields[3] as Map).cast<String, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ChapterModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.title);
+      ..write(obj.title)
+      ..writeByte(2)
+      ..write(obj.images)
+      ..writeByte(3)
+      ..write(obj.extra);
   }
 
   @override

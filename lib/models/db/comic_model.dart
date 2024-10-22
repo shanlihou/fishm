@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+import '../api/chapter_detail.dart';
 import '../api/comic_detail.dart';
 
 part 'comic_model.g.dart';
@@ -12,7 +13,13 @@ class ChapterModel {
   @HiveField(1)
   String title;
 
-  ChapterModel(this.id, this.title);
+  @HiveField(2, defaultValue: [])
+  List<String> images;
+
+  @HiveField(3, defaultValue: {})
+  Map<String, dynamic> extra;
+
+  ChapterModel(this.id, this.title, this.images, this.extra);
 }
 
 @HiveType(typeId: 3)
@@ -44,8 +51,9 @@ class ComicModel {
       : id = detail.id,
         title = detail.title,
         extra = detail.extra,
-        chapters =
-            detail.chapters.map((e) => ChapterModel(e.id, e.title)).toList(),
+        chapters = detail.chapters
+            .map((e) => ChapterModel(e.id, e.title, [], {}))
+            .toList(),
         cover = detail.cover;
 
   String? nextChapterId(String curChapterId) {
@@ -66,5 +74,19 @@ class ComicModel {
     if (index == -1) return null;
     if (index == chapters.length - 1) return null;
     return chapters[index + 1].id;
+  }
+
+  void addChapterDetail(String chapterId, ChapterDetail detail) {
+    int index = chapters.indexWhere((e) => e.id == chapterId);
+    if (index == -1) return;
+    chapters[index].images = detail.images;
+    chapters[index].extra = detail.extra;
+  }
+
+  ChapterDetail? getChapterDetail(String chapterId) {
+    int index = chapters.indexWhere((e) => e.id == chapterId);
+    if (index == -1) return null;
+    if (chapters[index].images.isEmpty) return null;
+    return ChapterDetail(chapters[index].images, chapters[index].extra);
   }
 }

@@ -3,16 +3,22 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:yaml/yaml.dart';
 
+import '../api/flutter_call_lua/method.dart';
 import '../common/log.dart';
 import '../const/general_const.dart';
 import '../const/lua_const.dart';
 import '../const/path.dart';
+import '../models/api/chapter_detail.dart';
+import '../models/db/comic_model.dart';
 import '../models/db/extensions.dart' as model_extensions;
 import '../types/common/alias.dart';
+import '../types/provider/comic_provider.dart';
 
 void openAppSettings() {
   if (Platform.isAndroid) {}
@@ -309,4 +315,24 @@ void setDioProxy(String proxyHost, int proxyPort, Dio dio) {
       };
       return client;
     };
+}
+
+Future<ChapterDetail> getChapterDetails(BuildContext context,
+    String extensionName, String comicId, String chapterId) async {
+  ComicModel comicModel = context
+      .read<ComicProvider>()
+      .getHistoryComicModel(getComicUniqueId(comicId, extensionName))!;
+
+  var detail = comicModel.getChapterDetail(chapterId);
+  if (detail != null) {
+    return detail;
+  }
+
+  var obj = await getChapterDetail(
+      extensionName, chapterId, comicId, comicModel.extra);
+
+  detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
+
+  comicModel.addChapterDetail(chapterId, detail);
+  return detail;
 }

@@ -15,6 +15,7 @@ import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
 
+import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../widget/net_image.dart';
@@ -58,7 +59,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ReadHistoryModel? _lastRecordHistory;
   int _fingerNum = 0;
   int _flags = 0;
-  final Map<String, ChapterDetail> _chapterDetailMap = {};
   final ReaderChapters _readerChapters = ReaderChapters();
   InitOption _initOption = InitOption.none;
   Timer? _timer;
@@ -98,7 +98,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   Future<bool> _initAsync() async {
     if (_initOption == InitOption.init) {
-      ChapterDetail detail = await _getChapterDetails(widget.chapterId);
+      ChapterDetail detail = await getChapterDetails(
+          context, widget.extensionName, widget.comicId, widget.chapterId);
       _readerChapters.addChapter(detail, widget.chapterId);
       int initPage = widget.initPage ?? 1;
 
@@ -175,20 +176,23 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     super.dispose();
   }
 
-  Future<ChapterDetail> _getChapterDetails(String chapterId) async {
-    if (_chapterDetailMap.containsKey(chapterId)) {
-      return _chapterDetailMap[chapterId]!;
-    }
+  // Future<ChapterDetail> _getChapterDetails(String chapterId) async {
+  //   ComicModel comicModel = context.read<ComicProvider>().getHistoryComicModel(
+  //       getComicUniqueId(widget.comicId, widget.extensionName))!;
 
-    var detail = await getChapterDetail(
-        widget.extensionName, chapterId, widget.comicId, widget.extra);
+  //   var detail = comicModel.getChapterDetail(chapterId);
+  //   if (detail != null) {
+  //     return detail;
+  //   }
 
-    ChapterDetail chapterDetail =
-        ChapterDetail.fromJson(detail as Map<String, dynamic>);
-    _chapterDetailMap[chapterId] = chapterDetail;
+  //   var obj = await getChapterDetail(
+  //       widget.extensionName, chapterId, widget.comicId, comicModel.extra);
 
-    return chapterDetail;
-  }
+  //   detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
+
+  //   comicModel.addChapterDetail(chapterId, detail);
+  //   return detail;
+  // }
 
   int get _page {
     return (_preloadController?.page ?? 0).round();
@@ -369,7 +373,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String last = _readerChapters.lastChapterId();
       String? nextChapterId = comicModel.nextChapterId(last);
       if (nextChapterId == null) return -1;
-      ChapterDetail detail = await _getChapterDetails(nextChapterId);
+      ChapterDetail detail = await getChapterDetails(
+          context, widget.extensionName, widget.comicId, nextChapterId);
       _readerChapters.addChapter(detail, nextChapterId);
       _readerChapters.frontPop();
       return _readerChapters.firstMiddlePageIndex();
@@ -377,7 +382,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String first = _readerChapters.firstChapterId();
       String? preChapterId = comicModel.preChapterId(first);
       if (preChapterId == null) return -1;
-      ChapterDetail detail = await _getChapterDetails(preChapterId);
+      ChapterDetail detail = await getChapterDetails(
+          context, widget.extensionName, widget.comicId, preChapterId);
       _readerChapters.addChapterHead(detail, preChapterId);
       _readerChapters.backPop();
       return _readerChapters.firstMiddlePageIndex();
