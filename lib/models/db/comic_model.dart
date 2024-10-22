@@ -56,6 +56,19 @@ class ComicModel {
             .toList(),
         cover = detail.cover;
 
+  void updateFromComicDetail(ComicDetail detail) {
+    List<ChapterModel> newChapters = [];
+    for (var chapter in detail.chapters) {
+      int index = chapters.indexWhere((e) => e.id == chapter.id);
+      if (index == -1) {
+        newChapters.add(ChapterModel(chapter.id, chapter.title, [], {}));
+      } else {
+        newChapters.add(chapters[index]);
+      }
+    }
+    chapters = newChapters;
+  }
+
   String? nextChapterId(String curChapterId) {
     int index = chapters.indexWhere((e) => e.id == curChapterId);
     if (index == -1) return null;
