@@ -6,6 +6,8 @@ import 'package:toonfu/views/pages/settings/debug_setting_page.dart';
 import 'package:toonfu/views/pages/settings/general_settings.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import 'network_settings.dart';
+
 class MainSettings extends StatefulWidget {
   const MainSettings({super.key});
 
@@ -14,7 +16,13 @@ class MainSettings extends StatefulWidget {
 }
 
 class _MainSettingsState extends State<MainSettings> {
-  final List<String> settingItems = ['Sources', 'About', 'Debug', 'General'];
+  final List<String> settingItems = [
+    'Sources',
+    'About',
+    'Debug',
+    'General',
+    'Network'
+  ];
 
   @override
   void initState() {
@@ -34,6 +42,9 @@ class _MainSettingsState extends State<MainSettings> {
     } else if (page == 'General') {
       await Navigator.push(context,
           CupertinoPageRoute(builder: (context) => const GeneralSettings()));
+    } else if (page == 'Network') {
+      await Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => const NetworkSettings()));
     }
   }
 
@@ -46,6 +57,8 @@ class _MainSettingsState extends State<MainSettings> {
       return AppLocalizations.of(context)!.debug;
     } else if (key == 'General') {
       return AppLocalizations.of(context)!.general;
+    } else if (key == 'Network') {
+      return AppLocalizations.of(context)!.network;
     }
 
     return '';

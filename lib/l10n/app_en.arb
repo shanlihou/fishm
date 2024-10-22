@@ -22,6 +22,10 @@
   "@debug": {
     "description": "Debug settings"
   },
+  "network": "Network",
+  "@network": {
+    "description": "Network settings"
+  },
   "language": "Language",
   "cancel": "Cancel",
   "installed": "Installed",

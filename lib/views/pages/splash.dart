@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../../types/manager/global_manager.dart';
 import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/local_provider.dart';
@@ -45,6 +46,8 @@ class _SplashScreenState extends State<SplashScreen> {
           .read<LocalProvider>()
           .setLocale(Locale(settingProvider.settings?.language ?? "en"));
     }
+
+    globalManager.initGlobal(settingProvider);
 
     Navigator.pushReplacement(
       buildContext,

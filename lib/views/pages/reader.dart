@@ -89,6 +89,13 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     _pageText.value = _getPageText();
   }
 
+  void _setPageController(PreloadPageController controller) {
+    if (_preloadController != null) {
+      _preloadController?.dispose();
+    }
+    _preloadController = controller;
+  }
+
   Future<bool> _initAsync() async {
     if (_initOption == InitOption.init) {
       ChapterDetail detail = await _getChapterDetails(widget.chapterId);
@@ -99,22 +106,25 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         initPage = 1;
       }
 
-      _preloadController = PreloadPageController(initialPage: initPage);
+      _setPageController(PreloadPageController(initialPage: initPage));
     } else if (_initOption == InitOption.pre) {
       int newPage = await _supplementChapter(false);
       if (newPage == -1) {
         newPage = 0;
       }
-      _preloadController = PreloadPageController(initialPage: newPage);
+
+      _setPageController(PreloadPageController(initialPage: newPage));
     } else if (_initOption == InitOption.next) {
       int newPage = await _supplementChapter(true);
       if (newPage == -1) {
         newPage = _readerChapters.imageCount - 1;
       }
-      _preloadController = PreloadPageController(initialPage: newPage);
+
+      _setPageController(PreloadPageController(initialPage: newPage));
     } else if (_initOption == InitOption.preChapter) {
       await _supplementChapter(false);
-      _preloadController = PreloadPageController(initialPage: 1);
+
+      _setPageController(PreloadPageController(initialPage: 1));
 
       _menuPage.value =
           MenuPageValue(_readerChapters.firstChapterId(), true, 1);
@@ -123,8 +133,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       int page = _readerChapters
           .getChapterIamgeRange(_readerChapters.lastChapterId())!
           .$1;
-      _preloadController = PreloadPageController(initialPage: page);
 
+      _setPageController(PreloadPageController(initialPage: page));
       _menuPage.value = MenuPageValue(_readerChapters.lastChapterId(), true, 1);
     }
 
@@ -161,6 +171,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _preloadController?.dispose();
     super.dispose();
   }
 

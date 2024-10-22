@@ -9,6 +9,8 @@ class OsExtensionLib {
     "listdir": _listdir,
     "isdir": _isdir,
     "delay": _delay,
+    "now": _now,
+    "get_duration_ms": _getDurationMs,
   };
 
   static int openOsExtensionLib(LuaState ls) {
@@ -50,5 +52,19 @@ class OsExtensionLib {
     int ms = ls.checkInteger(2)!;
     _delayAsync(ms, cbid!);
     return 0;
+  }
+
+  static int _now(LuaState ls) {
+    var ud = ls.newUserdata();
+    ud.data = DateTime.now();
+    return 1;
+  }
+
+  static int _getDurationMs(LuaState ls) {
+    var ud = ls.toUserdata(1);
+    var now = DateTime.now();
+    var duration = now.difference(ud?.data as DateTime);
+    ls.pushInteger(duration.inMilliseconds);
+    return 1;
   }
 }

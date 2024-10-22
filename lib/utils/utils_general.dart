@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yaml/yaml.dart';
@@ -293,4 +294,19 @@ Exts mergeExtensions(Exts extensions1, Exts extensions2) {
     }
   }
   return extensions1;
+}
+
+void setDioProxy(String proxyHost, int proxyPort, Dio dio) {
+  if (proxyHost.isEmpty || proxyPort == 0) {
+    return;
+  }
+
+  dio.httpClientAdapter = IOHttpClientAdapter()
+    ..createHttpClient = () {
+      HttpClient client = HttpClient();
+      client.findProxy = (uri) {
+        return 'PROXY $proxyHost:$proxyPort';
+      };
+      return client;
+    };
 }

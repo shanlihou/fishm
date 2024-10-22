@@ -13,9 +13,19 @@ class Settings {
   @HiveField(2, defaultValue: "")
   String language;
 
-  Settings(this.sources, this.localMainLuaDeubugPath, this.language);
+  @HiveField(3, defaultValue: false)
+  bool enableProxy;
+
+  @HiveField(4, defaultValue: "")
+  String proxyHost;
+
+  @HiveField(5, defaultValue: 0)
+  int proxyPort;
+
+  Settings(this.sources, this.localMainLuaDeubugPath, this.language,
+      this.enableProxy, this.proxyHost, this.proxyPort);
 
   static Settings defaultSettings() {
-    return Settings([], "", "");
+    return Settings([], "", "", false, "", 0);
   }
 }

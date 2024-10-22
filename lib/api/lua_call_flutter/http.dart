@@ -1,7 +1,9 @@
 import 'package:lua_dardo_co/lua.dart';
 import 'package:dio/dio.dart';
+import 'package:toonfu/utils/utils_general.dart';
 import '../../common/log.dart';
 import '../../types/manager/actions.dart';
+import '../../types/manager/global_manager.dart';
 import '../flutter_call_lua/payload/http_response.dart';
 import '../../utils/lua_table.dart';
 import 'dart:convert';
@@ -26,6 +28,11 @@ class HttpLib {
   ) async {
     try {
       Dio dio = Dio();
+
+      if (globalManager.enableProxy) {
+        setDioProxy(globalManager.proxyHost, globalManager.proxyPort, dio);
+      }
+
       var ret = await dio.get(
         url,
         queryParameters: query,
@@ -98,6 +105,11 @@ class HttpLib {
   ) async {
     try {
       Dio dio = Dio();
+
+      if (globalManager.enableProxy) {
+        setDioProxy(globalManager.proxyHost, globalManager.proxyPort, dio);
+      }
+
       var ret = await dio.download(url, downloadPath,
           options: Options(headers: headers));
 
