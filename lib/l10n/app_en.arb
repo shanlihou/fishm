@@ -30,5 +30,12 @@
   "cancel": "Cancel",
   "installed": "Installed",
   "store": "Store",
-  "config": "Config"
+  "config": "Config",
+  "proxy": "Proxy",
+  "@proxy": {
+    "description": "Proxy settings"
+  },
+  "enable": "Enable",
+  "host": "Host",
+  "port": "Port"
 }

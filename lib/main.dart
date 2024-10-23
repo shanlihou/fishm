@@ -29,7 +29,6 @@ Future<void> _main() async {
   await initDirectory();
   Hive.init(Directory.current.path);
   await Hive.initFlutter();
-  // Hive.openBox('settings');
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ExtensionAdapter());
   Hive.registerAdapter(ExtensionsAdapter());

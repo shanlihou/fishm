@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../types/manager/global_manager.dart';
 import '../../../types/provider/setting_provider.dart';
 
+import 'package:flutter_gen/gen_l10n/localizations.dart';
+
 class NetworkSettings extends StatefulWidget {
   const NetworkSettings({super.key});
 
@@ -59,10 +61,10 @@ class _NetworkSettingsState extends State<NetworkSettings> {
 
     List<Widget> children = [
       CupertinoFormSection(
-        header: const Text('代理设置'),
+        header: Text(AppLocalizations.of(context)!.proxy),
         children: [
           CupertinoFormRow(
-            prefix: const Text('启用代理'),
+            prefix: Text(AppLocalizations.of(context)!.enable),
             child: CupertinoSwitch(
               value: p.settings?.enableProxy ?? false,
               onChanged: (value) {
@@ -80,12 +82,12 @@ class _NetworkSettingsState extends State<NetworkSettings> {
       children.addAll([
         CupertinoTextFormFieldRow(
           controller: _hostController,
-          placeholder: '代理主机',
+          placeholder: AppLocalizations.of(context)!.host,
           focusNode: _hostFocusNode,
         ),
         CupertinoTextFormFieldRow(
           controller: _portController,
-          placeholder: '代理端口',
+          placeholder: AppLocalizations.of(context)!.port,
           keyboardType: TextInputType.number,
           focusNode: _portFocusNode,
         ),
@@ -93,8 +95,8 @@ class _NetworkSettingsState extends State<NetworkSettings> {
     }
 
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('网络设置'),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(AppLocalizations.of(context)!.network),
       ),
       child: SafeArea(
         child: Column(

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../const/db_const.dart';
 import '../../models/db/extensions.dart' as model_extensions;
 import '../../utils/utils_general.dart';
+import '../manager/plugin_db_manager.dart';
 
 class ExtensionProvider with ChangeNotifier {
   bool _isLoad = false;
@@ -37,6 +38,10 @@ class ExtensionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> extensionNames() {
+    return extensions.map((e) => e.name).toList();
+  }
+
   void updateExtension(model_extensions.Extension extension) {
     bool found = false;
     for (var i = _extensions!.extensions.length - 1; i >= 0; i--) {
@@ -52,6 +57,7 @@ class ExtensionProvider with ChangeNotifier {
     }
 
     _extensionsBox.put(extensionKey, _extensions!);
+    pluginDbManager.initPlugin(extension.name);
     notifyListeners();
   }
 

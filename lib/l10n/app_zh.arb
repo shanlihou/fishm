@@ -14,5 +14,9 @@
     "cancel": "取消",
     "installed": "已安装",
     "store": "商店",
-    "config": "配置"
+    "config": "配置",
+    "proxy": "代理",
+    "enable": "启用",
+    "host": "主机",
+    "port": "端口"
 }

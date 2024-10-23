@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../../types/manager/global_manager.dart';
+import '../../types/manager/plugin_db_manager.dart';
 import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/local_provider.dart';
@@ -48,6 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     globalManager.initGlobal(settingProvider);
+    pluginDbManager.initPlugins(extensionProvider.extensionNames());
 
     Navigator.pushReplacement(
       buildContext,

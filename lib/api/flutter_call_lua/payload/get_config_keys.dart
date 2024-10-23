@@ -11,7 +11,6 @@ class GetConfigKeys extends Payload {
   }
 
   static Action toAction(int retId, String plugin) {
-    return Action('get_config_keys', GetConfigKeys(),
-        retId: retId, plugin: plugin);
+    return Action('get_config', GetConfigKeys(), retId: retId, plugin: plugin);
   }
 }

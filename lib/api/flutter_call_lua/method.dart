@@ -8,6 +8,7 @@ import "payload/download_image.dart";
 import "payload/get_base_version.dart";
 import "payload/get_config_keys.dart";
 import "payload/search.dart";
+import "payload/set_configs.dart";
 
 Future<Object> gallery(String extensionName, int page) async {
   int retId = completerManager.genCompleteId();
@@ -81,6 +82,17 @@ Future<Object> getConfigKeys(String extensionName) async {
   int retId = completerManager.genCompleteId();
 
   actionsManager.addAction(GetConfigKeys.toAction(retId, extensionName));
+
+  var completer = completerManager.addCompleter(retId);
+  var ret = await completer.future;
+  return ret;
+}
+
+Future<Object> setConfigs(
+    String extensionName, Map<String, String> configs) async {
+  int retId = completerManager.genCompleteId();
+
+  actionsManager.addAction(SetConfigs.toAction(retId, extensionName, configs));
 
   var completer = completerManager.addCompleter(retId);
   var ret = await completer.future;
