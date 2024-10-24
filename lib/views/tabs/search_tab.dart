@@ -64,11 +64,16 @@ class _SearchTabState extends State<SearchTab> {
 
     for (var extension in extensionProvider!.extensions) {
       var ret = await search(extension.name, keyword, page);
-      GalleryResult galleryResult =
-          GalleryResult.fromJson(ret as Map<String, dynamic>);
-      setState(() {
-        searchResults.add(SearchResult(extension.name, galleryResult, keyword));
-      });
+      try {
+        GalleryResult galleryResult =
+            GalleryResult.fromJson(ret as Map<String, dynamic>);
+        setState(() {
+          searchResults
+              .add(SearchResult(extension.name, galleryResult, keyword));
+        });
+      } catch (e) {
+        Log.instance.e('search $extension.name failed: $e');
+      }
     }
 
     isSearching = false;
@@ -99,7 +104,7 @@ class _SearchTabState extends State<SearchTab> {
       return;
     }
 
-    if (galleryResult.data.isEmpty) {
+    if (galleryResult.data.isEmpty || galleryResult.noMore) {
       searchResult.allLoaded = true;
       searchResult.easyRefreshController.finishLoad(IndicatorResult.noMore);
       return;

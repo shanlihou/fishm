@@ -20,7 +20,7 @@ class ChapterModelAdapter extends TypeAdapter<ChapterModel> {
       fields[0] as String,
       fields[1] as String,
       fields[2] == null ? [] : (fields[2] as List).cast<String>(),
-      fields[3] == null ? {} : (fields[3] as Map).cast<String, dynamic>(),
+      fields[3] == null ? '{}' : fields[3] as String,
     );
   }
 
@@ -35,7 +35,7 @@ class ChapterModelAdapter extends TypeAdapter<ChapterModel> {
       ..writeByte(2)
       ..write(obj.images)
       ..writeByte(3)
-      ..write(obj.extra);
+      ..write(obj._extra);
   }
 
   @override
@@ -62,7 +62,7 @@ class ComicModelAdapter extends TypeAdapter<ComicModel> {
     return ComicModel(
       fields[0] as String,
       fields[1] as String,
-      (fields[2] as Map).cast<String, dynamic>(),
+      fields[2] == null ? '{}' : fields[2] as String,
       (fields[3] as List).cast<ChapterModel>(),
       fields[4] as String,
       fields[5] as String,
@@ -78,7 +78,7 @@ class ComicModelAdapter extends TypeAdapter<ComicModel> {
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.extra)
+      ..write(obj._extra)
       ..writeByte(3)
       ..write(obj.chapters)
       ..writeByte(4)

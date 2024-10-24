@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 
 import '../api/chapter_detail.dart';
@@ -16,10 +18,14 @@ class ChapterModel {
   @HiveField(2, defaultValue: [])
   List<String> images;
 
-  @HiveField(3, defaultValue: {})
-  Map<String, dynamic> extra;
+  @HiveField(3, defaultValue: "{}")
+  String _extra;
 
-  ChapterModel(this.id, this.title, this.images, this.extra);
+  Map<String, dynamic> get extra => jsonDecode(_extra);
+
+  set extra(Map<String, dynamic> value) => _extra = jsonEncode(value);
+
+  ChapterModel(this.id, this.title, this.images, this._extra);
 }
 
 @HiveType(typeId: 3)
@@ -30,8 +36,12 @@ class ComicModel {
   @HiveField(1)
   String title;
 
-  @HiveField(2)
-  Map<String, dynamic> extra;
+  @HiveField(2, defaultValue: "{}")
+  String _extra;
+
+  Map<String, dynamic> get extra => jsonDecode(_extra);
+
+  set extra(Map<String, dynamic> value) => _extra = jsonEncode(value);
 
   @HiveField(3)
   List<ChapterModel> chapters;
@@ -44,24 +54,27 @@ class ComicModel {
 
   String get uniqueId => '$id-$extensionName';
 
-  ComicModel(this.id, this.title, this.extra, this.chapters, this.cover,
+  ComicModel(this.id, this.title, this._extra, this.chapters, this.cover,
       this.extensionName);
 
-  ComicModel.fromComicDetail(ComicDetail detail, this.extensionName)
-      : id = detail.id,
-        title = detail.title,
-        extra = detail.extra,
-        chapters = detail.chapters
-            .map((e) => ChapterModel(e.id, e.title, [], {}))
+  static ComicModel fromComicDetail(ComicDetail detail, String extensionName) {
+    return ComicModel(
+        detail.id,
+        detail.title,
+        jsonEncode(detail.extra),
+        detail.chapters
+            .map((e) => ChapterModel(e.id, e.title, [], "{}"))
             .toList(),
-        cover = detail.cover;
+        detail.cover,
+        extensionName);
+  }
 
   void updateFromComicDetail(ComicDetail detail) {
     List<ChapterModel> newChapters = [];
     for (var chapter in detail.chapters) {
       int index = chapters.indexWhere((e) => e.id == chapter.id);
       if (index == -1) {
-        newChapters.add(ChapterModel(chapter.id, chapter.title, [], {}));
+        newChapters.add(ChapterModel(chapter.id, chapter.title, [], "{}"));
       } else {
         newChapters.add(chapters[index]);
       }

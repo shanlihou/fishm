@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
@@ -24,22 +25,43 @@ void openAppSettings() {
   if (Platform.isAndroid) {}
 }
 
-Future<bool> getStoragePermission() async {
-  late PermissionStatus status;
-  if (Platform.isAndroid) {
-    status = await Permission.storage.request();
-  } else {
-    // TODO: check iOS permission
-    return true;
-  }
+Future<bool> getAndroidPermission() async {
+  final DeviceInfoPlugin info =
+      DeviceInfoPlugin(); // import 'package:device_info_plus/device_info_plus.dart';
+  final AndroidDeviceInfo androidInfo = await info.androidInfo;
+  debugPrint('releaseVersion : ${androidInfo.version.release}');
+  final int androidVersion = int.parse(androidInfo.version.release);
 
-  return status == PermissionStatus.granted;
+  if (androidVersion >= 13) {
+    final request = await [
+      Permission.videos,
+      Permission.photos,
+      Permission.audio,
+    ].request(); //import 'package:permission_handler/permission_handler.dart';
+
+    return request.values.every((status) => status == PermissionStatus.granted);
+  } else {
+    final status = await Permission.storage.request();
+    return status.isGranted;
+  }
 }
 
-Future<void> initDirectory() async {
+Future<bool> getStoragePermission() async {
+  bool ret = true;
+  if (Platform.isAndroid) {
+    ret = await getAndroidPermission();
+  } else {
+    // TODO: check iOS permission
+    return ret;
+  }
+
+  return ret;
+}
+
+Future<bool> initDirectory() async {
   if (!await getStoragePermission()) {
     Log.instance.e("no storage permission");
-    return;
+    return false;
   }
 
   if (Platform.isAndroid) {
@@ -53,6 +75,7 @@ Future<void> initDirectory() async {
   }
 
   Log.instance.d('external: ${Directory.current}');
+  return true;
 }
 
 Future<void> downloadMainLua() async {

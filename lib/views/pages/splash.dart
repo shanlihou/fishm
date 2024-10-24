@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/log.dart';
 import '../../types/manager/global_manager.dart';
 import '../../types/manager/plugin_db_manager.dart';
 import '../../types/provider/comic_provider.dart';
@@ -28,6 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _init(BuildContext buildContext) async {
     if (_isInit) {
       return;
+    }
+
+    while (!await initDirectory()) {
+      Log.instance.d('init directory failed, retry...');
+      await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     _isInit = true;
