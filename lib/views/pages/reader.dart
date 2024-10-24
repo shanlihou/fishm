@@ -98,8 +98,12 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
 
   Future<bool> _initAsync() async {
     if (_initOption == InitOption.init) {
+      ComicModel comicModel = context
+          .read<ComicProvider>()
+          .getHistoryComicModel(
+              getComicUniqueId(widget.comicId, widget.extensionName))!;
       ChapterDetail detail = await getChapterDetails(
-          context, widget.extensionName, widget.comicId, widget.chapterId);
+          comicModel, widget.extensionName, widget.comicId, widget.chapterId);
       _readerChapters.addChapter(detail, widget.chapterId);
       int initPage = widget.initPage ?? 1;
 
@@ -374,7 +378,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String? nextChapterId = comicModel.nextChapterId(last);
       if (nextChapterId == null) return -1;
       ChapterDetail detail = await getChapterDetails(
-          context, widget.extensionName, widget.comicId, nextChapterId);
+          comicModel, widget.extensionName, widget.comicId, nextChapterId);
       _readerChapters.addChapter(detail, nextChapterId);
       _readerChapters.frontPop();
       return _readerChapters.firstMiddlePageIndex();
@@ -383,7 +387,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String? preChapterId = comicModel.preChapterId(first);
       if (preChapterId == null) return -1;
       ChapterDetail detail = await getChapterDetails(
-          context, widget.extensionName, widget.comicId, preChapterId);
+          comicModel, widget.extensionName, widget.comicId, preChapterId);
       _readerChapters.addChapterHead(detail, preChapterId);
       _readerChapters.backPop();
       return _readerChapters.firstMiddlePageIndex();

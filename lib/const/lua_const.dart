@@ -5,7 +5,7 @@ const pluginDir = '$mainDir/plugins';
 
 const mainRelease = [
   'https://raw.githubusercontent.com/shanlihou/Toonfu-lua/refs/heads/master/main.yaml',
-  'https://gitee.com/shanlihou/Toonfu-lua/raw/master/main.yaml'
+  //'https://gitee.com/shanlihou/Toonfu-lua/raw/master/main.yaml'
 ];
 
 const isSetHook = false;

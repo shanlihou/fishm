@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
+import '../../models/api/chapter_detail.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
@@ -33,6 +36,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   final ValueNotifier<bool> _isFavorite = ValueNotifier(false);
 
+  bool _isFetchChapterDownCnt = false;
+  bool _dispose = false;
+  final ValueNotifier<List<int>> _chpaterDownCnts = ValueNotifier([]);
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +47,67 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         context.read<ComicProvider>().favoriteComics.containsKey(
               getComicUniqueId(widget.comicItem.comicId, widget.extensionName),
             );
+  }
+
+  @override
+  void dispose() {
+    _dispose = true;
+    super.dispose();
+  }
+
+  Future<void> _fetchChapterDownCnts() async {
+    if (_isFetchChapterDownCnt) {
+      return;
+    }
+
+    _isFetchChapterDownCnt = true;
+
+    ComicModel? comicModel = context.read<ComicProvider>().getComicModel(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+
+    if (comicModel == null) {
+      _isFetchChapterDownCnt = false;
+      return;
+    }
+
+    if (comicModel.chapters.isEmpty) {
+      _isFetchChapterDownCnt = false;
+      return;
+    }
+
+    List<int> cnts = [];
+    for (var chapter in comicModel.chapters) {
+      Log.instance.d('fetch chapter once');
+      if (_dispose) {
+        break;
+      }
+      if (chapter.images.isEmpty) {
+        await getChapterDetails(comicModel, widget.extensionName,
+            widget.comicItem.comicId, chapter.id);
+      }
+
+      String folder = imageChapterFolder(
+          widget.extensionName, widget.comicItem.comicId, chapter.id);
+
+      int cnt = 0;
+      try {
+        Directory dir = Directory(folder);
+        if (await dir.exists()) {
+          cnt = await dir.list().where((entity) {
+            String path = entity.path.toLowerCase();
+            return path.endsWith('.png') || path.endsWith('.jpg');
+          }).length;
+        }
+      } catch (e) {
+        Log.instance.d('$folder is empty');
+      }
+      cnts.add(cnt);
+    }
+    if (mounted) {
+      _chpaterDownCnts.value = cnts;
+    }
+
+    _isFetchChapterDownCnt = false;
   }
 
   Future<void> _initWithContext() async {
@@ -54,6 +122,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     if (comicModel != null) {
       await Future.delayed(const Duration(milliseconds: 100));
       await provider.addComic(comicModel);
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _fetchChapterDownCnts();
+      });
       return;
     }
 
@@ -70,6 +142,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     await Future.delayed(const Duration(milliseconds: 100));
     await provider
         .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _fetchChapterDownCnts();
+    });
   }
 
   void _toggleFavorite() {
@@ -84,44 +160,44 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
   }
 
-  Widget _buildChapterItem(BuildContext buildContext, ChapterModel chapter) {
-    return Text(chapter.title);
+  Widget _buildChapterItem(
+      BuildContext buildContext, ChapterModel chapter, int idx) {
+    int max = chapter.images.length;
+    int cnt = 0;
+    if (idx < _chpaterDownCnts.value.length) {
+      cnt = _chpaterDownCnts.value[idx];
+    }
+    return Text('${chapter.title}    $cnt/$max');
   }
 
   Widget _buildChapterList(BuildContext buildContext, ComicModel comicModel) {
-    return Column(
-      children: [
-        for (var chapter in comicModel.chapters)
-          SizedBox(
-            height: 0.1.sh,
-            child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    buildContext,
-                    CupertinoPageRoute(
-                      builder: (context) => ComicReaderPage(
-                          widget.extensionName,
-                          chapter.id,
-                          comicModel.id,
-                          chapter.title,
-                          comicModel.extra),
-                    ),
-                  );
-                },
-                child: Text(chapter.title)),
-          )
-      ],
+    return ValueListenableBuilder(
+      valueListenable: _chpaterDownCnts,
+      builder: (context, cnts, child) => Column(
+        children: [
+          for (var chapter in comicModel.chapters.asMap().entries)
+            SizedBox(
+                height: 0.1.sh,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      buildContext,
+                      CupertinoPageRoute(
+                        builder: (context) => ComicReaderPage(
+                            widget.extensionName,
+                            chapter.value.id,
+                            comicModel.id,
+                            chapter.value.title,
+                            comicModel.extra),
+                      ),
+                    );
+                  },
+                  child: _buildChapterItem(
+                      buildContext, chapter.value, chapter.key),
+                ))
+        ],
+      ),
     );
-  }
-
-  String _getReadHistory(BuildContext buildContext) {
-    ComicProvider comicProvider = buildContext.watch<ComicProvider>();
-    String? readHistory = comicProvider.getReadHistory(
-        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
-    if (readHistory == null) {
-      return '';
-    }
-    return readHistory;
   }
 
   void _readComic(BuildContext buildContext) {

@@ -340,12 +340,8 @@ void setDioProxy(String proxyHost, int proxyPort, Dio dio) {
     };
 }
 
-Future<ChapterDetail> getChapterDetails(BuildContext context,
+Future<ChapterDetail> getChapterDetails(ComicModel comicModel,
     String extensionName, String comicId, String chapterId) async {
-  ComicModel comicModel = context
-      .read<ComicProvider>()
-      .getHistoryComicModel(getComicUniqueId(comicId, extensionName))!;
-
   var detail = comicModel.getChapterDetail(chapterId);
   if (detail != null) {
     return detail;
@@ -358,4 +354,9 @@ Future<ChapterDetail> getChapterDetails(BuildContext context,
 
   comicModel.addChapterDetail(chapterId, detail);
   return detail;
+}
+
+String imageChapterFolder(
+    String extensionName, String comicId, String chapterId) {
+  return '$archiveImageDir/$extensionName/$comicId/$chapterId';
 }

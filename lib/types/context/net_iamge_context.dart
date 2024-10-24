@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/general_const.dart';
+import '../../utils/utils_general.dart';
 
 abstract class NetImageContext {
   String imageUrl;
@@ -57,7 +58,7 @@ class NetImageContextReader extends NetImageContext {
 
   @override
   String get imagePath =>
-      '$archiveImageDir/$extensionName/$comicId/$chapterId/$index.${_getImageType()}';
+      '${imageChapterFolder(extensionName, comicId, chapterId)}/$index.${_getImageType()}';
 
   @override
   Future<bool> fetchImage() async {
