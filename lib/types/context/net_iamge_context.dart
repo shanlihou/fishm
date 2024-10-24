@@ -32,15 +32,16 @@ class NetImageContextCover extends NetImageContext {
 
   @override
   Future<bool> fetchImage() async {
-    Dio dio = Dio();
-    try {
-      var ret = await dio.download(imageUrl, imagePath);
-      return ret.statusCode == 200;
-    } catch (e) {
-      Log.instance.e(
-          'download net cover image failed: $e of url: $imageUrl path: $imagePath');
+    var ret = await downloadImage(extensionName, {}, imageUrl, imagePath)
+        as Map<String, dynamic>;
+
+    int code = ret['code'] as int;
+    if (code != 200) {
+      Log.instance.e('download net cover image failed: $ret');
       return false;
     }
+
+    return true;
   }
 }
 

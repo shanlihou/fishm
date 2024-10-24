@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
+import '../../common/log.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
@@ -59,24 +60,13 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     Object ret = await getDetail(
         widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
 
-    if (ret is String && mounted) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: const Text('error'),
-          content: Text(ret),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('confirm'),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-      );
+    ComicDetail detail;
+    try {
+      detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
+    } catch (e) {
+      Log.instance.e('get comic detail failed: $e');
       return;
     }
-
-    var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
     await Future.delayed(const Duration(milliseconds: 100));
     await provider
         .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));

@@ -1,14 +1,15 @@
+import 'package:crypto/crypto.dart';
 import 'package:lua_dardo_co/lua.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:crypton/crypton.dart';
-
 
 class CryptoLib {
   static const Map<String, DartFunction> _cryptoFuncs = {
     "base64encode": _base64Encode,
     "base64decode": _base64Decode,
     "rsa_decrypt": _rsaDecrypt,
+    "hmac_sha256": _hmacSha256,
   };
 
   static int openCryptoLib(LuaState ls) {
@@ -67,14 +68,28 @@ class CryptoLib {
     }
 
     try {
-      RSAKeypair rsaKeypair =
-          RSAKeypair(RSAPrivateKey.fromString(key));
-      Uint8List decrypted = rsaKeypair.privateKey.decryptData(content.data as Uint8List);
+      RSAKeypair rsaKeypair = RSAKeypair(RSAPrivateKey.fromString(key));
+      Uint8List decrypted =
+          rsaKeypair.privateKey.decryptData(content.data as Uint8List);
       Userdata ud = ls.newUserdata();
       ud.data = decrypted;
     } catch (e) {
       ls.pushNil();
     }
+    return 1;
+  }
+
+  static int _hmacSha256(LuaState ls) {
+    String key = ls.checkString(1)!;
+    String data = ls.checkString(2)!;
+
+    var utf8_key = utf8.encode(key);
+    var utf8_data = utf8.encode(data);
+    var hmacSha256 = Hmac(sha256, utf8_key);
+    var digest = hmacSha256.convert(utf8_data);
+
+    ls.pushString(digest.toString());
+
     return 1;
   }
 }
