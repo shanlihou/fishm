@@ -8,7 +8,6 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/general_const.dart';
-import '../../models/api/chapter_detail.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
@@ -17,6 +16,7 @@ import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
+import '../widget/download_options_widget.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -317,38 +317,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: comicModel.chapters.length,
-                itemBuilder: (context, index) {
-                  final chapter = comicModel.chapters[index];
-                  return CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      String id =
-                          'down_${widget.extensionName}_${widget.comicItem.comicId}_${chapter.id}';
-                      var p = context.read<TaskProvider>();
-                      if (p.isHasTask(id)) {
-                        return;
-                      }
-
-                      p.addTask(TaskDownload(
-                          id: id,
-                          extensionName: widget.extensionName,
-                          comicId: widget.comicItem.comicId,
-                          chapterId: chapter.id,
-                          chapterName: chapter.title,
-                          comicTitle: widget.comicItem.title));
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(chapter.title),
-                        const Icon(CupertinoIcons.cloud_download),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              child: DownloadOptionsWidget(comicModel: comicModel),
             ),
           ],
         ),

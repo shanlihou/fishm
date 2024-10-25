@@ -29,7 +29,7 @@ class _TaskPageState extends State<TaskPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(task.displayText()),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Material(
                           child: LinearProgressIndicator(
                             value: task.progress(),

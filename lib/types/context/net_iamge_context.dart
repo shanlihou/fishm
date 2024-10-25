@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/general_const.dart';

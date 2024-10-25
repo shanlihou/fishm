@@ -7,7 +7,6 @@ import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:yaml/yaml.dart';
 
 import '../api/flutter_call_lua/method.dart';
@@ -19,7 +18,6 @@ import '../models/api/chapter_detail.dart';
 import '../models/db/comic_model.dart';
 import '../models/db/extensions.dart' as model_extensions;
 import '../types/common/alias.dart';
-import '../types/provider/comic_provider.dart';
 
 void openAppSettings() {
   if (Platform.isAndroid) {}

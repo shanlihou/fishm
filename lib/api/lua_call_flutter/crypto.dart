@@ -83,10 +83,10 @@ class CryptoLib {
     String key = ls.checkString(1)!;
     String data = ls.checkString(2)!;
 
-    var utf8_key = utf8.encode(key);
-    var utf8_data = utf8.encode(data);
-    var hmacSha256 = Hmac(sha256, utf8_key);
-    var digest = hmacSha256.convert(utf8_data);
+    var utf8Key = utf8.encode(key);
+    var utf8Data = utf8.encode(data);
+    var hmacSha256 = Hmac(sha256, utf8Key);
+    var digest = hmacSha256.convert(utf8Data);
 
     ls.pushString(digest.toString());
 

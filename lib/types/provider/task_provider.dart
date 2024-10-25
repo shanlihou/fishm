@@ -45,9 +45,4 @@ class TaskProvider extends ChangeNotifier {
     task.setStatus(status);
     notifyListeners();
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

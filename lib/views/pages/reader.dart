@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:toonfu/types/common/reader_chapters.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
-import "../../api/flutter_call_lua/method.dart";
 import '../../const/general_const.dart';
 import "../../models/api/chapter_detail.dart";
 import 'package:preload_page_view/preload_page_view.dart';
