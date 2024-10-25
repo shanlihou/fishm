@@ -109,6 +109,12 @@ class ComicModel {
     chapters[index].extra = detail.extra;
   }
 
+  ChapterModel? getChapterModel(String chapterId) {
+    int index = chapters.indexWhere((e) => e.id == chapterId);
+    if (index == -1) return null;
+    return chapters[index];
+  }
+
   ChapterDetail? getChapterDetail(String chapterId) {
     int index = chapters.indexWhere((e) => e.id == chapterId);
     if (index == -1) return null;

@@ -15,6 +15,7 @@ import 'package:toonfu/views/pages/splash.dart';
 
 import 'models/db/read_history_model.dart';
 import 'types/provider/local_provider.dart';
+import 'types/provider/task_provider.dart';
 import 'utils/utils_general.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
@@ -41,6 +42,7 @@ Future<void> _main() async {
       ChangeNotifierProvider(create: (_) => SettingProvider()),
       ChangeNotifierProvider(create: (_) => ExtensionProvider()),
       ChangeNotifierProvider(create: (_) => ComicProvider()),
+      ChangeNotifierProvider(create: (_) => TaskProvider()),
     ],
     child: const MyApp(),
   ));

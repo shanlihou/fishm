@@ -7,12 +7,16 @@ import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
+import '../../const/general_const.dart';
 import '../../models/api/chapter_detail.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
+import '../../types/provider/task_provider.dart';
+import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
+import '../widget/comic_chapter_status_widget.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -38,7 +42,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   bool _isFetchChapterDownCnt = false;
   bool _dispose = false;
-  final ValueNotifier<List<int>> _chpaterDownCnts = ValueNotifier([]);
+
+  final Map<String, ComicChapterStatusController> _chapterStatusControllers =
+      {};
 
   @override
   void initState() {
@@ -62,7 +68,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     _isFetchChapterDownCnt = true;
 
-    ComicModel? comicModel = context.read<ComicProvider>().getComicModel(
+    var p = context.read<ComicProvider>();
+    ComicModel? comicModel = p.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
     if (comicModel == null) {
@@ -75,15 +82,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       return;
     }
 
-    List<int> cnts = [];
     for (var chapter in comicModel.chapters) {
-      Log.instance.d('fetch chapter once');
       if (_dispose) {
         break;
       }
       if (chapter.images.isEmpty) {
+        Log.instance.d('fetch chapter once');
         await getChapterDetails(comicModel, widget.extensionName,
             widget.comicItem.comicId, chapter.id);
+
+        await p.saveComic(comicModel);
       }
 
       String folder = imageChapterFolder(
@@ -98,13 +106,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             return path.endsWith('.png') || path.endsWith('.jpg');
           }).length;
         }
+
+        if (mounted) {
+          _chapterStatusControllers[chapter.id]?.setStatus(
+              cnt == chapter.images.length
+                  ? ComicChapterStatus.normal
+                  : ComicChapterStatus.downloading);
+        }
       } catch (e) {
         Log.instance.d('$folder is empty');
       }
-      cnts.add(cnt);
-    }
-    if (mounted) {
-      _chpaterDownCnts.value = cnts;
     }
 
     _isFetchChapterDownCnt = false;
@@ -121,7 +132,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     if (comicModel != null) {
       await Future.delayed(const Duration(milliseconds: 100));
-      await provider.addComic(comicModel);
+      await provider.addComic(comicModel, true);
 
       Future.delayed(const Duration(milliseconds: 100), () {
         _fetchChapterDownCnts();
@@ -140,8 +151,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       return;
     }
     await Future.delayed(const Duration(milliseconds: 100));
-    await provider
-        .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
+    await provider.addComic(
+        ComicModel.fromComicDetail(detail, widget.extensionName), true);
 
     Future.delayed(const Duration(milliseconds: 100), () {
       _fetchChapterDownCnts();
@@ -162,41 +173,54 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Widget _buildChapterItem(
       BuildContext buildContext, ChapterModel chapter, int idx) {
-    int max = chapter.images.length;
-    int cnt = 0;
-    if (idx < _chpaterDownCnts.value.length) {
-      cnt = _chpaterDownCnts.value[idx];
+    ComicChapterStatusController controller;
+    if (!_chapterStatusControllers.containsKey(chapter.id)) {
+      controller = ComicChapterStatusController();
+      _chapterStatusControllers[chapter.id] = controller;
+    } else {
+      controller = _chapterStatusControllers[chapter.id]!;
     }
-    return Text('${chapter.title}    $cnt/$max');
+
+    return Row(
+      children: [
+        Expanded(child: Text(chapter.title)),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ComicChapterStatusWidget(
+            extensionName: widget.extensionName,
+            comicId: widget.comicItem.comicId,
+            chapterId: chapter.id,
+            controller: controller,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildChapterList(BuildContext buildContext, ComicModel comicModel) {
-    return ValueListenableBuilder(
-      valueListenable: _chpaterDownCnts,
-      builder: (context, cnts, child) => Column(
-        children: [
-          for (var chapter in comicModel.chapters.asMap().entries)
-            SizedBox(
-                height: 0.1.sh,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      buildContext,
-                      CupertinoPageRoute(
-                        builder: (context) => ComicReaderPage(
-                            widget.extensionName,
-                            chapter.value.id,
-                            comicModel.id,
-                            chapter.value.title,
-                            comicModel.extra),
-                      ),
-                    );
-                  },
-                  child: _buildChapterItem(
-                      buildContext, chapter.value, chapter.key),
-                ))
-        ],
-      ),
+    return Column(
+      children: [
+        for (var chapter in comicModel.chapters.asMap().entries)
+          SizedBox(
+              height: 0.1.sh,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    buildContext,
+                    CupertinoPageRoute(
+                      builder: (context) => ComicReaderPage(
+                          widget.extensionName,
+                          chapter.value.id,
+                          comicModel.id,
+                          chapter.value.title,
+                          comicModel.extra),
+                    ),
+                  );
+                },
+                child:
+                    _buildChapterItem(buildContext, chapter.value, chapter.key),
+              ))
+      ],
     );
   }
 
@@ -264,11 +288,72 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     if (comicModel != null) {
       comicModel.updateFromComicDetail(detail);
-      provider.addComic(comicModel);
+      provider.addComic(comicModel, true);
     } else {
-      provider
-          .addComic(ComicModel.fromComicDetail(detail, widget.extensionName));
+      provider.addComic(
+          ComicModel.fromComicDetail(detail, widget.extensionName), true);
     }
+  }
+
+  void _showDownloadOptions(BuildContext context, ComicModel comicModel) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 300,
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Download Options',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: comicModel.chapters.length,
+                itemBuilder: (context, index) {
+                  final chapter = comicModel.chapters[index];
+                  return CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      String id =
+                          'down_${widget.extensionName}_${widget.comicItem.comicId}_${chapter.id}';
+                      var p = context.read<TaskProvider>();
+                      if (p.isHasTask(id)) {
+                        return;
+                      }
+
+                      p.addTask(TaskDownload(
+                          id: id,
+                          extensionName: widget.extensionName,
+                          comicId: widget.comicItem.comicId,
+                          chapterId: chapter.id,
+                          chapterName: chapter.title,
+                          comicTitle: widget.comicItem.title));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(chapter.title),
+                        const Icon(CupertinoIcons.cloud_download),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -326,6 +411,25 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                           builder: (context, comicProvider, child) => Text(
                               'read ${comicProvider.getReadHistory(getComicUniqueId(widget.comicItem.comicId, widget.extensionName)) ?? ''}'),
                         ),
+                      ),
+                      CupertinoButton(
+                        child: const Text('download'),
+                        onPressed: () {
+                          var comicProvider = context.read<ComicProvider>();
+                          ComicModel? comicModel = comicProvider.getComicModel(
+                              getComicUniqueId(widget.comicItem.comicId,
+                                  widget.extensionName));
+
+                          if (comicModel == null) {
+                            return;
+                          }
+
+                          if (comicModel.chapters.isEmpty) {
+                            return;
+                          }
+
+                          _showDownloadOptions(context, comicModel);
+                        },
                       )
                     ],
                   ),

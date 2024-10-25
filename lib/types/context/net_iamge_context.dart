@@ -11,14 +11,6 @@ abstract class NetImageContext {
   Future<bool> fetchImage();
 
   NetImageContext(this.imageUrl);
-
-  String _getImageType() {
-    String imgType = imageUrl.split('.').last;
-    if (imgType == 'jpg' || imgType == 'png' || imgType == 'webp') {
-      return imgType;
-    }
-    return 'jpg';
-  }
 }
 
 class NetImageContextCover extends NetImageContext {
@@ -29,7 +21,7 @@ class NetImageContextCover extends NetImageContext {
 
   @override
   String get imagePath =>
-      '$archiveImageDir/$extensionName/$comicId/cover.${_getImageType()}';
+      '$archiveImageDir/$extensionName/$comicId/cover.${getImageType(imageUrl)}';
 
   @override
   Future<bool> fetchImage() async {
@@ -58,7 +50,7 @@ class NetImageContextReader extends NetImageContext {
 
   @override
   String get imagePath =>
-      '${imageChapterFolder(extensionName, comicId, chapterId)}/$index.${_getImageType()}';
+      downloadImagePath(extensionName, comicId, chapterId, index, imageUrl);
 
   @override
   Future<bool> fetchImage() async {

@@ -97,13 +97,19 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<bool> _initAsync() async {
+    var p = context.read<ComicProvider>();
     if (_initOption == InitOption.init) {
-      ComicModel comicModel = context
-          .read<ComicProvider>()
-          .getHistoryComicModel(
-              getComicUniqueId(widget.comicId, widget.extensionName))!;
-      ChapterDetail detail = await getChapterDetails(
+      ComicModel comicModel = p.getHistoryComicModel(
+          getComicUniqueId(widget.comicId, widget.extensionName))!;
+      ChapterDetail? detail = await getChapterDetails(
           comicModel, widget.extensionName, widget.comicId, widget.chapterId);
+
+      if (detail == null) {
+        return false;
+      }
+
+      await p.saveComic(comicModel);
+
       _readerChapters.addChapter(detail, widget.chapterId);
       int initPage = widget.initPage ?? 1;
 
@@ -368,7 +374,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<int> _supplementChapter(bool isNext) async {
-    var comicModel = context.read<ComicProvider>().getHistoryComicModel(
+    var p = context.read<ComicProvider>();
+    var comicModel = p.getHistoryComicModel(
         getComicUniqueId(widget.comicId, widget.extensionName));
 
     if (comicModel == null) return -1;
@@ -377,8 +384,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String last = _readerChapters.lastChapterId();
       String? nextChapterId = comicModel.nextChapterId(last);
       if (nextChapterId == null) return -1;
-      ChapterDetail detail = await getChapterDetails(
-          comicModel, widget.extensionName, widget.comicId, nextChapterId);
+      ChapterDetail detail = (await getChapterDetails(
+          comicModel, widget.extensionName, widget.comicId, nextChapterId))!;
+      await p.saveComic(comicModel);
       _readerChapters.addChapter(detail, nextChapterId);
       _readerChapters.frontPop();
       return _readerChapters.firstMiddlePageIndex();
@@ -386,8 +394,9 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
       String first = _readerChapters.firstChapterId();
       String? preChapterId = comicModel.preChapterId(first);
       if (preChapterId == null) return -1;
-      ChapterDetail detail = await getChapterDetails(
-          comicModel, widget.extensionName, widget.comicId, preChapterId);
+      ChapterDetail detail = (await getChapterDetails(
+          comicModel, widget.extensionName, widget.comicId, preChapterId))!;
+      await p.saveComic(comicModel);
       _readerChapters.addChapterHead(detail, preChapterId);
       _readerChapters.backPop();
       return _readerChapters.firstMiddlePageIndex();

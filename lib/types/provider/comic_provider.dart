@@ -86,7 +86,12 @@ class ComicProvider with ChangeNotifier {
     return favoriteComics[uniqueId];
   }
 
-  Future<void> addComic(ComicModel comic) async {
+  Future<void> saveComic(ComicModel comic) async {
+    await addComic(comic, false);
+    await _favoriteComicBox.put(comic.uniqueId, comic);
+  }
+
+  Future<void> addComic(ComicModel comic, bool isNotify) async {
     for (var i = _historyComics.length - 1; i >= 0; i--) {
       if (_historyComics[i].$1.uniqueId == comic.uniqueId) {
         _comicBox.delete(_historyComics[i].$2);
@@ -98,7 +103,9 @@ class ComicProvider with ChangeNotifier {
     int now = getTimestamp();
     await _comicBox.put(now, comic);
     _historyComics.insert(0, (comic, now));
-    notifyListeners();
+    if (isNotify) {
+      notifyListeners();
+    }
   }
 
   Future<void> addFavoriteComic(String uniqueId) async {

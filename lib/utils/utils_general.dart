@@ -340,7 +340,7 @@ void setDioProxy(String proxyHost, int proxyPort, Dio dio) {
     };
 }
 
-Future<ChapterDetail> getChapterDetails(ComicModel comicModel,
+Future<ChapterDetail?> getChapterDetails(ComicModel comicModel,
     String extensionName, String comicId, String chapterId) async {
   var detail = comicModel.getChapterDetail(chapterId);
   if (detail != null) {
@@ -350,13 +350,31 @@ Future<ChapterDetail> getChapterDetails(ComicModel comicModel,
   var obj = await getChapterDetail(
       extensionName, chapterId, comicId, comicModel.extra);
 
-  detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
+  try {
+    detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
+  } catch (e) {
+    Log.instance.e('getChapterDetails error $e');
+    return null;
+  }
 
   comicModel.addChapterDetail(chapterId, detail);
   return detail;
 }
 
+String getImageType(String url) {
+  String imgType = url.split('.').last;
+  if (imgType == 'jpg' || imgType == 'png' || imgType == 'webp') {
+    return imgType;
+  }
+  return 'jpg';
+}
+
 String imageChapterFolder(
     String extensionName, String comicId, String chapterId) {
   return '$archiveImageDir/$extensionName/$comicId/$chapterId';
+}
+
+String downloadImagePath(String extensionName, String comicId, String chapterId,
+    int index, String imageUrl) {
+  return '${imageChapterFolder(extensionName, comicId, chapterId)}/$index.${getImageType(imageUrl)}';
 }
