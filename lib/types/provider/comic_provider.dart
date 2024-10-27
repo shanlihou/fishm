@@ -91,6 +91,17 @@ class ComicProvider with ChangeNotifier {
     await _favoriteComicBox.put(comic.uniqueId, comic);
   }
 
+  Future<void> removeHistoryComic(List<String> uniqueIds) async {
+    for (var i = _historyComics.length - 1; i >= 0; i--) {
+      if (uniqueIds.contains(_historyComics[i].$1.uniqueId)) {
+        _comicBox.delete(_historyComics[i].$2);
+        _historyComics.removeAt(i);
+      }
+    }
+
+    notifyListeners();
+  }
+
   Future<void> addComic(ComicModel comic, bool isNotify) async {
     for (var i = _historyComics.length - 1; i >= 0; i--) {
       if (_historyComics[i].$1.uniqueId == comic.uniqueId) {

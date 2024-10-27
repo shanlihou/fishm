@@ -38,6 +38,12 @@ class ExtensionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeExtension(String name) async {
+    _extensions!.extensions.removeWhere((e) => e.name == name);
+    await _extensionsBox.put(extensionKey, _extensions!);
+    notifyListeners();
+  }
+
   List<String> extensionNames() {
     return extensions.map((e) => e.name).toList();
   }

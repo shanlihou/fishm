@@ -52,7 +52,8 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
                   return;
                 }
 
-                if (await showInstallConfirmDialog(context, extension) ??
+                if (await showConfirmDialog(
+                        context, 'Install ${extension.name}?') ??
                     false) {
                   var entry = showLoadingDialog(context);
                   var ext = await installExtension(extension);

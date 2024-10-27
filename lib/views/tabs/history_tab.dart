@@ -15,20 +15,79 @@ class HistoryTab extends StatefulWidget {
 }
 
 class _HistoryTabState extends State<HistoryTab> {
+  Set<int> selectedIndices = {};
+  bool isSelectionMode = false;
+
   @override
   Widget build(BuildContext context) {
     List<ComicModel> comics = context.watch<ComicProvider>().historyComics;
 
-    return ListView.builder(
-      itemCount: comics.length,
-      itemBuilder: (context, index) {
-        return ComicItemWidget(
-          ComicItem.fromComicModel(comics[index]),
-          comics[index].extensionName,
-          width: 0.2.sw,
-          height: 0.2.sw,
-        );
-      },
+    return Stack(
+      children: [
+        ListView.builder(
+          itemCount: comics.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onLongPress: () {
+                setState(() {
+                  isSelectionMode = true;
+                  selectedIndices.add(index);
+                });
+              },
+              child: Container(
+                color: selectedIndices.contains(index)
+                    ? CupertinoColors.systemGrey5
+                    : null,
+                child: Row(
+                  children: [
+                    if (isSelectionMode)
+                      CupertinoCheckbox(
+                        value: selectedIndices.contains(index),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              selectedIndices.add(index);
+                            } else {
+                              selectedIndices.remove(index);
+                            }
+                          });
+                        },
+                      ),
+                    Expanded(
+                      child: ComicItemWidget(
+                        ComicItem.fromComicModel(comics[index]),
+                        comics[index].extensionName,
+                        width: 0.2.sw,
+                        height: 0.2.sw,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        if (isSelectionMode)
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: CupertinoButton(
+                color: CupertinoColors.destructiveRed,
+                child: const Text('delete'),
+                onPressed: () {
+                  List<String> uniqueIds = selectedIndices.map((index) {
+                    return comics[index].uniqueId;
+                  }).toList();
+                  isSelectionMode = false;
+                  selectedIndices.clear();
+                  context.read<ComicProvider>().removeHistoryComic(uniqueIds);
+                },
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

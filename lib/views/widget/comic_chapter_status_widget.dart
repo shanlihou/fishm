@@ -13,6 +13,10 @@ class ComicChapterStatusController {
     onChanged?.call(status);
   }
 
+  void dispose() {
+    onChanged = null;
+  }
+
   ComicChapterStatusController();
 }
 

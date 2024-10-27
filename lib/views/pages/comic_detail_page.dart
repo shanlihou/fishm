@@ -42,6 +42,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   bool _isFetchChapterDownCnt = false;
   bool _dispose = false;
+  Map<String, (int, int)> _chapterDownCnts = {};
 
   final Map<String, ComicChapterStatusController> _chapterStatusControllers =
       {};
@@ -58,6 +59,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   @override
   void dispose() {
     _dispose = true;
+    for (var controller in _chapterStatusControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -113,8 +117,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                   ? ComicChapterStatus.normal
                   : ComicChapterStatus.downloading);
         }
+
+        _chapterDownCnts[chapter.id] = (cnt, chapter.images.length);
       } catch (e) {
-        Log.instance.d('$folder is empty');
+        Log.instance.d('$folder is empty :$e');
       }
     }
 
@@ -317,7 +323,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: DownloadOptionsWidget(comicModel: comicModel),
+              child: DownloadOptionsWidget(
+                  comicModel: comicModel, chapterDownCnts: _chapterDownCnts),
             ),
           ],
         ),
