@@ -13,6 +13,7 @@ import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
+import 'const/db_const.dart';
 import 'models/db/read_history_model.dart';
 import 'types/provider/local_provider.dart';
 import 'types/provider/task_provider.dart';
@@ -30,6 +31,7 @@ Future<void> _main() async {
   await initDirectory();
   Hive.init(Directory.current.path);
   await Hive.initFlutter();
+  await Hive.openBox(taskHiveKey);
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ExtensionAdapter());
   Hive.registerAdapter(ExtensionsAdapter());

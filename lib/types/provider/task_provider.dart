@@ -1,9 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
+import '../../const/db_const.dart';
 import '../../const/general_const.dart';
 import '../task/task_base.dart';
 
 class TaskProvider extends ChangeNotifier {
   Map<String, TaskBase> tasks = {};
+
+  Future<void> loadTasks() async {
+    var box = Hive.box(taskHiveKey);
+    var entries = box.toMap().entries;
+    for (var entry in entries) {
+      tasks[entry.key] = TaskBase.fromArchiveString(entry.value as String);
+    }
+  }
 
   TaskBase? getAvailableTask() {
     for (var task in tasks.values) {
@@ -30,6 +40,8 @@ class TaskProvider extends ChangeNotifier {
     }
     task.createTime = DateTime.now();
     tasks[task.id] = task;
+
+    Hive.box(taskHiveKey).put(task.id, task.toArchiveString());
     notifyListeners();
   }
 
@@ -43,6 +55,7 @@ class TaskProvider extends ChangeNotifier {
       return;
     }
     task.setStatus(status);
+    Hive.box(taskHiveKey).put(id, task.toArchiveString());
     notifyListeners();
   }
 }

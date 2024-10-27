@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import '../provider/comic_provider.dart';
 import 'task_base.dart';
 
 class TaskDownload extends TaskBase {
+  static const int taskType = taskTypeDownload;
   final String extensionName;
   final String comicId;
   final String chapterId;
@@ -80,6 +82,38 @@ class TaskDownload extends TaskBase {
       _progress = (i + 1) / detail.images.length;
       yield true;
     }
+  }
+
+  @override
+  int get taskTypeValue => taskType;
+
+  @override
+  String archive() {
+    return jsonEncode({
+      'extensionName': extensionName,
+      'comicId': comicId,
+      'chapterId': chapterId,
+      'chapterName': chapterName,
+      'comicTitle': comicTitle,
+      'createTime': createTime?.toIso8601String(),
+      'id': id,
+      'status': status.index,
+    });
+  }
+
+  static TaskDownload fromJsonString(String jsonString) {
+    var json = jsonDecode(jsonString);
+    var task = TaskDownload(
+      id: json['id'],
+      extensionName: json['extensionName'],
+      comicId: json['comicId'],
+      chapterId: json['chapterId'],
+      chapterName: json['chapterName'],
+      comicTitle: json['comicTitle'],
+    );
+    task.createTime = DateTime.parse(json['createTime']);
+    task.status = TaskStatus.values[json['status']];
+    return task;
   }
 
   TaskDownload(

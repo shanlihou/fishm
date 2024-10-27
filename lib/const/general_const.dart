@@ -44,3 +44,5 @@ enum TaskStatus {
 }
 
 const downloadImageRetry = 5;
+
+const taskTypeDownload = 1;

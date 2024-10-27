@@ -8,6 +8,7 @@ import '../../types/provider/comic_provider.dart';
 import '../../types/provider/extension_provider.dart';
 import '../../types/provider/local_provider.dart';
 import '../../types/provider/setting_provider.dart';
+import '../../types/provider/task_provider.dart';
 import '../../utils/utils_general.dart';
 import 'home.dart';
 
@@ -31,18 +32,21 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
+    var settingProvider = buildContext.read<SettingProvider>();
+    var extensionProvider = buildContext.read<ExtensionProvider>();
+    var comicProvider = buildContext.read<ComicProvider>();
+    var taskProvider = buildContext.read<TaskProvider>();
+
     while (!await initDirectory()) {
       Log.instance.d('init directory failed, retry...');
       await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     _isInit = true;
-    var settingProvider = buildContext.read<SettingProvider>();
-    var extensionProvider = buildContext.read<ExtensionProvider>();
-    var comicProvider = buildContext.read<ComicProvider>();
     await settingProvider.loadSettings();
     await extensionProvider.loadExtensions();
     await comicProvider.loadComics();
+    await taskProvider.loadTasks();
     await initMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
     if (settingProvider.settings?.language == "") {

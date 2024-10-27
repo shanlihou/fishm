@@ -10,6 +10,8 @@ mixin TaskMixin {
   }
 
   Future<void> startTaskLoop(TaskProvider provider) async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+
     while (true) {
       var task = provider.getAvailableTask();
       if (task == null) {
