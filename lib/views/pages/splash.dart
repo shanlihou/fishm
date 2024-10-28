@@ -21,10 +21,21 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _isInit = false;
+  String _stepText = 'loading';
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _updateStepText(String text) {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _stepText = text;
+    });
   }
 
   Future<void> _init(BuildContext buildContext) async {
@@ -37,18 +48,25 @@ class _SplashScreenState extends State<SplashScreen> {
     var comicProvider = buildContext.read<ComicProvider>();
     var taskProvider = buildContext.read<TaskProvider>();
 
+    _updateStepText('init directory');
     while (!await initDirectory()) {
       Log.instance.d('init directory failed, retry...');
       await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     _isInit = true;
+    _updateStepText('load settings');
     await settingProvider.loadSettings();
+    _updateStepText('load extensions');
     await extensionProvider.loadExtensions();
+    _updateStepText('load comics');
     await comicProvider.loadComics();
+    _updateStepText('load tasks');
     await taskProvider.loadTasks();
+    _updateStepText('init main lua');
     await initMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
+    _updateStepText('set locale');
     if (settingProvider.settings?.language == "") {
       String language = Localizations.localeOf(buildContext).languageCode;
       context.read<LocalProvider>().setLocale(Locale(language));
@@ -58,9 +76,12 @@ class _SplashScreenState extends State<SplashScreen> {
           .setLocale(Locale(settingProvider.settings?.language ?? "en"));
     }
 
+    _updateStepText('init global');
     globalManager.initGlobal(settingProvider);
+    _updateStepText('init plugins');
     pluginDbManager.initPlugins(extensionProvider.extensionNames());
 
+    _updateStepText('go to home');
     Navigator.pushReplacement(
       buildContext,
       CupertinoPageRoute(builder: (context) => const Home()),
@@ -70,9 +91,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     _init(context);
-    return const CupertinoPageScaffold(
+    return CupertinoPageScaffold(
       child: Center(
-        child: Text('Loading...'),
+        child: Text(_stepText),
       ),
     );
   }

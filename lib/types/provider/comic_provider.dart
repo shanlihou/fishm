@@ -102,6 +102,22 @@ class ComicProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool isExtensionInUse(String extensionName) {
+    for (var i in _historyComics) {
+      if (i.$1.extensionName == extensionName) {
+        return true;
+      }
+    }
+
+    for (var i in favoriteComics.values) {
+      if (i.extensionName == extensionName) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   Future<void> addComic(ComicModel comic, bool isNotify) async {
     for (var i = _historyComics.length - 1; i >= 0; i--) {
       if (_historyComics[i].$1.uniqueId == comic.uniqueId) {
