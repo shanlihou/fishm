@@ -24,6 +24,10 @@ class TaskDownload extends TaskBase {
     return _progress;
   }
 
+  void setProgress(double value) {
+    _progress = value;
+  }
+
   @override
   void reset() {
     _progress = 0;
@@ -96,6 +100,7 @@ class TaskDownload extends TaskBase {
       'chapterName': chapterName,
       'comicTitle': comicTitle,
       'createTime': createTime?.toIso8601String(),
+      'progress': _progress,
       'id': id,
       'status': status.index,
     });
@@ -113,6 +118,7 @@ class TaskDownload extends TaskBase {
     );
     task.createTime = DateTime.parse(json['createTime']);
     task.status = TaskStatus.values[json['status']];
+    task.setProgress(json['progress']);
     return task;
   }
 
