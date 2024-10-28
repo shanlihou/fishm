@@ -39,8 +39,6 @@ class ComicChapterStatusWidget extends StatefulWidget {
 }
 
 class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
-  ComicChapterStatus _status = ComicChapterStatus.normal;
-
   @override
   void initState() {
     super.initState();
@@ -48,9 +46,7 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
   }
 
   void _onStatusChanged(ComicChapterStatus status) {
-    setState(() {
-      _status = status;
-    });
+    setState(() {});
   }
 
   int _getImageCount() {

@@ -11,7 +11,6 @@ import '../state/pb_oneof_entry.dart';
 import '../state/pb_field.dart';
 import '../common/pb_buffer.dart';
 
-
 class PbLoader {
   PbSlice s;
   bool isProto3 = false;
@@ -155,7 +154,6 @@ class PbLoader {
     endmsg(backup);
   }
 
-
   void enumValueDescriptorProto(PbEnumValueInfo info) {
     int tag;
     int sz;
@@ -184,7 +182,6 @@ class PbLoader {
     endmsg(backup);
   }
 
-
   void oneofDescriptorProto(PbTypeInfo info) {
     int tag;
     int sz;
@@ -206,7 +203,6 @@ class PbLoader {
     }
     endmsg(backup);
   }
-
 
   void messageOptions(PbTypeInfo info) {
     int tag;
@@ -277,8 +273,6 @@ class PbLoader {
   }
 
   int fileDescriptorProto(PbFileInfo fileinfo) {
-    PbSlice tmp;
-    int ret;
     int sz;
     PbSlice backup = beginmsg();
 
@@ -293,25 +287,25 @@ class PbLoader {
         case PB_PAIR_2_PB_TBYTES:
           fileinfo.package = readbytes();
           break;
-          case PB_PAIR_4_PB_TBYTES:
-            fileinfo.messageType.add(PbTypeInfo());
-            descriptorProto(fileinfo.messageType.last);
-            break;
-          case PB_PAIR_5_PB_TBYTES:
-            fileinfo.enumType.add(PbEnumInfo());
-            enumDescriptorProto(fileinfo.enumType.last);
-            break;
-          case PB_PAIR_7_PB_TBYTES:
-            fileinfo.extension.add(PbFieldInfo());
-            fieldDescriptorProto(fileinfo.extension.last);
-            break;
-          case PB_PAIR_12_PB_TBYTES:
-            fileinfo.syntax = readbytes();
-            break;
-          default:
-            if (s.skipvalue(tag) == 0) {
-              throw Exception('fileDescriptorProto skipvalue failed');
-            }
+        case PB_PAIR_4_PB_TBYTES:
+          fileinfo.messageType.add(PbTypeInfo());
+          descriptorProto(fileinfo.messageType.last);
+          break;
+        case PB_PAIR_5_PB_TBYTES:
+          fileinfo.enumType.add(PbEnumInfo());
+          enumDescriptorProto(fileinfo.enumType.last);
+          break;
+        case PB_PAIR_7_PB_TBYTES:
+          fileinfo.extension.add(PbFieldInfo());
+          fieldDescriptorProto(fileinfo.extension.last);
+          break;
+        case PB_PAIR_12_PB_TBYTES:
+          fileinfo.syntax = readbytes();
+          break;
+        default:
+          if (s.skipvalue(tag) == 0) {
+            throw Exception('fileDescriptorProto skipvalue failed');
+          }
       }
     }
 
@@ -341,7 +335,6 @@ class PbLoader {
     }
     return PB_OK;
   }
-
 
 // static int pbL_loadFile(pb_State *S, pbL_FileInfo *info, pb_Loader *L) {
 //     size_t i, count, j, jcount, curr = 0;
@@ -385,7 +378,8 @@ class PbLoader {
 
     PbField f = ps.newField(t, info.name!.toString(), info.number);
 
-    f.defaultValue = info.defaultValue != null ? info.defaultValue!.toString() : "";
+    f.defaultValue =
+        info.defaultValue != null ? info.defaultValue!.toString() : "";
     f.type = ft;
 
     f.oneofIdx = info.oneofIndex;
@@ -395,7 +389,11 @@ class PbLoader {
 
     f.typeId = info.type;
     f.repeated = info.label == PB_Lrepeated;
-    f.packed = info.packed >= 0 ? info.packed : (isProto3 && f.repeated) ? 1 : 0;
+    f.packed = info.packed >= 0
+        ? info.packed
+        : (isProto3 && f.repeated)
+            ? 1
+            : 0;
 
     if (f.typeId >= 9 && f.typeId <= 12) {
       f.packed = 0;
@@ -471,22 +469,4 @@ class PbLoader {
 
     return PB_OK;
   }
-  // int loadFile(PbFileInfo info) {
-  //   int i, count, j, jcount, curr = 0;
-  //   for (i = 0, count = info.enumType.length; i < count; ++i) {
-  //     enumDescriptorProto(info.enumType[i]);
-  //   }
-  //
-  //   for (i = 0, count = info.messageType.length; i < count; ++i) {
-  //     descriptorProto(info.messageType[i]);
-  //   }
-  //
-  //   for (i = 0, count = info.extension.length; i < count; ++i) {
-  //     fieldDescriptorProto(info.extension[i]);
-  //   }
-  //
-  //   return PB_OK;
-  // }
 }
-
-

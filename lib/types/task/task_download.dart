@@ -118,7 +118,7 @@ class TaskDownload extends TaskBase {
     );
     task.createTime = DateTime.parse(json['createTime']);
     task.status = TaskStatus.values[json['status']];
-    task.setProgress(json['progress']);
+    task.setProgress(json['progress'] ?? 0);
     return task;
   }
 

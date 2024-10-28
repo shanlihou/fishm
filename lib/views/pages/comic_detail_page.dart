@@ -11,8 +11,6 @@ import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
-import '../../types/provider/task_provider.dart';
-import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
