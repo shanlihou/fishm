@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/log.dart';
 import '../../types/provider/extension_provider.dart';
 import '../widget/search_result_widget.dart';
 
@@ -13,9 +14,9 @@ class SearchTab extends StatefulWidget {
 }
 
 class _SearchTabState extends State<SearchTab> {
-  ExtensionProvider? extensionProvider;
   TextEditingController _searchController = TextEditingController();
   List<(String, String)> extensionNames = [];
+  List<SearchResultController> searchResultControllers = [];
 
   @override
   void initState() {
@@ -25,20 +26,24 @@ class _SearchTabState extends State<SearchTab> {
   @override
   void dispose() {
     _searchController.dispose();
+    for (var controller in searchResultControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _search() async {
-    extensionNames.clear();
-    for (var extension in extensionProvider!.extensions) {
-      extensionNames.add((extension.name, _searchController.text));
+    for (var controller in searchResultControllers) {
+      controller.setKeyword(_searchController.text);
     }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    extensionProvider ??= context.read<ExtensionProvider>();
+    var p = context.watch<ExtensionProvider>();
+    while (searchResultControllers.length < p.extensions.length) {
+      searchResultControllers.add(SearchResultController());
+    }
 
     return Center(
       child: Column(children: [
@@ -64,13 +69,16 @@ class _SearchTabState extends State<SearchTab> {
           ],
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: extensionNames.length,
-            itemBuilder: (BuildContext context, int index) {
-              return SearchResultWidget(
-                  extensionName: extensionNames[index].$1,
-                  keyword: extensionNames[index].$2);
-            },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                for (var i = 0; i < p.extensions.length; i++)
+                  SearchResultWidget(
+                    extensionName: p.extensions[i].name,
+                    controller: searchResultControllers[i],
+                  ),
+              ],
+            ),
           ),
         ),
       ]),

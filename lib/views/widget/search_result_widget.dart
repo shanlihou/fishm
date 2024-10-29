@@ -10,12 +10,26 @@ import '../../types/common/search_header.dart';
 import '../class/comic_item.dart';
 import 'comic_item_widget.dart';
 
+class SearchResultController {
+  ValueChanged<String>? onChanged;
+
+  void setKeyword(String keyword) {
+    onChanged?.call(keyword);
+  }
+
+  void dispose() {
+    onChanged = null;
+  }
+
+  SearchResultController();
+}
+
 class SearchResultWidget extends StatefulWidget {
   final String extensionName;
-  final String keyword;
+  final SearchResultController controller;
 
   const SearchResultWidget(
-      {super.key, required this.extensionName, required this.keyword});
+      {super.key, required this.extensionName, required this.controller});
 
   @override
   State<SearchResultWidget> createState() => _SearchResultWidgetState();
@@ -23,6 +37,7 @@ class SearchResultWidget extends StatefulWidget {
 
 class _SearchResultWidgetState extends State<SearchResultWidget> {
   int _page = 0;
+  String _keyword = '';
   final List<ComicItem> _comicItems = [];
   bool _isLoading = false;
   final EasyRefreshController _easyRefreshController = EasyRefreshController(
@@ -32,17 +47,14 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
   @override
   void initState() {
     super.initState();
-    _loadMore();
+    widget.controller.onChanged = _onKeywordChanged;
   }
 
-  @override
-  void didUpdateWidget(covariant SearchResultWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.keyword != widget.keyword) {
-      _page = 0;
-      _comicItems.clear();
-      _loadMore();
-    }
+  void _onKeywordChanged(String keyword) {
+    _page = 0;
+    _keyword = keyword;
+    _comicItems.clear();
+    _loadMore();
   }
 
   Future<void> _loadMore() async {
@@ -51,8 +63,11 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
     }
 
     _isLoading = true;
-    Log.instance.d('search ${widget.extensionName} ${widget.keyword} $_page');
-    var ret = await search(widget.extensionName, widget.keyword, _page);
+    if (mounted) {
+      setState(() {});
+    }
+    Log.instance.d('search ${widget.extensionName} $_keyword $_page');
+    var ret = await search(widget.extensionName, _keyword, _page);
     try {
       var galleryResult = GalleryResult.fromJson(ret as Map<String, dynamic>);
       if (galleryResult.success) {
@@ -79,6 +94,9 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
     }
 
     _isLoading = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -89,29 +107,34 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Widget result;
+    if (_isLoading && _comicItems.isEmpty) {
+      result = const Center(child: CupertinoActivityIndicator());
+    } else {
+      result = SizedBox(
+        height: 0.4.sw,
+        width: 1.sw,
+        child: EasyRefresh(
+          controller: _easyRefreshController,
+          header: SearchHeader(),
+          footer: SearchFooter(),
+          onLoad: () async {
+            await _loadMore();
+          },
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _comicItems.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ComicItemWidget(_comicItems[index], widget.extensionName);
+            },
+          ),
+        ),
+      );
+    }
     return Column(
       children: [
         Text(widget.extensionName),
-        SizedBox(
-          height: 0.4.sw,
-          width: 1.sw,
-          child: EasyRefresh(
-            controller: _easyRefreshController,
-            header: SearchHeader(),
-            footer: SearchFooter(),
-            onLoad: () async {
-              await _loadMore();
-            },
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _comicItems.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ComicItemWidget(
-                    _comicItems[index], widget.extensionName);
-              },
-            ),
-          ),
-        )
+        result,
       ],
     );
   }
