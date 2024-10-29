@@ -3,4 +3,4 @@ const extensionStoreKey = 'extension_store';
 const comicHistoryHiveKey = 'comic_history';
 const favoriteComicHiveKey = 'favorite_comic';
 const readHistoryHiveKey = 'read_history';
-const taskHiveKey = 'db_task';
+const taskHiveKey = 'hive_task';

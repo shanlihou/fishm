@@ -70,6 +70,7 @@ class _ExploreTabState extends State<ExploreTab>
     return Expanded(
       flex: 1,
       child: ListView.builder(
+        scrollDirection: Axis.horizontal,
         itemCount: extensions.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(

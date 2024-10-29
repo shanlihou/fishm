@@ -86,99 +86,27 @@ class _HomeState extends State<Home>
         ),
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                children: [
-                  const BookShelfTab(),
-                  const HistoryTab(),
-                  const ExtensionsTab(),
-                  const ExploreTab(),
-                  const SearchTab(),
-                ],
-              ),
-            ),
-            Expanded(
-              child: BottomAppBarWidget(
-                currentIndex: 0,
-                onTap: (index) {
-                  curLabel.value = AppLocalizations.of(context)!.favorite;
-                },
-              ),
-
-              // CupertinoTabView(
-              //   builder: (context) {
-              //     return CupertinoTabScaffold(
-              //       tabBar: CupertinoTabBar(
-              //         onTap: (index) {
-              //           switch (index) {
-              //             case 0:
-              //               curLabel.value =
-              //                   AppLocalizations.of(context)!.favorite;
-              //               break;
-              //             case 1:
-              //               curLabel.value =
-              //                   AppLocalizations.of(context)!.history;
-              //               break;
-              //             case 2:
-              //               curLabel.value =
-              //                   AppLocalizations.of(context)!.extensions;
-              //               break;
-              //             case 3:
-              //               curLabel.value =
-              //                   AppLocalizations.of(context)!.explore;
-              //               break;
-              //             case 4:
-              //               curLabel.value =
-              //                   AppLocalizations.of(context)!.search;
-              //               break;
-              //           }
-              //         },
-              //         items: [
-              //           BottomNavigationBarItem(
-              //             icon: const Icon(CupertinoIcons.star),
-              //             label: AppLocalizations.of(context)!.favorite,
-              //           ),
-              //           BottomNavigationBarItem(
-              //             icon: const Icon(CupertinoIcons.clock),
-              //             label: AppLocalizations.of(context)!.history,
-              //           ),
-              //           BottomNavigationBarItem(
-              //             icon: const Icon(CupertinoIcons.square_grid_2x2),
-              //             label: AppLocalizations.of(context)!.extensions,
-              //           ),
-              //           BottomNavigationBarItem(
-              //             icon: const Icon(CupertinoIcons.globe),
-              //             label: AppLocalizations.of(context)!.explore,
-              //           ),
-              //           BottomNavigationBarItem(
-              //             icon: const Icon(CupertinoIcons.search),
-              //             label: AppLocalizations.of(context)!.search,
-              //           ),
-              //         ],
-              //       ),
-              //       tabBuilder: (context, index) {
-              //         switch (index) {
-              //           case 0:
-              //             return const BookShelfTab();
-              //           case 1:
-              //             return const HistoryTab();
-              //           case 2:
-              //             return const ExtensionsTab();
-              //           case 3:
-              //             return const ExploreTab();
-              //           case 4:
-              //             return const SearchTab();
-              //           default:
-              //             return const SizedBox.shrink();
-              //         }
-              //       },
-              //     );
-              //   },
-              // ),
-            ),
+        child: BottomAppBarWidget(
+          pages: [
+            const BookShelfTab(),
+            const HistoryTab(),
+            const ExtensionsTab(),
+            const ExploreTab(),
+            const SearchTab(),
           ],
+          titles: [
+            '书架',
+            '历史',
+            '扩展',
+            '探索',
+          ],
+          icons: [
+            CupertinoIcons.book,
+            CupertinoIcons.clock,
+            CupertinoIcons.square_favorites,
+            CupertinoIcons.search,
+          ],
+          middleIcon: CupertinoIcons.cloud_download,
         ),
       ),
     );
