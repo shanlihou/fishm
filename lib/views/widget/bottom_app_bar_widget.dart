@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../common/log.dart';
+import '../../const/assets_const.dart';
 import '../../const/color_const.dart';
 
 class BottomAppBarWidget extends StatefulWidget {
@@ -84,40 +85,16 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
           left: 0,
           right: 0,
           bottom: 55.h, // 调整按钮位置
-          child: GestureDetector(
-            onTap: () => _onTap(2), // 点击中间按钮时的回调
-            child: Container(
+          child: Center(
+            child: SizedBox(
               width: 212.h,
               height: 212.h,
-              decoration: BoxDecoration(
-                color: _isMiddle(_currentIndex)
-                    ? CupertinoColors.white
-                    : iconColor88,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Container(
-                  width: 180.h,
-                  height: 180.h,
-                  decoration: BoxDecoration(
-                    color: _isMiddle(_currentIndex)
-                        ? iconColor
-                        : CupertinoColors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: CupertinoColors.black.withOpacity(0.2),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    CupertinoIcons.book,
-                    color: _isMiddle(_currentIndex)
-                        ? CupertinoColors.white
-                        : iconColor,
-                    size: 30,
-                  ),
+              child: GestureDetector(
+                onTap: () => _onTap(2), // 点击中间按钮时的回调
+                child: Image.asset(
+                  _isMiddle(_currentIndex) ? shelfOn : shelfOff,
+                  width: 212.h,
+                  height: 212.h,
                 ),
               ),
             ),

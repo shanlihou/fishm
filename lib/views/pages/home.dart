@@ -88,9 +88,9 @@ class _HomeState extends State<Home>
       child: SafeArea(
         child: BottomAppBarWidget(
           pages: [
-            const BookShelfTab(),
-            const HistoryTab(),
             const ExtensionsTab(),
+            const HistoryTab(),
+            const BookShelfTab(),
             const ExploreTab(),
             const SearchTab(),
           ],
