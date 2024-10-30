@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/db/comic_model.dart';
-import '../../types/provider/comic_provider.dart';
-import '../class/comic_item.dart';
-import '../widget/comic_item_widget.dart';
 import 'favorite_tab.dart';
 import 'history_tab.dart';
 

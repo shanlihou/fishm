@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
-import '../../const/color_const.dart';
 
 class BottomAppBarWidget extends StatefulWidget {
   final List<Widget> pages;
