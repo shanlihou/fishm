@@ -66,6 +66,7 @@ Future<bool> initDirectory() async {
     var externalDir = await getExternalStorageDirectory();
     var applicationDir = await getApplicationDocumentsDirectory();
     Directory.current = externalDir ?? applicationDir;
+    Log.instance.d('external: $externalDir, application: $applicationDir');
   } else if (Platform.isWindows) {
     // var externalDir = await getExternalStorageDirectory();
     // var applicationDir = await getApplicationDocumentsDirectory();
