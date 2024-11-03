@@ -1,5 +1,6 @@
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../models/api/gallery_result.dart';
@@ -122,7 +123,12 @@ class _ExploreTabState extends State<ExploreTab>
                 }
 
                 var item = value[trulyIndex];
-                children.add(ComicItemWidget(item, extensionName!));
+                children.add(ComicItemWidget(
+                  item,
+                  extensionName!,
+                  width: 405.w,
+                  height: 541.h,
+                ));
               }
 
               return Container(

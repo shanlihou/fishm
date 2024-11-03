@@ -37,5 +37,7 @@
   },
   "enable": "Enable",
   "host": "Host",
-  "port": "Port"
+  "port": "Port",
+  "baseline": "I have a bottom line",
+  "findMore": "Find more comics"
 }

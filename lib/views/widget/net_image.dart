@@ -42,10 +42,10 @@ class NetImageProvider extends ImageProvider<NetImageProvider> {
 }
 
 class NetImage extends StatefulWidget {
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final NetImageContext ctx;
-  const NetImage(this.ctx, this.width, this.height, {super.key});
+  const NetImage(this.ctx, {super.key, this.width, this.height});
 
   @override
   State<NetImage> createState() => _NetImageState();
@@ -120,7 +120,7 @@ class _NetImageState extends State<NetImage> {
     if (_isDownloaded) {
       return Image.file(
         File(widget.ctx.imagePath),
-        fit: BoxFit.contain,
+        fit: BoxFit.fill,
         width: widget.width,
         height: widget.height,
       );

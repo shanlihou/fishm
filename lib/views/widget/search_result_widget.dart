@@ -125,7 +125,12 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
             scrollDirection: Axis.horizontal,
             itemCount: _comicItems.length,
             itemBuilder: (BuildContext context, int index) {
-              return ComicItemWidget(_comicItems[index], widget.extensionName);
+              return ComicItemWidget(
+                _comicItems[index],
+                widget.extensionName,
+                width: 405.w,
+                height: 541.h,
+              );
             },
           ),
         ),

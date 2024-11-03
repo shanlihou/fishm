@@ -57,8 +57,8 @@ class _HistoryTabState extends State<HistoryTab> {
                       child: ComicItemWidget(
                         ComicItem.fromComicModel(comics[index]),
                         comics[index].extensionName,
-                        width: 0.2.sw,
-                        height: 0.2.sw,
+                        width: 405.w,
+                        height: 541.h,
                       ),
                     ),
                   ],

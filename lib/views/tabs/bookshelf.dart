@@ -19,18 +19,10 @@ class _BookShelfTabState extends State<BookShelfTab> {
     return Positioned(
       left: 255.w,
       top: 37.h,
-      child: Container(
-        decoration: BoxDecoration(
-          color: CupertinoColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromRGBO(0, 0, 0, 0.05),
-              blurRadius: 16.w,
-            ),
-          ],
-        ),
+      bottom: 37.h,
+      child: SizedBox(
         width: 893.w,
-        height: 1240.h,
+        height: double.infinity,
         child: PageView(
           controller: _pageController,
           children: const [
@@ -52,10 +44,15 @@ class _BookShelfTabState extends State<BookShelfTab> {
         child: Container(
           decoration: BoxDecoration(
             color: front ? CupertinoColors.white : const Color(0xFFEFEFEF),
-            borderRadius: BorderRadius.all(Radius.circular(16.r)),
+            // only left top and left bottom
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              bottomLeft: Radius.circular(20.r),
+            ),
             boxShadow: [
               BoxShadow(
-                color: const Color.fromRGBO(0, 0, 0, 0.05),
+                // #9B9DC2 55%
+                color: const Color(0xFF9B9DC2).withOpacity(0.55),
                 blurRadius: 16.w,
               ),
             ],

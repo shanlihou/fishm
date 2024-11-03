@@ -240,7 +240,9 @@ Future<void> _downloadExtension(model_extensions.Extension extension) async {
     }
     if (file.isFile) {
       final data = file.content as List<int>;
-      File('$pluginDir/${extension.name}/$filename')
+      String fullPath = '$pluginDir/${extension.name}/$filename';
+      Log.instance.d('downloadExtension: $fullPath');
+      File(fullPath)
         ..createSync(recursive: true)
         ..writeAsBytesSync(data);
     }

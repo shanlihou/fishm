@@ -362,8 +362,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     widget.comicItem.comicId,
                     widget.comicItem.imageUrl,
                   ),
-                  1.sw,
-                  1.sw,
+                  width: 1.sw,
+                  height: 1.sw,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),

@@ -327,8 +327,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         child: NetImage(
           NetImageContextReader(widget.extensionName, widget.comicId, ret.$3,
               ret.$1, ret.$2, widget.extra),
-          1.sw,
-          1.sh,
+          width: 1.sw,
+          height: 1.sh,
         ));
   }
 
