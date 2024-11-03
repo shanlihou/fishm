@@ -3,91 +3,75 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
+import 'package:toonfu/utils/utils_general.dart';
 
+import '../../utils/utils_widget.dart';
 import '../class/comic_item.dart';
+import '../dialog/install_confirm_dialog.dart';
 import '../widget/comic_item_widget.dart';
 
-class HistoryTab extends StatefulWidget {
+class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
 
   @override
-  State<HistoryTab> createState() => _HistoryTabState();
-}
-
-class _HistoryTabState extends State<HistoryTab> {
-  Set<int> selectedIndices = {};
-  bool isSelectionMode = false;
-
-  @override
   Widget build(BuildContext context) {
+    var p = context.read<ComicProvider>();
     List<ComicModel> comics = context.watch<ComicProvider>().historyComics;
 
-    return Stack(
-      children: [
-        ListView.builder(
-          itemCount: comics.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onLongPress: () {
-                setState(() {
-                  isSelectionMode = true;
-                  selectedIndices.add(index);
-                });
-              },
-              child: Container(
-                color: selectedIndices.contains(index)
-                    ? CupertinoColors.systemGrey5
-                    : null,
-                child: Row(
-                  children: [
-                    if (isSelectionMode)
-                      CupertinoCheckbox(
-                        value: selectedIndices.contains(index),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value == true) {
-                              selectedIndices.add(index);
-                            } else {
-                              selectedIndices.remove(index);
-                            }
-                          });
-                        },
-                      ),
-                    Expanded(
+    Future<void> onLongPress(ComicModel comic) async {
+      if (await showConfirmDialog(context, 'Delete ${comic.title}?') ?? false) {
+        p.removeHistoryComic([getComicUniqueId(comic.id, comic.extensionName)]);
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.white,
+          boxShadow: [
+            // box-shadow: 0px 5px 20px 5px rgba(155,157,194,0.55);
+            BoxShadow(
+              color: const Color(0xFF9B9DC2).withOpacity(0.55),
+              blurRadius: 20.w,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            for (int i = 0; i < comics.length; i += 2)
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(34, 22, 0, 0).w,
+                    child: GestureDetector(
+                      onLongPress: () => onLongPress(comics[i]),
                       child: ComicItemWidget(
-                        ComicItem.fromComicModel(comics[index]),
-                        comics[index].extensionName,
+                        ComicItem.fromComicModel(comics[i]),
+                        comics[i].extensionName,
                         width: 405.w,
                         height: 541.h,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  if (i + 1 < comics.length)
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(9, 22, 34, 0).w,
+                      child: GestureDetector(
+                        onLongPress: () => onLongPress(comics[i + 1]),
+                        child: ComicItemWidget(
+                          ComicItem.fromComicModel(comics[i + 1]),
+                          comics[i + 1].extensionName,
+                          width: 405.w,
+                          height: 541.h,
+                        ),
+                      ),
+                    )
+                ],
               ),
-            );
-          },
+            comicTabBaseline(context),
+          ],
         ),
-        if (isSelectionMode)
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: CupertinoButton(
-                color: CupertinoColors.destructiveRed,
-                child: const Text('delete'),
-                onPressed: () {
-                  List<String> uniqueIds = selectedIndices.map((index) {
-                    return comics[index].uniqueId;
-                  }).toList();
-                  isSelectionMode = false;
-                  selectedIndices.clear();
-                  context.read<ComicProvider>().removeHistoryComic(uniqueIds);
-                },
-              ),
-            ),
-          ),
-      ],
+      ),
     );
   }
 }

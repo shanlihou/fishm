@@ -60,7 +60,17 @@ class _BookShelfTabState extends State<BookShelfTab> {
           width: 235.w,
           height: 149.h,
           child: Center(
-            child: Text(title),
+            child: Text(
+              title,
+              style: TextStyle(
+                // #B886F8 88%
+                // #9A9A9A 100%
+                color: front
+                    ? const Color(0xFFB886F8).withOpacity(0.88)
+                    : const Color(0xFF9A9A9A),
+                fontSize: 40.spMin,
+              ),
+            ),
           ),
           //#EFEFEF 100%
         ),

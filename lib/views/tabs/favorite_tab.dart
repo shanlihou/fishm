@@ -4,53 +4,12 @@ import 'package:provider/provider.dart';
 
 import '../../models/db/comic_model.dart';
 import '../../types/provider/comic_provider.dart';
+import '../../utils/utils_widget.dart';
 import '../class/comic_item.dart';
 import '../widget/comic_item_widget.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class FavoriteTab extends StatelessWidget {
   const FavoriteTab({super.key});
-
-  Widget _buildBaseLine(BuildContext context) {
-    return SizedBox(
-      height: 106.h,
-      child: Row(
-        children: [
-          SizedBox(width: 140.w),
-          Container(
-            // #BBBBBB 100%
-            color: const Color(0xFFBBBBBB),
-            width: 239.w,
-            height: 1.h,
-          ),
-          SizedBox(
-            width: 177.w,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(AppLocalizations.of(context)!.baseline)),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    child: Text(AppLocalizations.of(context)!.findMore),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            // #BBBBBB 100%
-            color: const Color(0xFFBBBBBB),
-            width: 239.w,
-            height: 1.h,
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,41 +54,10 @@ class FavoriteTab extends StatelessWidget {
                     )
                 ],
               ),
-            _buildBaseLine(context),
+            comicTabBaseline(context),
           ],
         ),
       ),
     );
-
-    // return ListView.builder(
-    //   itemCount: (comics.length / 2).ceil(),
-    //   itemBuilder: (context, index) {
-    //     return Row(
-    //       children: [
-    //         Container(
-    //           color: CupertinoColors.white,
-    //           padding: const EdgeInsets.fromLTRB(34, 22, 0, 0).w,
-    //           child: ComicItemWidget(
-    //             ComicItem.fromComicModel(comics[index * 2]),
-    //             comics[index * 2].extensionName,
-    //             width: 405.w,
-    //             height: 541.h,
-    //           ),
-    //         ),
-    //         if (index * 2 + 1 < comics.length)
-    //           Container(
-    //             color: CupertinoColors.white,
-    //             padding: const EdgeInsets.fromLTRB(9, 22, 34, 0).w,
-    //             child: ComicItemWidget(
-    //               ComicItem.fromComicModel(comics[index * 2 + 1]),
-    //               comics[index * 2 + 1].extensionName,
-    //               width: 405.w,
-    //               height: 541.h,
-    //             ),
-    //           )
-    //       ],
-    //     );
-    //   },
-    // );
   }
 }

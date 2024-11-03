@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -61,60 +62,79 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
       }
     }
 
-    return GestureDetector(
-      onLongPress: () async {
-        if (!_checkCouldUninstall(extension.name)) {
-          _showTip(
-              'could not uninstall: because of downloading or reading history');
-          return;
-        }
+    return Container(
+      //       left: 132px;
+      // top: 1515px;
+      // width: 915px;
+      // height: 188px;
+      // border-radius: 20px;
+      // background: linear-gradient(179.83deg, rgba(255,255,255,0.21) -1.75%,rgba(255,255,255,0) 66.95%);
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(20.r),
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFFF5F5F5).withOpacity(0.21),
+            Colors.transparent,
+          ],
+        ),
+      ),
+      child: GestureDetector(
+        onLongPress: () async {
+          if (!_checkCouldUninstall(extension.name)) {
+            _showTip(
+                'could not uninstall: because of downloading or reading history');
+            return;
+          }
 
-        var p = context.read<ExtensionProvider>();
-        if (await showConfirmDialog(context, 'Uninstall ${extension.name}?') ??
-            false) {
-          p.removeExtension(extension.name);
-        }
-      },
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(extension.name)),
-          Expanded(flex: 4, child: Text(extension.version)),
-          Expanded(
-              flex: 2,
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ExtensionConfigPage(
-                                extensionName: extension.name)));
-                  },
-                  child: Text(AppLocalizations.of(context)!.config))),
-          Expanded(
-              flex: 2,
-              child: GestureDetector(
-                onTap: () async {
-                  if (status == ExtensionStatus.installed) {
-                    return;
-                  }
-
-                  if (await showConfirmDialog(
-                          context, 'Install ${extension.name}?') ??
-                      false) {
-                    var entry = showLoadingDialog(context);
-                    var ext = await installExtension(extension);
-                    if (ext != null) {
-                      p.updateExtension(ext);
-                      actionsManager.resetMainLua();
+          var p = context.read<ExtensionProvider>();
+          if (await showConfirmDialog(
+                  context, 'Uninstall ${extension.name}?') ??
+              false) {
+            p.removeExtension(extension.name);
+          }
+        },
+        child: Row(
+          children: [
+            Expanded(flex: 2, child: Text(extension.name)),
+            Expanded(flex: 4, child: Text(extension.version)),
+            Expanded(
+                flex: 2,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ExtensionConfigPage(
+                                  extensionName: extension.name)));
+                    },
+                    child: Text(AppLocalizations.of(context)!.config))),
+            Expanded(
+                flex: 2,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (status == ExtensionStatus.installed) {
+                      return;
                     }
-                    entry.remove();
-                  }
-                },
-                child: status == ExtensionStatus.needUpdate
-                    ? const Icon(Icons.update)
-                    : const Icon(Icons.check),
-              )),
-        ],
+
+                    if (await showConfirmDialog(
+                            context, 'Install ${extension.name}?') ??
+                        false) {
+                      var entry = showLoadingDialog(context);
+                      var ext = await installExtension(extension);
+                      if (ext != null) {
+                        p.updateExtension(ext);
+                        actionsManager.resetMainLua();
+                      }
+                      entry.remove();
+                    }
+                  },
+                  child: status == ExtensionStatus.needUpdate
+                      ? const Icon(Icons.update)
+                      : const Icon(Icons.check),
+                )),
+          ],
+        ),
       ),
     );
   }
