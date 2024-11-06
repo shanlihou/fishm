@@ -21,5 +21,7 @@
     "host": "主机",
     "port": "端口",
     "baseline": "我是有底线的",
-    "findMore": "发现更多漫画"
+    "findMore": "发现更多漫画",
+    "update": "更新",
+    "install": "安装"
 }

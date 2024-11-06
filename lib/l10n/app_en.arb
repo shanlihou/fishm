@@ -40,5 +40,7 @@
   "host": "Host",
   "port": "Port",
   "baseline": "I have a bottom line",
-  "findMore": "Find more comics"
+  "findMore": "Find more comics",
+  "update": "Update",
+  "install": "Install"
 }

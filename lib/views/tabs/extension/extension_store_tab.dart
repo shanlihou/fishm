@@ -11,6 +11,7 @@ import '../../../types/provider/setting_provider.dart';
 import '../../../utils/utils_general.dart';
 import '../../dialog/install_confirm_dialog.dart';
 import '../../dialog/loading_dialog.dart';
+import '../../widget/extension_item_widget.dart';
 
 class ExtensionStoreTab extends StatefulWidget {
   const ExtensionStoreTab({super.key});
@@ -40,37 +41,9 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
       }
     }
 
-    return Row(
-      children: [
-        Expanded(flex: 2, child: Text(extension.name)),
-        Expanded(flex: 6, child: Text(extension.version)),
-        Expanded(
-            flex: 2,
-            child: GestureDetector(
-              onTap: () async {
-                if (status == ExtensionStatus.installed) {
-                  return;
-                }
-
-                if (await showConfirmDialog(
-                        context, 'Install ${extension.name}?') ??
-                    false) {
-                  var entry = showLoadingDialog(context);
-                  var ext = await installExtension(extension);
-                  if (ext != null) {
-                    p.updateExtension(ext);
-                    actionsManager.resetMainLua();
-                  }
-                  entry.remove();
-                }
-              },
-              child: status == ExtensionStatus.notInstalled
-                  ? const Icon(Icons.download)
-                  : status == ExtensionStatus.needUpdate
-                      ? const Icon(Icons.update)
-                      : const Icon(Icons.check),
-            )),
-      ],
+    return ExtensionItemWidget(
+      extension: extension,
+      status: status,
     );
   }
 
