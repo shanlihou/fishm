@@ -7,16 +7,16 @@ import '../../const/assets_const.dart';
 class BottomAppBarWidget extends StatefulWidget {
   final List<Widget> pages;
   final List<String> titles;
-  final List<IconData> icons;
-  final IconData middleIcon;
+  final List<String> iconOffs;
+  final List<String> iconOns;
   final PageController pageController = PageController();
 
   BottomAppBarWidget({
     super.key,
     required this.pages,
     required this.titles,
-    required this.icons,
-    required this.middleIcon,
+    required this.iconOffs,
+    required this.iconOns,
   });
 
   @override
@@ -71,7 +71,16 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                   }
 
                   return BottomNavigationBarItem(
-                    icon: Icon(widget.icons[index]),
+                    activeIcon: Image.asset(
+                      width: 80.w,
+                      height: 80.h,
+                      widget.iconOns[index],
+                    ),
+                    icon: Image.asset(
+                      width: 80.w,
+                      height: 80.h,
+                      widget.iconOffs[index],
+                    ),
                     label: widget.titles[index],
                   );
                 }),

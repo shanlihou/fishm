@@ -13,7 +13,7 @@ class SearchTab extends StatefulWidget {
 }
 
 class _SearchTabState extends State<SearchTab> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<(String, String)> extensionNames = [];
   List<SearchResultController> searchResultControllers = [];
 

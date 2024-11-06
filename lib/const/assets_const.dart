@@ -1,2 +1,10 @@
 const String shelfOn = 'assets/images/icon/shelf-on.png';
 const String shelfOff = 'assets/images/icon/shelf-off.png';
+const String extensionOn = 'assets/images/icon/extension-on.png';
+const String extensionOff = 'assets/images/icon/extension-off.png';
+const String searchOn = 'assets/images/icon/search-on.png';
+const String searchOff = 'assets/images/icon/search-off.png';
+const String myOn = 'assets/images/icon/my-on.png';
+const String myOff = 'assets/images/icon/my-off.png';
+const String modeOn = 'assets/images/icon/mode-on.png';
+const String modeOff = 'assets/images/icon/mode-off.png';

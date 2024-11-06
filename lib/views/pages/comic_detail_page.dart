@@ -40,7 +40,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   bool _isFetchChapterDownCnt = false;
   bool _dispose = false;
-  Map<String, (int, int)> _chapterDownCnts = {};
+  final Map<String, (int, int)> _chapterDownCnts = {};
 
   final Map<String, ComicChapterStatusController> _chapterStatusControllers =
       {};

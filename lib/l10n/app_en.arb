@@ -5,6 +5,7 @@
   "extensions": "Extensions",
   "explore": "Explore",
   "search": "Search",
+  "my": "My",
 
   "general": "General",
   "@general": {

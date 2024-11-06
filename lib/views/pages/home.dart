@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:toonfu/views/tabs/explore_tab.dart';
 import 'package:toonfu/views/tabs/bookshelf.dart';
+import '../../const/assets_const.dart';
 import '../../types/provider/task_provider.dart';
 import '../mixin/lua_mixin.dart';
 import '../mixin/task_mixin.dart';
@@ -87,26 +88,21 @@ class _HomeState extends State<Home>
       ),
       child: SafeArea(
         child: BottomAppBarWidget(
-          pages: [
-            const ExtensionsTab(),
-            const HistoryTab(),
-            const BookShelfTab(),
-            const ExploreTab(),
-            const SearchTab(),
+          pages: const [
+            ExtensionsTab(),
+            HistoryTab(),
+            BookShelfTab(),
+            ExploreTab(),
+            SearchTab(),
           ],
           titles: [
-            '书架',
-            '历史',
-            '扩展',
-            '探索',
+            AppLocalizations.of(context)!.extensions,
+            AppLocalizations.of(context)!.search,
+            AppLocalizations.of(context)!.explore,
+            AppLocalizations.of(context)!.my,
           ],
-          icons: [
-            CupertinoIcons.book,
-            CupertinoIcons.clock,
-            CupertinoIcons.square_favorites,
-            CupertinoIcons.search,
-          ],
-          middleIcon: CupertinoIcons.cloud_download,
+          iconOffs: const [extensionOff, searchOff, modeOff, myOff],
+          iconOns: const [extensionOn, searchOn, modeOn, myOn],
         ),
       ),
     );
