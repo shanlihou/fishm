@@ -5,12 +5,9 @@ import 'package:provider/provider.dart';
 import '../../../const/general_const.dart';
 import '../../../models/db/extensions.dart' as model_extensions;
 import '../../../types/common/alias.dart';
-import '../../../types/manager/actions.dart';
 import '../../../types/provider/extension_provider.dart';
 import '../../../types/provider/setting_provider.dart';
 import '../../../utils/utils_general.dart';
-import '../../dialog/install_confirm_dialog.dart';
-import '../../dialog/loading_dialog.dart';
 import '../../widget/extension_item_widget.dart';
 
 class ExtensionStoreTab extends StatefulWidget {
@@ -44,6 +41,7 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
     return ExtensionItemWidget(
       extension: extension,
       status: status,
+      supportConfig: false,
     );
   }
 

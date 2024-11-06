@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../common/log.dart';
 import '../../types/manager/global_manager.dart';
@@ -93,7 +95,19 @@ class _SplashScreenState extends State<SplashScreen> {
     _init(context);
     return CupertinoPageScaffold(
       child: Center(
-        child: Text(_stepText),
+        child: Column(
+          children: [
+            CupertinoButton(
+              child: Text(_stepText),
+              onPressed: () {
+                Navigator.of(context).push(material.MaterialPageRoute(
+                  builder: (context) =>
+                      TalkerScreen(talker: Log.instance.talker),
+                ));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
+import 'common/log.dart';
 import 'const/db_const.dart';
 import 'models/db/read_history_model.dart';
 import 'types/provider/local_provider.dart';
@@ -28,16 +29,20 @@ void main() {
 
 Future<void> _main() async {
   // Isolate.spawn<void>(luaLoop, null);
-  await initDirectory();
-  Hive.init(Directory.current.path);
-  await Hive.initFlutter();
-  await Hive.openBox(taskHiveKey);
-  Hive.registerAdapter(SettingsAdapter());
-  Hive.registerAdapter(ExtensionAdapter());
-  Hive.registerAdapter(ExtensionsAdapter());
-  Hive.registerAdapter(ComicModelAdapter());
-  Hive.registerAdapter(ChapterModelAdapter());
-  Hive.registerAdapter(ReadHistoryModelAdapter());
+  try {
+    await initDirectory();
+    Hive.init(Directory.current.path);
+    await Hive.initFlutter();
+    await Hive.openBox(taskHiveKey);
+    Hive.registerAdapter(SettingsAdapter());
+    Hive.registerAdapter(ExtensionAdapter());
+    Hive.registerAdapter(ExtensionsAdapter());
+    Hive.registerAdapter(ComicModelAdapter());
+    Hive.registerAdapter(ChapterModelAdapter());
+    Hive.registerAdapter(ReadHistoryModelAdapter());
+  } catch (e, s) {
+    Log.instance.e('Hive init error e:$e, s:$s');
+  }
 
   runApp(MultiProvider(
     providers: [

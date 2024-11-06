@@ -27,8 +27,13 @@ Future<bool> getAndroidPermission() async {
   final DeviceInfoPlugin info =
       DeviceInfoPlugin(); // import 'package:device_info_plus/device_info_plus.dart';
   final AndroidDeviceInfo androidInfo = await info.androidInfo;
-  debugPrint('releaseVersion : ${androidInfo.version.release}');
-  final int androidVersion = int.parse(androidInfo.version.release);
+  var strVersion = androidInfo.version.release;
+  Log.instance.d('releaseVersion string: $strVersion');
+  if (strVersion.contains('.')) {
+    strVersion = strVersion.split('.').first;
+  }
+  final int androidVersion = int.parse(strVersion);
+  Log.instance.d('androidVersion int: $androidVersion');
 
   if (androidVersion >= 13) {
     final request = await [

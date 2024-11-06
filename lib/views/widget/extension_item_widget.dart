@@ -16,11 +16,13 @@ class ExtensionItemWidget extends StatelessWidget {
   final model_extensions.Extension extension;
   final ExtensionStatus status;
   final void Function(model_extensions.Extension)? onLongPress;
+  final bool supportConfig;
   const ExtensionItemWidget({
     super.key,
     required this.extension,
     required this.status,
     this.onLongPress,
+    this.supportConfig = true,
   });
 
   void _toExtensionConfigPage(BuildContext context, String extensionName) {
@@ -57,6 +59,66 @@ class ExtensionItemWidget extends StatelessWidget {
     }
   }
 
+  List<Color> _getColors() {
+    if (status == ExtensionStatus.notInstalled) {
+      return const [
+        const Color.fromARGB(255, 131, 190, 253),
+        const Color.fromARGB(255, 153, 149, 249),
+      ];
+    } else {
+      return const [
+        const Color.fromARGB(255, 87, 208, 189),
+        const Color.fromARGB(255, 67, 203, 213),
+      ];
+    }
+  }
+
+  Widget _buildElevatedButton(String text, VoidCallback? onPressed) {
+    return material.ElevatedButton(
+      style: material.ElevatedButton.styleFrom(
+        side: BorderSide(
+          color: CupertinoColors.white,
+          width: 1.w,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40.r),
+        ),
+        backgroundBuilder: (context, states, child) => Container(
+          child: child,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: _getColors()),
+          ),
+        ),
+      ),
+      child: Text(text, style: TextStyle(color: CupertinoColors.white)),
+      onPressed: onPressed,
+    );
+  }
+
+  Widget _buildButton(BuildContext context, VoidCallback? onPressed) {
+    switch (status) {
+      case ExtensionStatus.needUpdate:
+        return _buildElevatedButton(
+            AppLocalizations.of(context)!.update, onPressed);
+      case ExtensionStatus.installed:
+        return Text(AppLocalizations.of(context)!.installed,
+            style: TextStyle(color: CupertinoColors.white));
+      default:
+        return _buildElevatedButton(
+            AppLocalizations.of(context)!.install, onPressed);
+    }
+  }
+
+  Widget _buildConfigButton(BuildContext context) {
+    if (!supportConfig) {
+      return const SizedBox.shrink();
+    }
+    return _buildElevatedButton(
+      AppLocalizations.of(context)!.config,
+      () => _toExtensionConfigPage(context, extension.name),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,10 +129,7 @@ class ExtensionItemWidget extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment(-1, -1),
           end: Alignment(1, -0.5),
-          colors: [
-            const Color.fromARGB(255, 87, 208, 189),
-            const Color.fromARGB(255, 67, 203, 213),
-          ],
+          colors: _getColors(),
         ),
       ),
       child: GestureDetector(
@@ -96,30 +155,13 @@ class ExtensionItemWidget extends StatelessWidget {
                   style: TextStyle(color: CupertinoColors.white),
                 )),
             Expanded(
-                flex: 1,
-                child: CupertinoButton(
-                  onPressed: () =>
-                      _toExtensionConfigPage(context, extension.name),
-                  child: Text(AppLocalizations.of(context)!.config,
-                      style: TextStyle(color: CupertinoColors.white)),
-                )),
-            Expanded(
-                flex: 1,
-                child: status == ExtensionStatus.needUpdate
-                    ? CupertinoButton(
-                        onPressed: null,
-                        child: Text(AppLocalizations.of(context)!.update,
-                            style: TextStyle(color: CupertinoColors.white)),
-                      )
-                    : status == ExtensionStatus.installed
-                        ? Text(AppLocalizations.of(context)!.installed,
-                            style: TextStyle(color: CupertinoColors.white))
-                        : CupertinoButton(
-                            child: Text(AppLocalizations.of(context)!.install,
-                                style: TextStyle(color: CupertinoColors.white)),
-                            onPressed: () =>
-                                _onTapInstall(context, extension, status),
-                          )),
+                flex: 1, child: Center(child: _buildConfigButton(context))),
+            Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(right: 60.w),
+                width: 320.w,
+                child: _buildButton(
+                    context, () => _onTapInstall(context, extension, status))),
           ],
         ),
       ),
