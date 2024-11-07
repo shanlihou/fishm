@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../../const/general_const.dart';
@@ -79,12 +80,32 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
     return Consumer<ExtensionProvider>(
       builder: (context, extensionProvider, child) {
         var extensions = extensionProvider.extensions;
-        return ListView.builder(
-          itemCount: extensions.length,
-          itemBuilder: (context, index) {
-            return _buildExtensionItem(extensions[index], extensionProvider);
-          },
+        List<Widget> children = extensions
+            .map(
+              (e) => Container(
+                color: CupertinoColors.white,
+                child: _buildExtensionItem(e, extensionProvider),
+              ),
+            )
+            .toList();
+
+        children.add(comicTabBaseline(context));
+
+        return Container(
+          margin: EdgeInsets.fromLTRB(43.w, 0.h, 43.w, 44.h),
+          child: SingleChildScrollView(
+            child: Column(
+              children: children,
+            ),
+          ),
         );
+
+        // return ListView.builder(
+        //   itemCount: extensions.length,
+        //   itemBuilder: (context, index) {
+        //     return _buildExtensionItem(extensions[index], extensionProvider);
+        //   },
+        // );
       },
     );
   }

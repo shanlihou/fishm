@@ -68,7 +68,6 @@ class _BookShelfTabState extends State<BookShelfTab> {
                 color: front
                     ? const Color(0xFFB886F8).withOpacity(0.88)
                     : const Color(0xFF9A9A9A),
-                fontSize: 40.spMin,
               ),
             ),
           ),

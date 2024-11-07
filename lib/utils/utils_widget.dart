@@ -23,9 +23,7 @@ Widget comicTabBaseline(BuildContext context) {
                   alignment: Alignment.bottomCenter,
                   child: Text(
                     AppLocalizations.of(context)!.baseline,
-                    style: TextStyle(
-                      fontSize: 40.spMin,
-                    ),
+                    style: TextStyle(),
                   )),
             ),
             Expanded(
@@ -36,7 +34,6 @@ Widget comicTabBaseline(BuildContext context) {
                   style: TextStyle(
                     // #B886F8 88%
                     color: const Color(0xFFB886F8).withOpacity(0.88),
-                    fontSize: 40.spMin,
                   ),
                 ),
               ),

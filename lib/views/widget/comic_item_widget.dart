@@ -67,7 +67,6 @@ class ComicItemWidget extends StatelessWidget {
                   child: Text(
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 40.spMin,
                       color: CupertinoColors.white,
                     ),
                     maxLines: 1,
