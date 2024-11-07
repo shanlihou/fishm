@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
+import '../../const/color_const.dart';
 import '../../models/api/gallery_result.dart';
 import '../../types/common/search_footer.dart';
 import '../../types/common/search_header.dart';
 import '../class/comic_item.dart';
 import 'comic_item_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class SearchResultController {
   ValueChanged<String>? onChanged;
@@ -125,22 +127,43 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
             scrollDirection: Axis.horizontal,
             itemCount: _comicItems.length,
             itemBuilder: (BuildContext context, int index) {
-              return ComicItemWidget(
-                _comicItems[index],
-                widget.extensionName,
-                width: 405.w,
-                height: 541.h,
+              return Container(
+                margin: EdgeInsets.only(right: 20.w),
+                child: ComicItemWidget(
+                  _comicItems[index],
+                  widget.extensionName,
+                  width: 405.w,
+                  height: 541.h,
+                ),
               );
             },
           ),
         ),
       );
     }
-    return Column(
-      children: [
-        Text(widget.extensionName),
-        result,
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: CupertinoColors.white,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      margin: EdgeInsets.fromLTRB(43.w, 44.h, 43.w, 0),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            margin: EdgeInsets.fromLTRB(40.w, 20.h, 20.w, 0),
+            child: Text(
+                style: TextStyle(color: lineColor),
+                '${AppLocalizations.of(context)!.extensions} : ${widget.extensionName}'),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+            color: lineColor,
+            height: 1.h,
+          ),
+          result,
+        ],
+      ),
     );
   }
 }

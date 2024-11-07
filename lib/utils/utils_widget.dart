@@ -3,6 +3,8 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import '../const/color_const.dart';
+
 Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
   return Container(
     height: 106.h,
@@ -13,7 +15,7 @@ Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
         Expanded(
           child: Container(
             // #BBBBBB 100%
-            color: const Color(0xFFBBBBBB),
+            color: lineColor,
             height: 1.h,
           ),
         ),
@@ -44,7 +46,7 @@ Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
         Expanded(
           child: Container(
             // #BBBBBB 100%
-            color: const Color(0xFFBBBBBB),
+            color: lineColor,
             height: 1.h,
           ),
         ),

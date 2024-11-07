@@ -83,14 +83,6 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
                 ),
               ),
             );
-
-            // return ListView.builder(
-            //   itemCount: extensions.length,
-            //   itemBuilder: (context, index) {
-            //     return _buildExtensionItem(
-            //         extensions[index], extensionProvider);
-            //   },
-            // );
           },
         ));
   }

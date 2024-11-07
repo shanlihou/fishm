@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/const/color_const.dart';
 
 import '../../types/provider/extension_provider.dart';
 import '../widget/search_result_widget.dart';
@@ -44,12 +45,14 @@ class _SearchTabState extends State<SearchTab> {
       searchResultControllers.add(SearchResultController());
     }
 
-    return Center(
+    return Container(
+      color: backgroundColor06,
       child: Column(children: [
         Row(
           children: [
-            SizedBox(
-              width: 0.8.sw,
+            Container(
+              margin: EdgeInsets.only(left: 200.w),
+              width: 0.6.sw,
               child: CupertinoTextField(
                 controller: _searchController,
                 placeholder: 'name of comic',

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import '../../const/color_const.dart';
 import 'extension/extension_installed_tab.dart';
 import 'extension/extension_store_tab.dart';
 
@@ -81,7 +82,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
     }
 
     return Container(
-      color: const Color(0xFF7F83F7).withOpacity(0.06),
+      color: backgroundColor06,
       child: Column(
         children: [
           Container(
