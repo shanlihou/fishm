@@ -3,9 +3,10 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
-Widget comicTabBaseline(BuildContext context) {
-  return SizedBox(
+Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
+  return Container(
     height: 106.h,
+    color: backgroundColor,
     child: Row(
       children: [
         SizedBox(width: 100.w),

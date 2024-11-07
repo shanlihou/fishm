@@ -89,7 +89,8 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
             )
             .toList();
 
-        children.add(comicTabBaseline(context));
+        children.add(
+            comicTabBaseline(context, backgroundColor: CupertinoColors.white));
 
         return Container(
           margin: EdgeInsets.fromLTRB(43.w, 0.h, 43.w, 44.h),
@@ -99,13 +100,6 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
             ),
           ),
         );
-
-        // return ListView.builder(
-        //   itemCount: extensions.length,
-        //   itemBuilder: (context, index) {
-        //     return _buildExtensionItem(extensions[index], extensionProvider);
-        //   },
-        // );
       },
     );
   }
