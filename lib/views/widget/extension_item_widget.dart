@@ -81,7 +81,7 @@ class ExtensionItemWidget extends StatelessWidget {
           width: 1.w,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40.r),
+          borderRadius: BorderRadius.circular(50.r),
         ),
         backgroundBuilder: (context, states, child) => Container(
           child: child,
@@ -90,8 +90,14 @@ class ExtensionItemWidget extends StatelessWidget {
           ),
         ),
       ),
-      child: Text(text, style: TextStyle(color: CupertinoColors.white)),
       onPressed: onPressed,
+      child: Text(text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 44.spMin,
+            color: CupertinoColors.white,
+          )),
     );
   }
 
@@ -102,7 +108,10 @@ class ExtensionItemWidget extends StatelessWidget {
             AppLocalizations.of(context)!.update, onPressed);
       case ExtensionStatus.installed:
         return Text(AppLocalizations.of(context)!.installed,
-            style: TextStyle(color: CupertinoColors.white));
+            style: TextStyle(
+              fontSize: 44.spMin,
+              color: CupertinoColors.white,
+            ));
       default:
         return _buildElevatedButton(
             AppLocalizations.of(context)!.install, onPressed);
@@ -113,22 +122,30 @@ class ExtensionItemWidget extends StatelessWidget {
     if (!supportConfig) {
       return const SizedBox.shrink();
     }
-    return _buildElevatedButton(
-      AppLocalizations.of(context)!.config,
-      () => _toExtensionConfigPage(context, extension.name),
+    return CupertinoButton(
+      onPressed: () => _toExtensionConfigPage(context, extension.name),
+      child: Icon(
+        size: 90.spMin,
+        CupertinoIcons.settings,
+        color: CupertinoColors.white,
+      ),
     );
+    // return _buildElevatedButton(
+    //   AppLocalizations.of(context)!.config,
+    //   () => _toExtensionConfigPage(context, extension.name),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 100.w, vertical: 35.h),
+      margin: EdgeInsets.symmetric(horizontal: 40.w, vertical: 15.h),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(20.r),
         gradient: LinearGradient(
-          begin: Alignment(-1, -1),
-          end: Alignment(1, -0.5),
+          begin: const Alignment(-1, -1),
+          end: const Alignment(1, -0.5),
           colors: _getColors(),
         ),
       ),
@@ -137,29 +154,38 @@ class ExtensionItemWidget extends StatelessWidget {
         child: Row(
           children: [
             Container(
-                width: 250.w,
-                margin: EdgeInsets.fromLTRB(153.w, 54.h, 0, 66.h),
+                width: 290.w,
+                margin: EdgeInsets.fromLTRB(104.w, 54.h, 60.w, 66.h),
                 child: Text(
                   extension.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
+                    fontSize: 56.spMin,
                     color: CupertinoColors.white,
-                    fontWeight: FontWeight.bold,
                   ),
                 )),
             Expanded(
                 flex: 1,
                 child: Text(
                   extension.version,
-                  style: TextStyle(color: CupertinoColors.white),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 48.spMin,
+                    color: CupertinoColors.white,
+                  ),
                 )),
             Expanded(
-                flex: 1, child: Center(child: _buildConfigButton(context))),
+                flex: 1,
+                child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: _buildConfigButton(context))),
             Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.only(right: 60.w),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                 width: 320.w,
+                height: 120.h,
                 child: _buildButton(
                     context, () => _onTapInstall(context, extension, status))),
           ],

@@ -60,7 +60,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
               CupertinoTabBar(
                 currentIndex: _currentIndex,
                 onTap: _onTap,
-                height: 204.h,
+                height: 184.h,
                 items: List.generate(widget.titles.length + 1, (index) {
                   if (index == widget.titles.length / 2) {
                     return const BottomNavigationBarItem(
@@ -85,6 +85,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                   );
                 }),
               ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
