@@ -31,9 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.2
-  lua_dardo_co: ^0.0.9
-  # lua_dardo_co:
+  # lua_dardo_co: ^0.0.9
+  lua_dardo_co:
   #   path: /Users/hoshily/custom/git/flutter/LuaDardo
+    path: E:\shgithub\flutter\LuaDardo
   dio: ^5.6.0
   crypto: ^3.0.5
   crypton: ^2.2.1
