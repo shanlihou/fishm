@@ -51,7 +51,7 @@ class _SearchTabState extends State<SearchTab> {
         Row(
           children: [
             Container(
-              margin: EdgeInsets.only(left: 200.w),
+              margin: EdgeInsets.fromLTRB(158.w, 46.h, 26.w, 0),
               width: 0.6.sw,
               child: CupertinoTextField(
                 controller: _searchController,
@@ -62,11 +62,16 @@ class _SearchTabState extends State<SearchTab> {
                 ),
               ),
             ),
-            CupertinoButton(
-              onPressed: _search,
-              padding: EdgeInsets.zero,
-              minSize: 0.1.sw,
-              child: const Icon(CupertinoIcons.search),
+            Container(
+              width: 80.w,
+              height: 80.h,
+              margin: EdgeInsets.fromLTRB(0, 58.h, 0, 0),
+              child: CupertinoButton(
+                onPressed: _search,
+                padding: EdgeInsets.zero,
+                minSize: 0.1.sw,
+                child: const Icon(CupertinoIcons.search),
+              ),
             ),
           ],
         ),
