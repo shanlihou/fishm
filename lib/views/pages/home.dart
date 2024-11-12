@@ -72,17 +72,17 @@ class _HomeState extends State<Home>
                 );
               },
             ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => const MainSettings()),
-                );
-              },
-            ),
+            // CupertinoButton(
+            //   padding: EdgeInsets.zero,
+            //   child: const Icon(CupertinoIcons.settings),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       CupertinoPageRoute(
+            //           builder: (context) => const MainSettings()),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
