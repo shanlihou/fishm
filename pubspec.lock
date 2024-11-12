@@ -493,10 +493,11 @@ packages:
   lua_dardo_co:
     dependency: "direct main"
     description:
-      path: "E:\\shgithub\\flutter\\LuaDardo"
-      relative: false
-    source: path
-    version: "0.0.9"
+      name: lua_dardo_co
+      sha256: eaeeedc70b47cbb6fb2469a6d7d3a02db6b0e57e9486810c0a3383d5acb241f3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.10"
   macros:
     dependency: transitive
     description:

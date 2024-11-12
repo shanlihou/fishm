@@ -82,6 +82,7 @@ class LuaManager {
       }
     }
 
+    ls.clearThreadWeakRef();
     ls.pop(ls.getTop());
   }
 }
