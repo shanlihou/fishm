@@ -10,7 +10,6 @@ import '../mixin/task_mixin.dart';
 import '../tabs/my_tab.dart';
 import '../tabs/search_tab.dart';
 import '../widget/bottom_app_bar_widget.dart';
-import 'settings/main_settings.dart';
 import '../tabs/extensions_tab.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
