@@ -24,13 +24,13 @@ class MyTab extends StatelessWidget {
               width: 80.w,
               height: 80.h,
               margin: EdgeInsets.fromLTRB(73.5.w, 43.h, 56.w, 29.h),
-              child: Icon(CupertinoIcons.settings)),
+              child: const Icon(CupertinoIcons.settings)),
           Expanded(child: Text(title)),
           Container(
               height: 75.h,
               width: 75.w,
               margin: EdgeInsets.only(right: 33.w),
-              child: Icon(CupertinoIcons.right_chevron)),
+              child: const Icon(CupertinoIcons.right_chevron)),
         ],
       ),
     );

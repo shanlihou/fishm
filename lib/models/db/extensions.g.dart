@@ -21,13 +21,14 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
       fields[1] as String,
       fields[2] as int,
       fields[3] as String,
+      fields[4] == null ? '' : fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Extension obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.url)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
       ..writeByte(2)
       ..write(obj.status)
       ..writeByte(3)
-      ..write(obj.version);
+      ..write(obj.version)
+      ..writeByte(4)
+      ..write(obj.alias);
   }
 
   @override

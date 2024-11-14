@@ -97,6 +97,8 @@ flutter:
     - assets/images/icon/my-on.png
     - assets/images/icon/mode-off.png
     - assets/images/icon/mode-on.png
+    - assets/images/icon/extension-delete.png
+    - assets/images/icon/extension-settings.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -42,6 +42,7 @@ class ComicItemWidget extends StatelessWidget {
                 ),
                 width: width,
                 height: height,
+                boxFit: BoxFit.fill,
               ),
             ),
             Positioned(
@@ -66,7 +67,7 @@ class ComicItemWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: CupertinoColors.white,
                     ),
                     maxLines: 1,

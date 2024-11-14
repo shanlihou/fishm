@@ -8,3 +8,5 @@ const String myOn = 'assets/images/icon/my-on.png';
 const String myOff = 'assets/images/icon/my-off.png';
 const String modeOn = 'assets/images/icon/mode-on.png';
 const String modeOff = 'assets/images/icon/mode-off.png';
+const String extensionDelete = 'assets/images/icon/extension-delete.png';
+const String extensionSettings = 'assets/images/icon/extension-settings.png';

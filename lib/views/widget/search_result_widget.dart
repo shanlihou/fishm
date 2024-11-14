@@ -153,7 +153,7 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.fromLTRB(40.w, 20.h, 20.w, 0),
             child: Text(
-                style: TextStyle(color: lineColor),
+                style: const TextStyle(color: lineColor),
                 '${AppLocalizations.of(context)!.extensions} : ${widget.extensionName}'),
           ),
           Container(

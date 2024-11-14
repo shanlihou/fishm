@@ -19,15 +19,22 @@ class Extension {
   @HiveField(3)
   final String version;
 
+  @HiveField(4, defaultValue: '')
+  final String alias;
+
   Extension clone() {
-    return Extension(url, name, status, version);
+    return Extension(url, name, status, version, alias);
   }
 
-  Extension(this.url, this.name, this.status, this.version);
+  Extension(this.url, this.name, this.status, this.version, this.alias);
 
   static Extension fromYaml(YamlMap json) {
-    return Extension(
-        json['url'], json['name'], extensionStatusRemote, json['version']);
+    return Extension(json['url'], json['name'], extensionStatusRemote,
+        json['version'], json['alias']);
+  }
+
+  String get displayName {
+    return alias.isEmpty ? name : alias;
   }
 }
 

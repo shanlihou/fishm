@@ -44,6 +44,10 @@ class ExtensionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  model_extensions.Extension? getStoreExtension(String name) {
+    return _extensionsStore!.extensions.firstWhere((e) => e.name == name);
+  }
+
   List<String> extensionNames() {
     return extensions.map((e) => e.name).toList();
   }
