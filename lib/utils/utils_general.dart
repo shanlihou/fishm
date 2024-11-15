@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
@@ -133,6 +134,11 @@ Future<void> downloadMainLuaByUrl(String mainUrl) async {
         ..writeAsBytesSync(data);
     }
   }
+}
+
+Future<void> exportComicChapter(String sourceDir, String targetPath) async {
+  final encoder = ZipFileEncoder();
+  await encoder.zipDirectoryAsync(Directory(sourceDir), filename: targetPath);
 }
 
 bool isStartWithDot(String path) {
