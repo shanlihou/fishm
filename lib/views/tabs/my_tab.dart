@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/const/color_const.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import '../../const/assets_const.dart';
 import '../pages/settings/about_page.dart';
 import '../pages/settings/debug_setting_page.dart';
 import '../pages/settings/general_settings.dart';
@@ -13,7 +14,7 @@ class MyTab extends StatelessWidget {
   const MyTab({super.key});
 
   Widget _buildSettingItem(
-      BuildContext context, String title, WidgetBuilder toPage) {
+      BuildContext context, String icon, String title, WidgetBuilder toPage) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, CupertinoPageRoute(builder: toPage));
@@ -24,7 +25,7 @@ class MyTab extends StatelessWidget {
               width: 80.w,
               height: 80.h,
               margin: EdgeInsets.fromLTRB(73.5.w, 43.h, 56.w, 29.h),
-              child: const Icon(CupertinoIcons.settings)),
+              child: Image.asset(icon)),
           Expanded(child: Text(title)),
           Container(
               height: 75.h,
@@ -65,19 +66,34 @@ class MyTab extends StatelessWidget {
         child: Column(
           children: [
             _buildSettingGroup([
-              _buildSettingItem(context, AppLocalizations.of(context)!.sources,
+              _buildSettingItem(
+                  context,
+                  mySetting,
+                  AppLocalizations.of(context)!.sources,
                   (context) => const SourcesSettings()),
-              _buildSettingItem(context, AppLocalizations.of(context)!.network,
+              _buildSettingItem(
+                  context,
+                  myNet,
+                  AppLocalizations.of(context)!.network,
                   (context) => const NetworkSettings()),
             ]),
             _buildSettingGroup([
-              _buildSettingItem(context, AppLocalizations.of(context)!.general,
+              _buildSettingItem(
+                  context,
+                  mySetting,
+                  AppLocalizations.of(context)!.general,
                   (context) => const GeneralSettings()),
             ]),
             _buildSettingGroup([
-              _buildSettingItem(context, AppLocalizations.of(context)!.about,
+              _buildSettingItem(
+                  context,
+                  myAbout,
+                  AppLocalizations.of(context)!.about,
                   (context) => const AboutPage()),
-              _buildSettingItem(context, AppLocalizations.of(context)!.debug,
+              _buildSettingItem(
+                  context,
+                  myDebug,
+                  AppLocalizations.of(context)!.debug,
                   (context) => const DebugSettingPage()),
             ]),
           ],

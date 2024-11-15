@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 import '../const/color_const.dart';
+import 'utils_general.dart';
 
 Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
   return Container(
@@ -26,7 +27,7 @@ Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
                   alignment: Alignment.bottomCenter,
                   child: Text(
                     AppLocalizations.of(context)!.baseline,
-                    style: TextStyle(fontSize: 24.spMin),
+                    style: TextStyle(fontSize: pm(12, 24.spMin)),
                   )),
             ),
             Expanded(
@@ -37,7 +38,7 @@ Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
                   style: TextStyle(
                     // #B886F8 88%
                     color: const Color(0xFFB886F8).withOpacity(0.88),
-                    fontSize: 24.spMin,
+                    fontSize: pm(12, 24.spMin),
                   ),
                 ),
               ),

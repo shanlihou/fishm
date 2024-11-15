@@ -575,8 +575,8 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                       flex: 6,
                       child: Center(
                         child: SizedBox(
-                          width: 0.2.sw,
-                          height: 0.2.sh,
+                          width: 0.1.sw,
+                          height: 0.1.sh,
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/types/provider/setting_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../const/color_const.dart';
 
 class SourcesSettings extends StatefulWidget {
   const SourcesSettings({super.key});
@@ -46,43 +49,52 @@ class _SourcesSettingsState extends State<SourcesSettings> {
         ),
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: CupertinoButton(
-                          onPressed: () {
-                            context
-                                .read<SettingProvider>()
-                                .addSource(_sourceUrlController.text);
-                          },
-                          child: const Icon(CupertinoIcons.add))),
-                  Expanded(
-                      flex: 9,
-                      child: CupertinoTextField(
-                        controller: _sourceUrlController,
-                        placeholder: 'Source url',
-                        placeholderStyle:
-                            const TextStyle(color: CupertinoColors.systemGrey),
-                      )),
-                ],
+        child: Container(
+          color: backgroundColor06,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          child: Column(
+            children: [
+              Container(
+                color: CupertinoColors.white,
+                height: 100.h,
+                width: double.infinity,
               ),
-            ),
-            Expanded(
-              flex: 10,
-              child: ListView.builder(
-                itemCount: context.watch<SettingProvider>().sources.length,
-                itemBuilder: (context, index) {
-                  return _buildSourceItem(
-                      context.watch<SettingProvider>().sources[index]);
-                },
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: CupertinoButton(
+                            onPressed: () {
+                              context
+                                  .read<SettingProvider>()
+                                  .addSource(_sourceUrlController.text);
+                            },
+                            child: const Icon(CupertinoIcons.add))),
+                    Expanded(
+                        flex: 9,
+                        child: CupertinoTextField(
+                          controller: _sourceUrlController,
+                          placeholder: 'Source url',
+                          placeholderStyle: const TextStyle(
+                              color: CupertinoColors.systemGrey),
+                        )),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 10,
+                child: ListView.builder(
+                  itemCount: context.watch<SettingProvider>().sources.length,
+                  itemBuilder: (context, index) {
+                    return _buildSourceItem(
+                        context.watch<SettingProvider>().sources[index]);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -100,7 +100,7 @@ class ExtensionItemWidget extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: 44.spMin,
+            fontSize: pm(20, 44.spMin),
             color: CupertinoColors.white,
           )),
     );
@@ -114,7 +114,7 @@ class ExtensionItemWidget extends StatelessWidget {
       case ExtensionStatus.installed:
         return Text(AppLocalizations.of(context)!.installed,
             style: TextStyle(
-              fontSize: 44.spMin,
+              fontSize: pm(22, 44.spMin),
               color: CupertinoColors.white,
             ));
       default:
@@ -131,8 +131,8 @@ class ExtensionItemWidget extends StatelessWidget {
       onTap: () => _toExtensionConfigPage(context, extension.name),
       child: Image.asset(
         extensionSettings,
-        width: 90.w,
-        height: 90.h,
+        width: pm(45, 90.w),
+        height: pm(45, 90.h),
         fit: BoxFit.fill,
         color: CupertinoColors.white,
       ),
@@ -172,8 +172,8 @@ class ExtensionItemWidget extends StatelessWidget {
               onTap: () => onLongPress?.call(extension),
               child: Image.asset(
                 extensionDelete,
-                width: 40.w,
-                height: 40.h,
+                width: pm(15, 40.w),
+                height: pm(15, 40.h),
                 fit: BoxFit.fill,
               ),
             ),
@@ -186,7 +186,7 @@ class ExtensionItemWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 56.spMin,
+                  fontSize: pm(20, 56.spMin),
                   color: CupertinoColors.white,
                 ),
               )),
@@ -197,7 +197,7 @@ class ExtensionItemWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 48.spMin,
+                  fontSize: pm(20, 48.spMin),
                   color: CupertinoColors.white,
                 ),
               )),

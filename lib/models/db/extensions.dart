@@ -30,7 +30,7 @@ class Extension {
 
   static Extension fromYaml(YamlMap json) {
     return Extension(json['url'], json['name'], extensionStatusRemote,
-        json['version'], json['alias']);
+        json['version'], json['alias'] ?? "");
   }
 
   String get displayName {

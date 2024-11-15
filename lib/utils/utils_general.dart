@@ -60,6 +60,14 @@ Future<bool> getStoragePermission() async {
   return ret;
 }
 
+List<String> osPathSplit(String path) {
+  if (Platform.isWindows) {
+    return path.split('\\');
+  } else {
+    return path.split('/');
+  }
+}
+
 Future<bool> initDirectory() async {
   if (!await getStoragePermission()) {
     Log.instance.e("no storage permission");
@@ -382,4 +390,12 @@ String imageChapterFolder(
 String downloadImagePath(String extensionName, String comicId, String chapterId,
     int index, String imageUrl) {
   return '${imageChapterFolder(extensionName, comicId, chapterId)}/$index.${getImageType(imageUrl)}';
+}
+
+double pm(double pcValue, double mobileValue) {
+  if (Platform.isIOS || Platform.isAndroid) {
+    return mobileValue;
+  }
+
+  return pcValue;
 }
