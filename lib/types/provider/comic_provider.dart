@@ -175,6 +175,6 @@ class ComicProvider with ChangeNotifier {
 
     var chapterTitle = comicModel.getChapterTitle(readHistory.chapterId);
 
-    return 'chapter: $chapterTitle page: ${readHistory.index}';
+    return '$chapterTitle ${readHistory.index}';
   }
 }

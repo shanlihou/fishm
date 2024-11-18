@@ -91,8 +91,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               onPressed: () => _showLanguagePicker(context),
             ),
             CupertinoButton(
-              child: const Text('clear'),
               onPressed: _clearAll,
+              child: const Text('clear'),
             ),
           ],
         ),

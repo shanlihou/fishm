@@ -4,9 +4,11 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/const/color_const.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
+import '../../const/assets_const.dart';
 import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
@@ -18,6 +20,7 @@ import '../widget/download_options_widget.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class ComicDetailPage extends StatefulWidget {
   final ComicItem comicItem;
@@ -353,72 +356,111 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         child: EasyRefresh(
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                NetImage(
-                  NetImageContextCover(
-                    widget.extensionName,
-                    widget.comicItem.comicId,
-                    widget.comicItem.imageUrl,
-                  ),
-                  width: 1.sw,
-                  height: 1.sw,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: Container(
+              padding: EdgeInsets.all(50.w),
+              color: backgroundColor06,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Text(widget.comicItem.title),
-                      const SizedBox(height: 8),
-                      Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
-                      const SizedBox(height: 16),
-                      const Text('简介:'),
-                      const SizedBox(height: 8),
-                      Text(widget.comicItem.extra['description'] ?? '暂无简介'),
-                      CupertinoButton(
-                        onPressed: () {
-                          _readComic(context);
-                        },
-                        child: Consumer<ComicProvider>(
-                          builder: (context, comicProvider, child) => Text(
-                              'read ${comicProvider.getReadHistory(getComicUniqueId(widget.comicItem.comicId, widget.extensionName)) ?? ''}'),
+                      NetImage(
+                        NetImageContextCover(
+                          widget.extensionName,
+                          widget.comicItem.comicId,
+                          widget.comicItem.imageUrl,
                         ),
+                        width: 600.w,
+                        height: 800.h,
                       ),
-                      CupertinoButton(
-                        child: const Text('download'),
-                        onPressed: () {
-                          var comicProvider = context.read<ComicProvider>();
-                          ComicModel? comicModel = comicProvider.getComicModel(
-                              getComicUniqueId(widget.comicItem.comicId,
-                                  widget.extensionName));
-
-                          if (comicModel == null) {
-                            return;
-                          }
-
-                          if (comicModel.chapters.isEmpty) {
-                            return;
-                          }
-
-                          _showDownloadOptions(context, comicModel);
-                        },
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.comicItem.title,
+                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          Text(
+                              '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                          Image.asset(width: 100.w, height: 100.h, addToShelf),
+                          Row(
+                            children: [
+                              Image.asset(width: 100.w, height: 100.h, onShelf),
+                              SizedBox(
+                                width: 200.w,
+                                child: Consumer<ComicProvider>(
+                                  builder: (context, comicProvider, child) =>
+                                      Text(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          comicProvider.getReadHistory(
+                                                  getComicUniqueId(
+                                                      widget.comicItem.comicId,
+                                                      widget.extensionName)) ??
+                                              ''),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
                       )
                     ],
                   ),
-                ),
-                Consumer<ComicProvider>(
-                  builder: (context, comicProvider, child) {
-                    ComicModel? comicModel = comicProvider.getComicModel(
-                        getComicUniqueId(
-                            widget.comicItem.comicId, widget.extensionName));
-                    return comicModel == null
-                        ? const Center(child: CupertinoActivityIndicator())
-                        : _buildChapterList(context, comicModel);
-                  },
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.comicItem.title),
+                        const SizedBox(height: 8),
+                        Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
+                        const SizedBox(height: 16),
+                        const Text('简介:'),
+                        const SizedBox(height: 8),
+                        Text(widget.comicItem.extra['description'] ?? '暂无简介'),
+                        CupertinoButton(
+                          onPressed: () {
+                            _readComic(context);
+                          },
+                          child: Consumer<ComicProvider>(
+                            builder: (context, comicProvider, child) => Text(
+                                'read ${comicProvider.getReadHistory(getComicUniqueId(widget.comicItem.comicId, widget.extensionName)) ?? ''}'),
+                          ),
+                        ),
+                        CupertinoButton(
+                          child: const Text('download'),
+                          onPressed: () {
+                            var comicProvider = context.read<ComicProvider>();
+                            ComicModel? comicModel =
+                                comicProvider.getComicModel(getComicUniqueId(
+                                    widget.comicItem.comicId,
+                                    widget.extensionName));
+
+                            if (comicModel == null) {
+                              return;
+                            }
+
+                            if (comicModel.chapters.isEmpty) {
+                              return;
+                            }
+
+                            _showDownloadOptions(context, comicModel);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  Consumer<ComicProvider>(
+                    builder: (context, comicProvider, child) {
+                      ComicModel? comicModel = comicProvider.getComicModel(
+                          getComicUniqueId(
+                              widget.comicItem.comicId, widget.extensionName));
+                      return comicModel == null
+                          ? const Center(child: CupertinoActivityIndicator())
+                          : _buildChapterList(context, comicModel);
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),

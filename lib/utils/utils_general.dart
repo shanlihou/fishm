@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';

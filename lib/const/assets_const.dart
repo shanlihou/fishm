@@ -15,3 +15,5 @@ const String myDebug = 'assets/images/icon/my-debug.png';
 const String myNet = 'assets/images/icon/my-net.png';
 const String mySetting = 'assets/images/icon/my-setting.png';
 const String myTeach = 'assets/images/icon/my-teach.png';
+const String addToShelf = 'assets/images/icon/add-to-shelf.png';
+const String onShelf = 'assets/images/icon/on-shelf.png';
