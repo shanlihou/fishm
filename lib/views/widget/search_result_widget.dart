@@ -28,10 +28,14 @@ class SearchResultController {
 
 class SearchResultWidget extends StatefulWidget {
   final String extensionName;
+  final String displayName;
   final SearchResultController controller;
 
   const SearchResultWidget(
-      {super.key, required this.extensionName, required this.controller});
+      {super.key,
+      required this.extensionName,
+      required this.displayName,
+      required this.controller});
 
   @override
   State<SearchResultWidget> createState() => _SearchResultWidgetState();

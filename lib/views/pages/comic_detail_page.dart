@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart' as material;
 
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
@@ -357,66 +358,119 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(50.w),
+              padding: EdgeInsets.all(60.w),
               color: backgroundColor06,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      NetImage(
-                        NetImageContextCover(
-                          widget.extensionName,
-                          widget.comicItem.comicId,
-                          widget.comicItem.imageUrl,
-                        ),
-                        width: 600.w,
-                        height: 800.h,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.comicItem.title,
-                              maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text(
-                              '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
-                          Image.asset(width: 100.w, height: 100.h, addToShelf),
-                          Row(
+                  SizedBox(
+                    height: 800.h,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 600.w,
+                          height: 800.h,
+                          child: Stack(
                             children: [
-                              Image.asset(width: 100.w, height: 100.h, onShelf),
-                              SizedBox(
-                                width: 200.w,
-                                child: Consumer<ComicProvider>(
-                                  builder: (context, comicProvider, child) =>
-                                      Text(
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          comicProvider.getReadHistory(
-                                                  getComicUniqueId(
-                                                      widget.comicItem.comicId,
-                                                      widget.extensionName)) ??
-                                              ''),
+                              Positioned.fill(
+                                child: NetImage(
+                                  NetImageContextCover(
+                                    widget.extensionName,
+                                    widget.comicItem.comicId,
+                                    widget.comicItem.imageUrl,
+                                  ),
+                                  width: 600.w,
+                                  height: 800.h,
                                 ),
-                              )
+                              ),
+                              Positioned(
+                                right: 10.w,
+                                top: 10.h,
+                                child: Image.asset(
+                                  addToShelf,
+                                  width: 150.w,
+                                  height: 150.h,
+                                ),
+                              ),
                             ],
-                          )
-                        ],
-                      )
-                    ],
+                          ),
+                        ),
+                        Expanded(child: Container()),
+                        Column(
+                          children: [
+                            Text(widget.comicItem.title,
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(
+                                '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                            Expanded(child: Container()),
+                            SizedBox(
+                              width: 400.w,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                      width: 60.w, height: 60.h, history),
+                                  SizedBox(width: 20.w),
+                                  SizedBox(
+                                    width: 200.w,
+                                    child: Consumer<ComicProvider>(
+                                      builder: (context, comicProvider,
+                                              child) =>
+                                          Text(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              comicProvider.getReadHistory(
+                                                      getComicUniqueId(
+                                                          widget.comicItem
+                                                              .comicId,
+                                                          widget
+                                                              .extensionName)) ??
+                                                  ''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            SizedBox(
+                              width: 400.w,
+                              child: material.ElevatedButton(
+                                style: material.ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.r),
+                                    ),
+                                    backgroundBuilder: (context, states,
+                                            child) =>
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            gradient: LinearGradient(colors: [
+                                              Color.fromARGB(
+                                                  255, 131, 190, 253),
+                                              Color.fromARGB(
+                                                  255, 153, 149, 249),
+                                            ]),
+                                          ),
+                                          child: child,
+                                        )),
+                                onPressed: () {},
+                                child: Text('read',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: pm(20, 40.spMin),
+                                        color: CupertinoColors.white)),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.comicItem.title),
-                        const SizedBox(height: 8),
-                        Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
-                        const SizedBox(height: 16),
-                        const Text('简介:'),
-                        const SizedBox(height: 8),
-                        Text(widget.comicItem.extra['description'] ?? '暂无简介'),
                         CupertinoButton(
                           onPressed: () {
                             _readComic(context);

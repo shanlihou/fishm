@@ -17,3 +17,4 @@ const String mySetting = 'assets/images/icon/my-setting.png';
 const String myTeach = 'assets/images/icon/my-teach.png';
 const String addToShelf = 'assets/images/icon/add-to-shelf.png';
 const String onShelf = 'assets/images/icon/on-shelf.png';
+const String history = 'assets/images/icon/history.png';

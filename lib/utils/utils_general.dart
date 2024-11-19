@@ -17,6 +17,7 @@ import '../models/api/chapter_detail.dart';
 import '../models/db/comic_model.dart';
 import '../models/db/extensions.dart' as model_extensions;
 import '../types/common/alias.dart';
+import '../types/manager/global_manager.dart';
 
 void openAppSettings() {
   if (Platform.isAndroid) {}
@@ -83,6 +84,16 @@ Future<bool> initDirectory() async {
     // var externalDir = await getExternalStorageDirectory();
     // var applicationDir = await getApplicationDocumentsDirectory();
     // Log.instance.d('external: $externalDir, application: $applicationDir');
+  } else if (Platform.isIOS) {
+    final tempDir = await getTemporaryDirectory();
+    Log.instance.d('Temporary directory: ${tempDir.path}');
+
+    final appSupportDir = await getApplicationSupportDirectory();
+    Log.instance.d('Application support directory: ${appSupportDir.path}');
+
+    final appDocumentsDir = await getApplicationDocumentsDirectory();
+    Log.instance.d('Application documents directory: ${appDocumentsDir.path}');
+    Directory.current = appDocumentsDir;
   }
 
   Log.instance.d('external: ${Directory.current}');
@@ -93,6 +104,11 @@ Future<void> downloadMainLua() async {
   Dio dio = Dio();
   for (var url in mainRelease) {
     try {
+      print('will set proxy?, ${globalManager.enableProxy}');
+      if (globalManager.enableProxy) {
+        print('${globalManager.proxyHost}, ${globalManager.proxyPort}');
+        setDioProxy(globalManager.proxyHost, globalManager.proxyPort, dio);
+      }
       await dio.download(url, mainYamlDownloadPath);
     } catch (e) {
       Log.instance.e('downloadMainLuaTmp down yaml error: $e');

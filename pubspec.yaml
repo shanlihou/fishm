@@ -106,6 +106,7 @@ flutter:
     - assets/images/icon/my-teach.png
     - assets/images/icon/add-to-shelf.png
     - assets/images/icon/on-shelf.png
+    - assets/images/icon/history.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
