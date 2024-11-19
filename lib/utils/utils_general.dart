@@ -420,3 +420,7 @@ double pm(double pcValue, double mobileValue) {
 
   return pcValue;
 }
+
+String buildTaskId(String extensionName, String comicId, String chapterId) {
+  return 'down_${extensionName}_${comicId}_$chapterId';
+}

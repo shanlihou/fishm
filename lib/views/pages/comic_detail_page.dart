@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart' as material;
 
 import 'package:easy_refresh/easy_refresh.dart';
@@ -10,14 +9,12 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
-import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
-import '../widget/download_options_widget.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -44,10 +41,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   bool _isFetchChapterDownCnt = false;
   bool _dispose = false;
-  final Map<String, (int, int)> _chapterDownCnts = {};
-
-  final Map<String, ComicChapterStatusController> _chapterStatusControllers =
-      {};
 
   @override
   void initState() {
@@ -61,9 +54,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   @override
   void dispose() {
     _dispose = true;
-    for (var controller in _chapterStatusControllers.values) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
@@ -97,32 +87,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         await getChapterDetails(comicModel, widget.extensionName,
             widget.comicItem.comicId, chapter.id);
 
-        await p.saveComic(comicModel);
-      }
-
-      String folder = imageChapterFolder(
-          widget.extensionName, widget.comicItem.comicId, chapter.id);
-
-      int cnt = 0;
-      try {
-        Directory dir = Directory(folder);
-        if (await dir.exists()) {
-          cnt = await dir.list().where((entity) {
-            String path = entity.path.toLowerCase();
-            return path.endsWith('.png') || path.endsWith('.jpg');
-          }).length;
-        }
-
-        if (mounted) {
-          _chapterStatusControllers[chapter.id]?.setStatus(
-              cnt == chapter.images.length
-                  ? ComicChapterStatus.normal
-                  : ComicChapterStatus.downloading);
-        }
-
-        _chapterDownCnts[chapter.id] = (cnt, chapter.images.length);
-      } catch (e) {
-        Log.instance.d('$folder is empty :$e');
+        await p.saveComic(comicModel, isNotify: true);
       }
     }
 
@@ -181,14 +146,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Widget _buildChapterItem(
       BuildContext buildContext, ChapterModel chapter, int idx) {
-    ComicChapterStatusController controller;
-    if (!_chapterStatusControllers.containsKey(chapter.id)) {
-      controller = ComicChapterStatusController();
-      _chapterStatusControllers[chapter.id] = controller;
-    } else {
-      controller = _chapterStatusControllers[chapter.id]!;
-    }
-
     return Container(
       decoration: BoxDecoration(
         color: CupertinoColors.white,
@@ -206,7 +163,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               extensionName: widget.extensionName,
               comicId: widget.comicItem.comicId,
               chapterId: chapter.id,
-              controller: controller,
             ),
           ),
         ],
@@ -309,37 +265,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
   }
 
-  void _showDownloadOptions(BuildContext context, ComicModel comicModel) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 300,
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Download Options',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: DownloadOptionsWidget(
-                  comicModel: comicModel, chapterDownCnts: _chapterDownCnts),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _initWithContext();
@@ -366,6 +291,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                           width: 600.w,
                           height: 800.h,
                           child: Stack(
+                            // image and favorite button
                             children: [
                               Positioned.fill(
                                 child: NetImage(
@@ -470,34 +396,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               ),
                             )
                           ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CupertinoButton(
-                          child: const Text('download'),
-                          onPressed: () {
-                            var comicProvider = context.read<ComicProvider>();
-                            ComicModel? comicModel =
-                                comicProvider.getComicModel(getComicUniqueId(
-                                    widget.comicItem.comicId,
-                                    widget.extensionName));
-
-                            if (comicModel == null) {
-                              return;
-                            }
-
-                            if (comicModel.chapters.isEmpty) {
-                              return;
-                            }
-
-                            _showDownloadOptions(context, comicModel);
-                          },
                         )
                       ],
                     ),
