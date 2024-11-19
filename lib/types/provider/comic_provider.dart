@@ -147,6 +147,10 @@ class ComicProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool isFavoriteComic(String uniqueId) {
+    return favoriteComics.containsKey(uniqueId);
+  }
+
   Future<void> removeFavoriteComic(String uniqueId) async {
     await _favoriteComicBox.delete(uniqueId);
     favoriteComics.remove(uniqueId);

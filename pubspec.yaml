@@ -105,6 +105,7 @@ flutter:
     - assets/images/icon/my-setting.png
     - assets/images/icon/my-teach.png
     - assets/images/icon/add-to-shelf.png
+    - assets/images/icon/add-to-shelf-on.png
     - assets/images/icon/on-shelf.png
     - assets/images/icon/history.png
 

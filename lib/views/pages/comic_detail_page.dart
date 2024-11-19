@@ -168,14 +168,14 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   void _toggleFavorite() {
-    _isFavorite.value = !_isFavorite.value;
-
     String uniqueId =
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
-    if (_isFavorite.value) {
-      context.read<ComicProvider>().addFavoriteComic(uniqueId);
-    } else {
+    bool isFavorite = context.read<ComicProvider>().isFavoriteComic(uniqueId);
+
+    if (isFavorite) {
       context.read<ComicProvider>().removeFavoriteComic(uniqueId);
+    } else {
+      context.read<ComicProvider>().addFavoriteComic(uniqueId);
     }
   }
 
@@ -189,19 +189,28 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       controller = _chapterStatusControllers[chapter.id]!;
     }
 
-    return Row(
-      children: [
-        Expanded(child: Text(chapter.title)),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ComicChapterStatusWidget(
-            extensionName: widget.extensionName,
-            comicId: widget.comicItem.comicId,
-            chapterId: chapter.id,
-            controller: controller,
+    return Container(
+      decoration: BoxDecoration(
+        color: CupertinoColors.white,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      margin: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
+      height: 100.h,
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+      child: Row(
+        children: [
+          Expanded(child: Text(chapter.title)),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ComicChapterStatusWidget(
+              extensionName: widget.extensionName,
+              comicId: widget.comicItem.comicId,
+              chapterId: chapter.id,
+              controller: controller,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -209,25 +218,22 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     return Column(
       children: [
         for (var chapter in comicModel.chapters.asMap().entries)
-          SizedBox(
-              height: 0.1.sh,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    buildContext,
-                    CupertinoPageRoute(
-                      builder: (context) => ComicReaderPage(
-                          widget.extensionName,
-                          chapter.value.id,
-                          comicModel.id,
-                          chapter.value.title,
-                          comicModel.extra),
-                    ),
-                  );
-                },
-                child:
-                    _buildChapterItem(buildContext, chapter.value, chapter.key),
-              ))
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                buildContext,
+                CupertinoPageRoute(
+                  builder: (context) => ComicReaderPage(
+                      widget.extensionName,
+                      chapter.value.id,
+                      comicModel.id,
+                      chapter.value.title,
+                      comicModel.extra),
+                ),
+              );
+            },
+            child: _buildChapterItem(buildContext, chapter.value, chapter.key),
+          )
       ],
     );
   }
@@ -341,17 +347,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.comicItem.title),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _toggleFavorite,
-          child: ValueListenableBuilder(
-            valueListenable: _isFavorite,
-            builder: (context, isFavorite, child) => Icon(
-              isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-              color: CupertinoColors.systemRed,
-            ),
-          ),
-        ),
       ),
       child: SafeArea(
         child: EasyRefresh(
@@ -386,10 +381,21 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               Positioned(
                                 right: 10.w,
                                 top: 10.h,
-                                child: Image.asset(
-                                  addToShelf,
-                                  width: 150.w,
-                                  height: 150.h,
+                                child: GestureDetector(
+                                  onTap: _toggleFavorite,
+                                  child: Consumer<ComicProvider>(
+                                    builder: (context, comicProvider, child) =>
+                                        Image.asset(
+                                      comicProvider.isFavoriteComic(
+                                              getComicUniqueId(
+                                                  widget.comicItem.comicId,
+                                                  widget.extensionName))
+                                          ? addToShelfOn
+                                          : addToShelf,
+                                      width: 150.w,
+                                      height: 150.h,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -452,7 +458,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                           ),
                                           child: child,
                                         )),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _readComic(context);
+                                },
                                 child: Text('read',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -471,15 +479,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CupertinoButton(
-                          onPressed: () {
-                            _readComic(context);
-                          },
-                          child: Consumer<ComicProvider>(
-                            builder: (context, comicProvider, child) => Text(
-                                'read ${comicProvider.getReadHistory(getComicUniqueId(widget.comicItem.comicId, widget.extensionName)) ?? ''}'),
-                          ),
-                        ),
                         CupertinoButton(
                           child: const Text('download'),
                           onPressed: () {
