@@ -328,74 +328,80 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                           ),
                         ),
                         Expanded(child: Container()),
-                        Column(
-                          children: [
-                            Text(widget.comicItem.title,
-                                maxLines: 1, overflow: TextOverflow.ellipsis),
-                            Text(
-                                '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
-                            Expanded(child: Container()),
-                            SizedBox(
-                              width: 400.w,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                      width: 60.w, height: 60.h, history),
-                                  SizedBox(width: 20.w),
-                                  SizedBox(
-                                    width: 200.w,
-                                    child: Consumer<ComicProvider>(
-                                      builder: (context, comicProvider,
+                        material.SizedBox(
+                          width: 400.w,
+                          child: Column(
+                            children: [
+                              Text(widget.comicItem.title,
+                                  maxLines: 1, overflow: TextOverflow.ellipsis),
+                              Text(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                              Expanded(child: Container()),
+                              SizedBox(
+                                width: 400.w,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                        width: 60.w, height: 60.h, history),
+                                    SizedBox(width: 20.w),
+                                    SizedBox(
+                                      width: 200.w,
+                                      child: Consumer<ComicProvider>(
+                                        builder: (context, comicProvider,
+                                                child) =>
+                                            Text(
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                comicProvider.getReadHistory(
+                                                        getComicUniqueId(
+                                                            widget.comicItem
+                                                                .comicId,
+                                                            widget
+                                                                .extensionName)) ??
+                                                    ''),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10.h),
+                              SizedBox(
+                                width: 400.w,
+                                child: material.ElevatedButton(
+                                  style: material.ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.r),
+                                      ),
+                                      backgroundBuilder: (context, states,
                                               child) =>
-                                          Text(
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              comicProvider.getReadHistory(
-                                                      getComicUniqueId(
-                                                          widget.comicItem
-                                                              .comicId,
-                                                          widget
-                                                              .extensionName)) ??
-                                                  ''),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: 400.w,
-                              child: material.ElevatedButton(
-                                style: material.ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.r),
-                                    ),
-                                    backgroundBuilder: (context, states,
-                                            child) =>
-                                        Container(
-                                          decoration: const BoxDecoration(
-                                            gradient: LinearGradient(colors: [
-                                              Color.fromARGB(
-                                                  255, 131, 190, 253),
-                                              Color.fromARGB(
-                                                  255, 153, 149, 249),
-                                            ]),
-                                          ),
-                                          child: child,
-                                        )),
-                                onPressed: () {
-                                  _readComic(context);
-                                },
-                                child: Text('read',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: pm(20, 40.spMin),
-                                        color: CupertinoColors.white)),
-                              ),
-                            )
-                          ],
+                                          Container(
+                                            decoration: const BoxDecoration(
+                                              gradient: LinearGradient(colors: [
+                                                Color.fromARGB(
+                                                    255, 131, 190, 253),
+                                                Color.fromARGB(
+                                                    255, 153, 149, 249),
+                                              ]),
+                                            ),
+                                            child: child,
+                                          )),
+                                  onPressed: () {
+                                    _readComic(context);
+                                  },
+                                  child: Text('read',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: pm(20, 40.spMin),
+                                          color: CupertinoColors.white)),
+                                ),
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
