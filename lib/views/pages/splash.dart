@@ -59,6 +59,8 @@ class _SplashScreenState extends State<SplashScreen> {
     _isInit = true;
     _updateStepText('load settings');
     await settingProvider.loadSettings();
+    _updateStepText('init global');
+    globalManager.initGlobal(settingProvider);
     _updateStepText('load extensions');
     await extensionProvider.loadExtensions();
     _updateStepText('load comics');
@@ -78,8 +80,6 @@ class _SplashScreenState extends State<SplashScreen> {
           .setLocale(Locale(settingProvider.settings?.language ?? "en"));
     }
 
-    _updateStepText('init global');
-    globalManager.initGlobal(settingProvider);
     _updateStepText('init plugins');
     pluginDbManager.initPlugins(extensionProvider.extensionNames());
 

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../models/db/comic_model.dart';
 import '../../types/provider/task_provider.dart';
 import '../../types/task/task_download.dart';
+import '../../utils/utils_general.dart';
 
 class DownloadOptionsWidget extends StatelessWidget {
   final Map<String, (int, int)> chapterDownCnts;
@@ -20,7 +21,7 @@ class DownloadOptionsWidget extends StatelessWidget {
         final chapter = comicModel.chapters[index];
         var p = context.watch<TaskProvider>();
         String id =
-            'down_${comicModel.extensionName}_${comicModel.id}_${chapter.id}';
+            buildTaskId(comicModel.extensionName, comicModel.id, chapter.id);
 
         Widget statusWidget;
 

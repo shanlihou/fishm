@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/material.dart' as material;
 
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,14 +9,12 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
-import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
-import '../widget/download_options_widget.dart';
 import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -43,10 +41,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   bool _isFetchChapterDownCnt = false;
   bool _dispose = false;
-  final Map<String, (int, int)> _chapterDownCnts = {};
-
-  final Map<String, ComicChapterStatusController> _chapterStatusControllers =
-      {};
 
   @override
   void initState() {
@@ -60,9 +54,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   @override
   void dispose() {
     _dispose = true;
-    for (var controller in _chapterStatusControllers.values) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
@@ -96,32 +87,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         await getChapterDetails(comicModel, widget.extensionName,
             widget.comicItem.comicId, chapter.id);
 
-        await p.saveComic(comicModel);
-      }
-
-      String folder = imageChapterFolder(
-          widget.extensionName, widget.comicItem.comicId, chapter.id);
-
-      int cnt = 0;
-      try {
-        Directory dir = Directory(folder);
-        if (await dir.exists()) {
-          cnt = await dir.list().where((entity) {
-            String path = entity.path.toLowerCase();
-            return path.endsWith('.png') || path.endsWith('.jpg');
-          }).length;
-        }
-
-        if (mounted) {
-          _chapterStatusControllers[chapter.id]?.setStatus(
-              cnt == chapter.images.length
-                  ? ComicChapterStatus.normal
-                  : ComicChapterStatus.downloading);
-        }
-
-        _chapterDownCnts[chapter.id] = (cnt, chapter.images.length);
-      } catch (e) {
-        Log.instance.d('$folder is empty :$e');
+        await p.saveComic(comicModel, isNotify: true);
       }
     }
 
@@ -167,40 +133,40 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   void _toggleFavorite() {
-    _isFavorite.value = !_isFavorite.value;
-
     String uniqueId =
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
-    if (_isFavorite.value) {
-      context.read<ComicProvider>().addFavoriteComic(uniqueId);
-    } else {
+    bool isFavorite = context.read<ComicProvider>().isFavoriteComic(uniqueId);
+
+    if (isFavorite) {
       context.read<ComicProvider>().removeFavoriteComic(uniqueId);
+    } else {
+      context.read<ComicProvider>().addFavoriteComic(uniqueId);
     }
   }
 
   Widget _buildChapterItem(
       BuildContext buildContext, ChapterModel chapter, int idx) {
-    ComicChapterStatusController controller;
-    if (!_chapterStatusControllers.containsKey(chapter.id)) {
-      controller = ComicChapterStatusController();
-      _chapterStatusControllers[chapter.id] = controller;
-    } else {
-      controller = _chapterStatusControllers[chapter.id]!;
-    }
-
-    return Row(
-      children: [
-        Expanded(child: Text(chapter.title)),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ComicChapterStatusWidget(
-            extensionName: widget.extensionName,
-            comicId: widget.comicItem.comicId,
-            chapterId: chapter.id,
-            controller: controller,
+    return Container(
+      decoration: BoxDecoration(
+        color: CupertinoColors.white,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      margin: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
+      height: 100.h,
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+      child: Row(
+        children: [
+          Expanded(child: Text(chapter.title)),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ComicChapterStatusWidget(
+              extensionName: widget.extensionName,
+              comicId: widget.comicItem.comicId,
+              chapterId: chapter.id,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -208,25 +174,22 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     return Column(
       children: [
         for (var chapter in comicModel.chapters.asMap().entries)
-          SizedBox(
-              height: 0.1.sh,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    buildContext,
-                    CupertinoPageRoute(
-                      builder: (context) => ComicReaderPage(
-                          widget.extensionName,
-                          chapter.value.id,
-                          comicModel.id,
-                          chapter.value.title,
-                          comicModel.extra),
-                    ),
-                  );
-                },
-                child:
-                    _buildChapterItem(buildContext, chapter.value, chapter.key),
-              ))
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                buildContext,
+                CupertinoPageRoute(
+                  builder: (context) => ComicReaderPage(
+                      widget.extensionName,
+                      chapter.value.id,
+                      comicModel.id,
+                      chapter.value.title,
+                      comicModel.extra),
+                ),
+              );
+            },
+            child: _buildChapterItem(buildContext, chapter.value, chapter.key),
+          )
       ],
     );
   }
@@ -302,37 +265,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
   }
 
-  void _showDownloadOptions(BuildContext context, ComicModel comicModel) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 300,
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Download Options',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: DownloadOptionsWidget(
-                  comicModel: comicModel, chapterDownCnts: _chapterDownCnts),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _initWithContext();
@@ -340,111 +272,130 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.comicItem.title),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _toggleFavorite,
-          child: ValueListenableBuilder(
-            valueListenable: _isFavorite,
-            builder: (context, isFavorite, child) => Icon(
-              isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-              color: CupertinoColors.systemRed,
-            ),
-          ),
-        ),
       ),
       child: SafeArea(
         child: EasyRefresh(
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(50.w),
+              padding: EdgeInsets.all(60.w),
               color: backgroundColor06,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      NetImage(
-                        NetImageContextCover(
-                          widget.extensionName,
-                          widget.comicItem.comicId,
-                          widget.comicItem.imageUrl,
-                        ),
-                        width: 600.w,
-                        height: 800.h,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.comicItem.title,
-                              maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text(
-                              '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
-                          Image.asset(width: 100.w, height: 100.h, addToShelf),
-                          Row(
-                            children: [
-                              Image.asset(width: 100.w, height: 100.h, onShelf),
-                              SizedBox(
-                                width: 200.w,
-                                child: Consumer<ComicProvider>(
-                                  builder: (context, comicProvider, child) =>
-                                      Text(
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          comicProvider.getReadHistory(
-                                                  getComicUniqueId(
-                                                      widget.comicItem.comicId,
-                                                      widget.extensionName)) ??
-                                              ''),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(
+                    height: 800.h,
+                    child: Row(
                       children: [
-                        Text(widget.comicItem.title),
-                        const SizedBox(height: 8),
-                        Text('作者: ${widget.comicItem.extra['author'] ?? '未知'}'),
-                        const SizedBox(height: 16),
-                        const Text('简介:'),
-                        const SizedBox(height: 8),
-                        Text(widget.comicItem.extra['description'] ?? '暂无简介'),
-                        CupertinoButton(
-                          onPressed: () {
-                            _readComic(context);
-                          },
-                          child: Consumer<ComicProvider>(
-                            builder: (context, comicProvider, child) => Text(
-                                'read ${comicProvider.getReadHistory(getComicUniqueId(widget.comicItem.comicId, widget.extensionName)) ?? ''}'),
+                        SizedBox(
+                          width: 600.w,
+                          height: 800.h,
+                          child: Stack(
+                            // image and favorite button
+                            children: [
+                              Positioned.fill(
+                                child: NetImage(
+                                  NetImageContextCover(
+                                    widget.extensionName,
+                                    widget.comicItem.comicId,
+                                    widget.comicItem.imageUrl,
+                                  ),
+                                  width: 600.w,
+                                  height: 800.h,
+                                ),
+                              ),
+                              Positioned(
+                                right: 10.w,
+                                top: 10.h,
+                                child: GestureDetector(
+                                  onTap: _toggleFavorite,
+                                  child: Consumer<ComicProvider>(
+                                    builder: (context, comicProvider, child) =>
+                                        Image.asset(
+                                      comicProvider.isFavoriteComic(
+                                              getComicUniqueId(
+                                                  widget.comicItem.comicId,
+                                                  widget.extensionName))
+                                          ? addToShelfOn
+                                          : addToShelf,
+                                      width: 150.w,
+                                      height: 150.h,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        CupertinoButton(
-                          child: const Text('download'),
-                          onPressed: () {
-                            var comicProvider = context.read<ComicProvider>();
-                            ComicModel? comicModel =
-                                comicProvider.getComicModel(getComicUniqueId(
-                                    widget.comicItem.comicId,
-                                    widget.extensionName));
-
-                            if (comicModel == null) {
-                              return;
-                            }
-
-                            if (comicModel.chapters.isEmpty) {
-                              return;
-                            }
-
-                            _showDownloadOptions(context, comicModel);
-                          },
+                        Expanded(child: Container()),
+                        Column(
+                          children: [
+                            Text(widget.comicItem.title,
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(
+                                '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                            Expanded(child: Container()),
+                            SizedBox(
+                              width: 400.w,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                      width: 60.w, height: 60.h, history),
+                                  SizedBox(width: 20.w),
+                                  SizedBox(
+                                    width: 200.w,
+                                    child: Consumer<ComicProvider>(
+                                      builder: (context, comicProvider,
+                                              child) =>
+                                          Text(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              comicProvider.getReadHistory(
+                                                      getComicUniqueId(
+                                                          widget.comicItem
+                                                              .comicId,
+                                                          widget
+                                                              .extensionName)) ??
+                                                  ''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            SizedBox(
+                              width: 400.w,
+                              child: material.ElevatedButton(
+                                style: material.ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.r),
+                                    ),
+                                    backgroundBuilder: (context, states,
+                                            child) =>
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            gradient: LinearGradient(colors: [
+                                              Color.fromARGB(
+                                                  255, 131, 190, 253),
+                                              Color.fromARGB(
+                                                  255, 153, 149, 249),
+                                            ]),
+                                          ),
+                                          child: child,
+                                        )),
+                                onPressed: () {
+                                  _readComic(context);
+                                },
+                                child: Text('read',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: pm(20, 40.spMin),
+                                        color: CupertinoColors.white)),
+                              ),
+                            )
+                          ],
                         )
                       ],
                     ),

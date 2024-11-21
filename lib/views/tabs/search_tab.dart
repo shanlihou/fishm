@@ -81,7 +81,8 @@ class _SearchTabState extends State<SearchTab> {
               children: [
                 for (var i = 0; i < p.extensions.length; i++)
                   SearchResultWidget(
-                    extensionName: p.extensions[i].displayName,
+                    extensionName: p.extensions[i].name,
+                    displayName: p.extensions[i].displayName,
                     controller: searchResultControllers[i],
                   ),
               ],
