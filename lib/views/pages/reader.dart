@@ -62,7 +62,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   InitOption _initOption = InitOption.none;
   Timer? _timer;
 
-  // value notifier
   final ValueNotifier<String> _pageText = ValueNotifier('0/0');
   final ValueNotifier<MenuPageValue> _menuPage =
       ValueNotifier(MenuPageValue("", false, 0));
@@ -184,24 +183,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     _preloadController?.dispose();
     super.dispose();
   }
-
-  // Future<ChapterDetail> _getChapterDetails(String chapterId) async {
-  //   ComicModel comicModel = context.read<ComicProvider>().getHistoryComicModel(
-  //       getComicUniqueId(widget.comicId, widget.extensionName))!;
-
-  //   var detail = comicModel.getChapterDetail(chapterId);
-  //   if (detail != null) {
-  //     return detail;
-  //   }
-
-  //   var obj = await getChapterDetail(
-  //       widget.extensionName, chapterId, widget.comicId, comicModel.extra);
-
-  //   detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
-
-  //   comicModel.addChapterDetail(chapterId, detail);
-  //   return detail;
-  // }
 
   int get _page {
     return (_preloadController?.page ?? 0).round();
