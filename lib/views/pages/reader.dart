@@ -16,7 +16,6 @@ import 'package:preload_page_view/preload_page_view.dart';
 
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
-import '../../types/context/comic_reader_context.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../widget/net_image.dart';
 
@@ -38,12 +37,17 @@ class MenuPageValue {
 }
 
 class ComicReaderPage extends StatefulWidget {
-  final ComicReaderContext readerContext;
+  final String chapterId;
+  final String comicId;
+  final String chapterTitle;
+  final String extensionName;
   final int? initPage;
+  final String? initChapterId;
   final Map<String, dynamic> extra;
 
-  const ComicReaderPage(this.readerContext, this.extra,
-      {super.key, this.initPage});
+  const ComicReaderPage(this.extensionName, this.chapterId, this.comicId,
+      this.chapterTitle, this.extra,
+      {super.key, this.initPage, this.initChapterId});
 
   @override
   _ComicReaderPageState createState() => _ComicReaderPageState();
@@ -54,9 +58,11 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ReadHistoryModel? _lastRecordHistory;
   int _fingerNum = 0;
   int _flags = 0;
+  final ReaderChapters _readerChapters = ReaderChapters();
   InitOption _initOption = InitOption.none;
   Timer? _timer;
 
+  // value notifier
   final ValueNotifier<String> _pageText = ValueNotifier('0/0');
   final ValueNotifier<MenuPageValue> _menuPage =
       ValueNotifier(MenuPageValue("", false, 0));
@@ -90,10 +96,24 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<bool> _initAsync() async {
+    var p = context.read<ComicProvider>();
     if (_initOption == InitOption.init) {
-      int? initPage = await widget.readerContext.init(context);
-      if (initPage == null) {
+      ComicModel comicModel = p.getHistoryComicModel(
+          getComicUniqueId(widget.comicId, widget.extensionName))!;
+      ChapterDetail? detail = await getChapterDetails(
+          comicModel, widget.extensionName, widget.comicId, widget.chapterId);
+
+      if (detail == null) {
         return false;
+      }
+
+      await p.saveComic(comicModel);
+
+      _readerChapters.addChapter(detail, widget.chapterId);
+      int initPage = widget.initPage ?? 1;
+
+      if (_readerChapters.imageUrl(initPage) == null) {
+        initPage = 1;
       }
 
       _setPageController(PreloadPageController(initialPage: initPage));
@@ -151,7 +171,11 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<void> _recordReadHistory() async {
-    await widget.readerContext.recordReadHistory(context);
+    ComicProvider comicProvider = context.read<ComicProvider>();
+    comicProvider.recordReadHistory(
+        getComicUniqueId(widget.comicId, widget.extensionName),
+        _lastRecordHistory!.chapterId,
+        _lastRecordHistory!.index);
   }
 
   @override
@@ -160,6 +184,24 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
     _preloadController?.dispose();
     super.dispose();
   }
+
+  // Future<ChapterDetail> _getChapterDetails(String chapterId) async {
+  //   ComicModel comicModel = context.read<ComicProvider>().getHistoryComicModel(
+  //       getComicUniqueId(widget.comicId, widget.extensionName))!;
+
+  //   var detail = comicModel.getChapterDetail(chapterId);
+  //   if (detail != null) {
+  //     return detail;
+  //   }
+
+  //   var obj = await getChapterDetail(
+  //       widget.extensionName, chapterId, widget.comicId, comicModel.extra);
+
+  //   detail = ChapterDetail.fromJson(obj as Map<String, dynamic>);
+
+  //   comicModel.addChapterDetail(chapterId, detail);
+  //   return detail;
+  // }
 
   int get _page {
     return (_preloadController?.page ?? 0).round();
@@ -467,7 +509,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         builder: (context, value, child) {
           return PreloadPageView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: widget.readerContext.imageCount,
+              itemCount: _readerChapters.imageCount,
               physics: value ? const NeverScrollableScrollPhysics() : null,
               preloadPagesCount: 4,
               controller: _preloadController,
@@ -475,7 +517,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                 if (index == 0) {
                   _initOption = InitOption.pre;
                   setState(() {});
-                } else if (index == widget.readerContext.imageCount - 1) {
+                } else if (index == _readerChapters.imageCount - 1) {
                   _initOption = InitOption.next;
                   setState(() {});
                 } else {
