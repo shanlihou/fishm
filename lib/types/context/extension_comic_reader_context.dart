@@ -4,10 +4,12 @@ import 'package:provider/provider.dart';
 import '../../models/api/chapter_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../utils/utils_general.dart';
+import '../common/reader_chapters.dart';
 import '../provider/comic_provider.dart';
 import 'comic_reader_context.dart';
 
-class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
+class ExtensionComicReaderContext extends ComicReaderContext
+    with ReaderChapters {
   final String chapterId;
   final String comicId;
   final String chapterTitle;
@@ -15,7 +17,7 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
   final int? initPage;
 
   ExtensionComicReaderContext(this.chapterId, this.comicId, this.chapterTitle,
-      this.extensionName, super.readerChapters, this.initPage);
+      this.extensionName, this.initPage);
 
   @override
   Future<int?> init(BuildContext context) async {
@@ -31,10 +33,10 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
 
     await p.saveComic(comicModel);
 
-    readerChapters.addChapter(detail, chapterId);
+    addChapter(detail, chapterId);
     int initPage = this.initPage ?? 1;
 
-    if (readerChapters.imageUrl(initPage) == null) {
+    if (imageUrl(initPage) == null) {
       initPage = 1;
     }
 
@@ -42,5 +44,11 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
   }
 
   @override
-  int get imageCount => readerChapters.imageCount;
+  Future<void> recordReadHistory(BuildContext context, int page) async {
+    var ret = imageUrl(page);
+    if (ret == null) return;
+    ComicProvider comicProvider = context.read<ComicProvider>();
+    comicProvider.recordReadHistory(
+        getComicUniqueId(comicId, extensionName), ret.$3, ret.$2 + 1);
+  }
 }

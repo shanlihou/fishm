@@ -54,7 +54,6 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   ReadHistoryModel? _lastRecordHistory;
   int _fingerNum = 0;
   int _flags = 0;
-  final ReaderChapters _readerChapters = ReaderChapters();
   InitOption _initOption = InitOption.none;
   Timer? _timer;
 
@@ -152,11 +151,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<void> _recordReadHistory() async {
-    ComicProvider comicProvider = context.read<ComicProvider>();
-    comicProvider.recordReadHistory(
-        getComicUniqueId(widget.comicId, widget.extensionName),
-        _lastRecordHistory!.chapterId,
-        _lastRecordHistory!.index);
+    await widget.readerContext.recordReadHistory(context);
   }
 
   @override
@@ -472,7 +467,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
         builder: (context, value, child) {
           return PreloadPageView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: _readerChapters.imageCount,
+              itemCount: widget.readerContext.imageCount,
               physics: value ? const NeverScrollableScrollPhysics() : null,
               preloadPagesCount: 4,
               controller: _preloadController,
@@ -480,7 +475,7 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
                 if (index == 0) {
                   _initOption = InitOption.pre;
                   setState(() {});
-                } else if (index == _readerChapters.imageCount - 1) {
+                } else if (index == widget.readerContext.imageCount - 1) {
                   _initOption = InitOption.next;
                   setState(() {});
                 } else {

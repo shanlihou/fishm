@@ -3,11 +3,11 @@ import 'package:toonfu/models/api/chapter_detail.dart';
 import '../../common/log.dart';
 import 'reader_chapter_base.dart';
 
-class ReaderChapters<T extends ReaderChapterBase> {
-  final List<T> chapters = [];
+mixin ReaderChapters {
+  final List<ChapterDetail> chapters = [];
   final List<String> chapterIds = [];
 
-  void addChapter(T detail, String id) {
+  void addChapter(ChapterDetail detail, String id) {
     chapters.add(detail);
     chapterIds.add(id);
   }
@@ -44,7 +44,7 @@ class ReaderChapters<T extends ReaderChapterBase> {
     return chapters.first.imageCount + 1;
   }
 
-  void addChapterHead(T detail, String id) {
+  void addChapterHead(ChapterDetail detail, String id) {
     chapters.insert(0, detail);
     chapterIds.insert(0, id);
   }
