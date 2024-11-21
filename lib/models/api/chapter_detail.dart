@@ -1,8 +1,13 @@
-class ChapterDetail {
+import '../../types/common/reader_chapter_base.dart';
+
+class ChapterDetail extends ReaderChapterBase {
   List<String> images;
   Map<String, dynamic> extra;
 
   ChapterDetail(this.images, this.extra);
+
+  @override
+  int get imageCount => images.length;
 
   static ChapterDetail fromJson(Map<String, dynamic> json) {
     List<String> images = [];

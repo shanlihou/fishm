@@ -1,12 +1,13 @@
 import 'package:toonfu/models/api/chapter_detail.dart';
 
 import '../../common/log.dart';
+import 'reader_chapter_base.dart';
 
-class ReaderChapters {
-  final List<ChapterDetail> chapters = [];
+class ReaderChapters<T extends ReaderChapterBase> {
+  final List<T> chapters = [];
   final List<String> chapterIds = [];
 
-  void addChapter(ChapterDetail detail, String id) {
+  void addChapter(T detail, String id) {
     chapters.add(detail);
     chapterIds.add(id);
   }
@@ -25,7 +26,7 @@ class ReaderChapters {
         return ret;
       }
 
-      ret += chapters[i].images.length;
+      ret += chapters[i].imageCount;
       ret += 1;
     }
 
@@ -40,10 +41,10 @@ class ReaderChapters {
   }
 
   int firstMiddlePageIndex() {
-    return chapters.first.images.length + 1;
+    return chapters.first.imageCount + 1;
   }
 
-  void addChapterHead(ChapterDetail detail, String id) {
+  void addChapterHead(T detail, String id) {
     chapters.insert(0, detail);
     chapterIds.insert(0, id);
   }
@@ -62,10 +63,10 @@ class ReaderChapters {
     for (var i = 0; i < chapters.length; i++) {
       var chapter = chapters[i];
       if (chapterIds[i] == chapterId) {
-        return (start, start + chapter.images.length - 1);
+        return (start, start + chapter.imageCount - 1);
       }
 
-      start += chapter.images.length + 1;
+      start += chapter.imageCount + 1;
     }
 
     return null;
@@ -74,23 +75,13 @@ class ReaderChapters {
   int getChapterImageCount(String chapterId) {
     int index = chapterIds.indexWhere((e) => e == chapterId);
     if (index == -1) return 0;
-    return chapters[index].images.length;
-  }
-
-  void debugPrint() {
-    for (var chapter in chapters) {
-      for (var image in chapter.images) {
-        Log.instance.d('image: $image');
-      }
-
-      Log.instance.d('--------------------------------');
-    }
+    return chapters[index].imageCount;
   }
 
   int get imageCount {
     int count = 0;
     for (var chapter in chapters) {
-      count += chapter.images.length;
+      count += chapter.imageCount;
     }
     return count + 1 + chapters.length;
   }
@@ -103,7 +94,7 @@ class ReaderChapters {
         return ret + page - 1;
       }
 
-      ret += chapter.images.length;
+      ret += chapter.imageCount;
       ret += 1;
     }
     return null;
@@ -119,15 +110,15 @@ class ReaderChapters {
 
     for (var i = 0; i < chapters.length; i++) {
       var chapter = chapters[i];
-      if (index < chapter.images.length) {
+      if (index < chapter.imageCount) {
         return (
           chapter.images[index],
           index,
           chapterIds[i],
-          chapter.images.length
+          chapter.imageCount
         );
       }
-      index -= chapter.images.length;
+      index -= chapter.imageCount;
 
       if (index == 0) {
         return null;

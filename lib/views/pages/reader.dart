@@ -16,6 +16,7 @@ import 'package:preload_page_view/preload_page_view.dart';
 
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
+import '../../types/context/comic_reader_context.dart';
 import '../../types/context/net_iamge_context.dart';
 import '../widget/net_image.dart';
 
@@ -37,17 +38,12 @@ class MenuPageValue {
 }
 
 class ComicReaderPage extends StatefulWidget {
-  final String chapterId;
-  final String comicId;
-  final String chapterTitle;
-  final String extensionName;
+  final ComicReaderContext readerContext;
   final int? initPage;
-  final String? initChapterId;
   final Map<String, dynamic> extra;
 
-  const ComicReaderPage(this.extensionName, this.chapterId, this.comicId,
-      this.chapterTitle, this.extra,
-      {super.key, this.initPage, this.initChapterId});
+  const ComicReaderPage(this.readerContext, this.extra,
+      {super.key, this.initPage});
 
   @override
   _ComicReaderPageState createState() => _ComicReaderPageState();
@@ -95,24 +91,10 @@ class _ComicReaderPageState extends State<ComicReaderPage> {
   }
 
   Future<bool> _initAsync() async {
-    var p = context.read<ComicProvider>();
     if (_initOption == InitOption.init) {
-      ComicModel comicModel = p.getHistoryComicModel(
-          getComicUniqueId(widget.comicId, widget.extensionName))!;
-      ChapterDetail? detail = await getChapterDetails(
-          comicModel, widget.extensionName, widget.comicId, widget.chapterId);
-
-      if (detail == null) {
+      int? initPage = await widget.readerContext.init(context);
+      if (initPage == null) {
         return false;
-      }
-
-      await p.saveComic(comicModel);
-
-      _readerChapters.addChapter(detail, widget.chapterId);
-      int initPage = widget.initPage ?? 1;
-
-      if (_readerChapters.imageUrl(initPage) == null) {
-        initPage = 1;
       }
 
       _setPageController(PreloadPageController(initialPage: initPage));
