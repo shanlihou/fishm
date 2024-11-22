@@ -82,16 +82,14 @@ class _NetImageState extends State<NetImage> {
 
   Future<void> _downloadImage() async {
     bool success = await widget.ctx.fetchImage();
-    if (!success) {
-      setState(() {
-        _isDownloadFailed = true;
-      });
-      return;
-    }
 
     if (mounted) {
       setState(() {
-        _isDownloaded = true;
+        if (success) {
+          _isDownloaded = true;
+        } else {
+          _isDownloadFailed = true;
+        }
       });
     }
   }

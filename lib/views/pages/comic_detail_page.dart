@@ -12,6 +12,7 @@ import '../../const/assets_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
+import '../../types/context/extension_comic_reader_context.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
@@ -19,6 +20,8 @@ import '../widget/net_image.dart';
 import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
+
+import 'reader_page.dart';
 
 class ComicDetailPage extends StatefulWidget {
   final ComicItem comicItem;
@@ -179,12 +182,21 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               Navigator.push(
                 buildContext,
                 CupertinoPageRoute(
-                  builder: (context) => ComicReaderPage(
+                  builder: (context) => ReaderPage(
+                    readerContext: ExtensionComicReaderContext(
                       widget.extensionName,
-                      chapter.value.id,
                       comicModel.id,
-                      chapter.value.title,
-                      comicModel.extra),
+                      chapter.value.id,
+                      null,
+                      comicModel.extra,
+                    ),
+                  ),
+                  // builder: (context) => ComicReaderPage(
+                  //     widget.extensionName,
+                  //     chapter.value.id,
+                  //     comicModel.id,
+                  //     chapter.value.title,
+                  //     comicModel.extra),
                 ),
               );
             },
@@ -205,27 +217,33 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
 
     late ReadHistoryModel readHistory;
-    String chapterTitle = '';
     if (comicProvider.readHistory.containsKey(uniqueId)) {
       readHistory = comicProvider.readHistory[uniqueId]!;
-      chapterTitle = comicModel.getChapterTitle(readHistory.chapterId)!;
     } else {
       readHistory = ReadHistoryModel(comicModel.chapters.last.id, 0);
-      chapterTitle = comicModel.chapters.first.title;
     }
 
     Navigator.push(
       buildContext,
       CupertinoPageRoute(
-        builder: (context) => ComicReaderPage(
-          widget.extensionName,
-          readHistory.chapterId,
-          widget.comicItem.comicId,
-          chapterTitle,
-          widget.comicItem.extra,
-          initChapterId: readHistory.chapterId,
-          initPage: readHistory.index,
+        builder: (context) => ReaderPage(
+          readerContext: ExtensionComicReaderContext(
+            widget.extensionName,
+            comicModel.id,
+            readHistory.chapterId,
+            readHistory.index,
+            comicModel.extra,
+          ),
         ),
+        // builder: (context) => ComicReaderPage(
+        //   widget.extensionName,
+        //   readHistory.chapterId,
+        //   widget.comicItem.comicId,
+        //   chapterTitle,
+        //   widget.comicItem.extra,
+        //   initChapterId: readHistory.chapterId,
+        //   initPage: readHistory.index,
+        // ),
       ),
     );
   }
