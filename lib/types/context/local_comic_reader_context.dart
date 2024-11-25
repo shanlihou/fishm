@@ -1,14 +1,44 @@
-import 'package:flutter/widgets.dart';
+import 'dart:io';
 
+import 'package:archive/archive.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../const/general_const.dart';
+import '../../views/widget/net_image.dart';
+import '../common/reader_chapters.dart';
+import '../common/reader_chapters.dart';
 import 'comic_reader_context.dart';
+import 'net_iamge_context.dart';
+
+class LocalChapterDetail extends ReaderChapter {
+  final List<String> images;
+
+  LocalChapterDetail(this.images);
+}
 
 class LocalComicReaderContext extends ComicReaderContext {
+  String cbzDir;
+  String imageSaveDir = "";
+  List<String> _cbzPaths = [];
+  int? initCbzIndex;
+  int? initCbzPage;
+  final ReaderChapters<LocalChapterDetail> _readerChapters = ReaderChapters();
+
+  LocalComicReaderContext(this.cbzDir, {this.initCbzIndex, this.initCbzPage});
+
   @override
   void recordHistory(BuildContext context, int page) {}
 
   @override
   Widget? getImage(BuildContext context, int page) {
-    return null;
+    var ret = _readerChapters.imageUrl(page);
+    if (ret == null) {
+      return null;
+    } else {
+      return NetImage(NetImageContextLocal(ret.$1, ret.$1),
+          width: 1.sw, height: 1.sh);
+    }
   }
 
   @override
@@ -17,16 +47,66 @@ class LocalComicReaderContext extends ComicReaderContext {
   }
 
   @override
-  int get imageCount => 0;
+  int get imageCount => _readerChapters.imageCount;
 
   @override
-  String getPageText(BuildContext context, int page) {
-    return '';
+  String getPageText(BuildContext context, int index) {
+    var ret = _readerChapters.imageUrl(index);
+    if (ret == null) {
+      return '0/0';
+    }
+
+    return '${ret.$3} ${ret.$2 + 1}/${ret.$4}';
+  }
+
+  Future<(List<String>, String)> _loadCbzByIndex(int index) async {
+    var _curDir = '$imageSaveDir/$index';
+    String _initCbzPath = _cbzPaths[index];
+    final bytes = await File(_initCbzPath).readAsBytes();
+    final archive = ZipDecoder().decodeBytes(bytes);
+
+    int writeIdx = 1;
+    List<String> imagePaths = [];
+    for (final file in archive) {
+      if (file.isFile) {
+        var suffix = file.name.split('.').last;
+        String newFileName = '$_curDir/${writeIdx}.$suffix';
+
+        imagePaths.add(newFileName);
+        if (File(newFileName).existsSync()) {
+          writeIdx++;
+          continue;
+        }
+
+        final data = file.content as List<int>;
+        File(newFileName)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(data);
+        writeIdx++;
+      }
+    }
+
+    return (imagePaths, _curDir);
   }
 
   @override
   Future<int?> init(BuildContext context) async {
-    return null;
+    // urlencode cbzdir
+    var urlEncodedCbzDir = Uri.encodeComponent(cbzDir);
+    print('urlEncodedCbzDir: $urlEncodedCbzDir');
+
+    imageSaveDir = '$archiveCbzImageDir/$urlEncodedCbzDir';
+
+    bool isDir = await Directory(cbzDir).exists();
+    if (!isDir) {
+      _cbzPaths = [cbzDir];
+    }
+
+    var (imagePaths, curDir) = await _loadCbzByIndex(initCbzIndex ?? 0);
+    print('imagePaths: $imagePaths');
+
+    _readerChapters.addChapter(LocalChapterDetail(imagePaths), curDir);
+    return 1;
   }
 
   @override

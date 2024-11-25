@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:easy_refresh/easy_refresh.dart';
@@ -146,28 +149,44 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
   }
 
+  Future<void> _exportChapterToCbz(
+      BuildContext buildContext, ChapterModel chapter) async {
+    print('export chapter to cbz: ${chapter.id}');
+    String folder = imageChapterFolder(
+        widget.extensionName, widget.comicItem.comicId, chapter.id);
+    print('folder: $folder');
+    var encoder = ZipFileEncoder();
+    await encoder.zipDirectoryAsync(Directory(folder),
+        filename: 'tmp/test.cbz');
+  }
+
   Widget _buildChapterItem(
       BuildContext buildContext, ChapterModel chapter, int idx) {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.white,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      margin: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
-      height: 100.h,
-      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
-      child: Row(
-        children: [
-          Expanded(child: Text(chapter.title)),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ComicChapterStatusWidget(
-              extensionName: widget.extensionName,
-              comicId: widget.comicItem.comicId,
-              chapterId: chapter.id,
+    return GestureDetector(
+      onLongPress: () {
+        _exportChapterToCbz(buildContext, chapter);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        margin: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
+        height: 100.h,
+        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+        child: Row(
+          children: [
+            Expanded(child: Text(chapter.title)),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ComicChapterStatusWidget(
+                extensionName: widget.extensionName,
+                comicId: widget.comicItem.comicId,
+                chapterId: chapter.id,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -228,15 +247,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             comicModel.extra,
           ),
         ),
-        // builder: (context) => ComicReaderPage(
-        //   widget.extensionName,
-        //   readHistory.chapterId,
-        //   widget.comicItem.comicId,
-        //   chapterTitle,
-        //   widget.comicItem.extra,
-        //   initChapterId: readHistory.chapterId,
-        //   initPage: readHistory.index,
-        // ),
       ),
     );
   }

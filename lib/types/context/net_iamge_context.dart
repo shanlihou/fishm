@@ -11,6 +11,20 @@ abstract class NetImageContext {
   NetImageContext(this.imageUrl);
 }
 
+class NetImageContextLocal extends NetImageContext {
+  final String localPath;
+
+  NetImageContextLocal(super.imageUrl, this.localPath);
+
+  @override
+  String get imagePath => localPath;
+
+  @override
+  Future<bool> fetchImage() async {
+    return true;
+  }
+}
+
 class NetImageContextCover extends NetImageContext {
   final String extensionName;
   final String comicId;
