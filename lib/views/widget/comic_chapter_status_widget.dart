@@ -119,6 +119,18 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
           return;
         }
 
+        ComicModel? comicModel = comicProvider.getComicModel(
+            getComicUniqueId(widget.comicId, widget.extensionName));
+        if (comicModel == null) {
+          return;
+        }
+
+        ChapterModel? chapterModel =
+            comicModel.getChapterModel(widget.chapterId);
+        if (chapterModel == null) {
+          return;
+        }
+
         var id =
             buildTaskId(widget.extensionName, widget.comicId, widget.chapterId);
         taskProvider.addTask(TaskDownload(
@@ -126,8 +138,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
             extensionName: widget.extensionName,
             comicId: widget.comicId,
             chapterId: widget.chapterId,
-            chapterName: widget.chapterId,
-            comicTitle: widget.comicId));
+            chapterName: chapterModel.title,
+            comicTitle: comicModel.title));
       },
       child: _buildIconAndText(status, comicProvider),
     );

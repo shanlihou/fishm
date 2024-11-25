@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:toonfu/views/tabs/download_task_tab.dart';
 
 import 'favorite_tab.dart';
 import 'history_tab.dart';
@@ -28,6 +29,7 @@ class _BookShelfTabState extends State<BookShelfTab> {
           children: const [
             FavoriteTab(),
             HistoryTab(),
+            DownloadTaskTab(),
           ],
         ),
       ),
@@ -89,13 +91,14 @@ class _BookShelfTabState extends State<BookShelfTab> {
     List<Widget> children;
     var fav = _buildTabItem(37.h, '收藏', 0);
     var history = _buildTabItem(200.h, '历史', 1);
+    var download = _buildTabItem(370.h, '下载', 2);
     var pageView = _buildPageView();
 
-    if (_currentIndex == 0) {
-      children = [history, pageView, fav];
-    } else {
-      children = [fav, pageView, history];
-    }
+    children = [fav, history, download];
+    var front = children[_currentIndex];
+    children.remove(front);
+    children.insert(0, front);
+    children.insert(1, pageView);
 
     return Container(
       // #7F83F7 6%

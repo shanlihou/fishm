@@ -17,7 +17,6 @@ import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
 import '../widget/net_image.dart';
-import './reader.dart';
 import '../../types/context/net_iamge_context.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 

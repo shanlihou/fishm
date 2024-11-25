@@ -23,7 +23,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
   ExtensionComicReaderContext(this.extensionName, this.comicId,
       this.initChapterId, this.initPage, this.extra);
 
-  ReaderChapters _readerChapters = ReaderChapters();
+  final ReaderChapters _readerChapters = ReaderChapters();
 
   int? preChapter(BuildContext context) {
     var preChapterId = context
