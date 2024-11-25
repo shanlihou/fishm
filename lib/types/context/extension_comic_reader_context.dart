@@ -25,6 +25,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
   final ReaderChapters _readerChapters = ReaderChapters();
 
+  @override
   int? preChapter(BuildContext context) {
     var preChapterId = context
         .read<ComicProvider>()
@@ -64,6 +65,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     return ret?.$1 ?? 0;
   }
 
+  @override
   void recordHistory(BuildContext context, int index) {
     var ret = _readerChapters.imageUrl(index);
     if (ret == null) {
@@ -102,12 +104,15 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     return initPage;
   }
 
+  @override
   int get imageCount => _readerChapters.imageCount;
 
+  @override
   (String?, String?) buildMiddleText(BuildContext context, int index) {
     return ('', '');
   }
 
+  @override
   Widget? getImage(BuildContext context, int index) {
     var ret = _readerChapters.imageUrl(index);
     if (ret == null) {
@@ -122,10 +127,12 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     }
   }
 
+  @override
   int chapterImageCount() {
     return _readerChapters.getChapterImageCount(historyChapterId);
   }
 
+  @override
   String getPageText(BuildContext context, int index) {
     var ret = _readerChapters.imageUrl(index);
     if (ret == null) {
@@ -143,6 +150,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     return '$chapterTitle ${ret.$2 + 1}/${ret.$4}';
   }
 
+  @override
   Future<int> supplementChapter(BuildContext context, bool isNext) async {
     var p = context.read<ComicProvider>();
     var comicModel = p.getComicModel(getComicUniqueId(comicId, extensionName));

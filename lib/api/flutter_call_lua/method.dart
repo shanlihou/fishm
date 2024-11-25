@@ -15,7 +15,8 @@ Future<Object> gallery(String extensionName, int page) async {
 
   actionsManager.addAction(Gallery.toAction(retId, extensionName, page));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(
+      retId, 'gallery ext:$extensionName page:$page');
   var ret = await completer.future;
 
   return ret;
@@ -28,7 +29,8 @@ Future<Object> getDetail(
   actionsManager
       .addAction(GetDetail.toAction(retId, extensionName, comicId, extra));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(
+      retId, 'getDetail ext:$extensionName comicId:$comicId');
   var ret = await completer.future;
   return ret;
 }
@@ -40,7 +42,8 @@ Future<Object> getChapterDetail(String extensionName, String chapterId,
   actionsManager.addAction(
       ChapterDetail.toAction(retId, extensionName, chapterId, comicId, extra));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(retId,
+      'getChapterDetail ext:$extensionName chapterId:$chapterId comicId:$comicId');
   var ret = await completer.future;
   return ret;
 }
@@ -52,7 +55,8 @@ Future<Object> downloadImage(String extensionName, Map<String, dynamic> extra,
   actionsManager.addAction(
       DownloadImage.toAction(retId, extensionName, extra, url, downloadPath));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(retId,
+      'downloadImage ext:$extensionName url:$url downloadPath:$downloadPath');
   var ret = await completer.future;
   return ret;
 }
@@ -62,7 +66,7 @@ Future<Object> getBaseVersion() async {
 
   actionsManager.addAction(GetBaseVersion.toAction(retId));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(retId, 'getBaseVersion');
   var ret = await completer.future;
   return ret;
 }
@@ -73,7 +77,8 @@ Future<Object> search(String extensionName, String keyword, int page) async {
   actionsManager
       .addAction(Search.toAction(retId, extensionName, keyword, page));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(
+      retId, 'search ext:$extensionName keyword:$keyword page:$page');
   var ret = await completer.future;
   return ret;
 }
@@ -83,7 +88,8 @@ Future<Object> getConfigKeys(String extensionName) async {
 
   actionsManager.addAction(GetConfigKeys.toAction(retId, extensionName));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer =
+      completerManager.addCompleter(retId, 'getConfigKeys ext:$extensionName');
   var ret = await completer.future;
   return ret;
 }
@@ -94,7 +100,8 @@ Future<Object> setConfigs(
 
   actionsManager.addAction(SetConfigs.toAction(retId, extensionName, configs));
 
-  var completer = completerManager.addCompleter(retId);
+  var completer = completerManager.addCompleter(
+      retId, 'setConfigs ext:$extensionName configs:$configs');
   var ret = await completer.future;
   return ret;
 }

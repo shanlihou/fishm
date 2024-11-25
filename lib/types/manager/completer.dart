@@ -7,7 +7,8 @@ const int TIME_OUT = 60;
 class CompleterData {
   Completer<Object> completer;
   DateTime createTime;
-  CompleterData()
+  String info;
+  CompleterData(this.info)
       : completer = Completer<Object>(),
         createTime = DateTime.now();
 }
@@ -23,8 +24,8 @@ class CompleterManager {
     return id;
   }
 
-  Completer<Object> addCompleter(int id) {
-    _map[id] = CompleterData();
+  Completer<Object> addCompleter(int id, String info) {
+    _map[id] = CompleterData(info);
     return _map[id]!.completer;
   }
 

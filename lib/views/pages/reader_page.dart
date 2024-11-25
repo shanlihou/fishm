@@ -8,7 +8,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 
 import '../../const/general_const.dart';
-import '../../types/context/extension_comic_reader_context.dart';
+import '../../types/context/comic_reader_context.dart';
 import '../../utils/utils_general.dart';
 
 enum InitOption {
@@ -28,7 +28,7 @@ class MenuPageValue {
 }
 
 class ReaderPage extends StatefulWidget {
-  final ExtensionComicReaderContext readerContext;
+  final ComicReaderContext readerContext;
   const ReaderPage({super.key, required this.readerContext});
   @override
   State<ReaderPage> createState() => _ReaderPageState();
@@ -51,6 +51,14 @@ class _ReaderPageState extends State<ReaderPage> {
     super.initState();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_preloadController == null) {
+        return;
+      }
+
+      if (_preloadController!.positions.isEmpty) {
+        return;
+      }
+
       widget.readerContext.recordHistory(context, _page);
     });
   }
