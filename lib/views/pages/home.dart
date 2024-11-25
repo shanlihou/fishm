@@ -13,8 +13,6 @@ import '../widget/bottom_app_bar_widget.dart';
 import '../tabs/extensions_tab.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
-import 'task_page.dart';
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -60,29 +58,7 @@ class _HomeState extends State<Home>
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.list_bullet),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (context) => const TaskPage()),
-                );
-              },
-            ),
-            // CupertinoButton(
-            //   padding: EdgeInsets.zero,
-            //   child: const Icon(CupertinoIcons.settings),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       CupertinoPageRoute(
-            //           builder: (context) => const MainSettings()),
-            //     );
-            //   },
-            // ),
-          ],
+          children: [],
         ),
       ),
       child: SafeArea(

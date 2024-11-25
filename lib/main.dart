@@ -44,6 +44,8 @@ Future<void> _main() async {
     Log.instance.e('Hive init error e:$e, s:$s');
   }
 
+  Log.instance.i('ready to run app');
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => SettingProvider()),

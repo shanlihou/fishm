@@ -44,6 +44,12 @@ class TaskProvider extends ChangeNotifier {
     return tasks.containsKey(id);
   }
 
+  void removeTask(String id) {
+    tasks.remove(id);
+    Hive.box(taskHiveKey).delete(id);
+    notifyListeners();
+  }
+
   void addTask(TaskDownload task) {
     if (tasks.containsKey(task.id)) {
       throw Exception('task id already exists');

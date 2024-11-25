@@ -20,3 +20,4 @@ const String addToShelfOn = 'assets/images/icon/add-to-shelf-on.png';
 const String onShelf = 'assets/images/icon/on-shelf.png';
 const String history = 'assets/images/icon/history.png';
 const String download2 = 'assets/images/icon/download2.png';
+const String goToRead = 'assets/images/icon/go-to-read.png';

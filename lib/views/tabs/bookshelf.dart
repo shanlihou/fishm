@@ -4,6 +4,7 @@ import 'package:toonfu/views/tabs/download_task_tab.dart';
 
 import 'favorite_tab.dart';
 import 'history_tab.dart';
+import 'local_comic_tab.dart';
 
 class BookShelfTab extends StatefulWidget {
   const BookShelfTab({super.key});
@@ -29,6 +30,7 @@ class _BookShelfTabState extends State<BookShelfTab> {
           children: const [
             FavoriteTab(),
             HistoryTab(),
+            LocalComicTab(),
             DownloadTaskTab(),
           ],
         ),
@@ -88,17 +90,21 @@ class _BookShelfTabState extends State<BookShelfTab> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children;
-    var fav = _buildTabItem(37.h, '收藏', 0);
-    var history = _buildTabItem(200.h, '历史', 1);
-    var download = _buildTabItem(370.h, '下载', 2);
-    var pageView = _buildPageView();
+    double current = 37.h;
+    double addValue = 170.h;
+    int index = 0;
+    List<Widget> children = [];
+    List<String> titles = ['收藏', '历史', '本地', '下载'];
+    for (String title in titles) {
+      var tab = _buildTabItem(current, title, index++);
+      current += addValue;
+      children.add(tab);
+    }
 
-    children = [fav, history, download];
     var front = children[_currentIndex];
     children.remove(front);
     children.insert(0, front);
-    children.insert(1, pageView);
+    children.insert(1, _buildPageView());
 
     return Container(
       // #7F83F7 6%

@@ -139,7 +139,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
             comicId: widget.comicId,
             chapterId: widget.chapterId,
             chapterName: chapterModel.title,
-            comicTitle: comicModel.title));
+            comicTitle: comicModel.title,
+            imageCount: chapterModel.images.length));
       },
       child: _buildIconAndText(status, comicProvider),
     );

@@ -17,20 +17,12 @@ class TaskDownload extends TaskBase {
   final String chapterId;
   final String chapterName;
   final String comicTitle;
-  double _progress = 0;
-
-  @override
-  double progress() {
-    return _progress;
-  }
-
-  void setProgress(double value) {
-    _progress = value;
-  }
+  final int imageCount;
+  int currentCount;
 
   @override
   void reset() {
-    _progress = 0;
+    currentCount = 0;
   }
 
   @override
@@ -83,7 +75,7 @@ class TaskDownload extends TaskBase {
         yield false;
         return;
       }
-      _progress = (i + 1) / detail.images.length;
+      currentCount = i + 1;
       yield true;
     }
   }
@@ -100,7 +92,8 @@ class TaskDownload extends TaskBase {
       'chapterName': chapterName,
       'comicTitle': comicTitle,
       'createTime': createTime?.toIso8601String(),
-      'progress': _progress,
+      'imageCount': imageCount,
+      'currentCount': currentCount,
       'id': id,
       'status': status.index,
     });
@@ -115,10 +108,11 @@ class TaskDownload extends TaskBase {
       chapterId: json['chapterId'],
       chapterName: json['chapterName'],
       comicTitle: json['comicTitle'],
+      imageCount: json['imageCount'],
+      currentCount: json['currentCount'],
     );
     task.createTime = DateTime.parse(json['createTime']);
     task.status = TaskStatus.values[json['status']];
-    task.setProgress(json['progress'] ?? 0);
     return task;
   }
 
@@ -128,5 +122,7 @@ class TaskDownload extends TaskBase {
       required this.comicId,
       required this.chapterId,
       required this.chapterName,
-      required this.comicTitle});
+      required this.comicTitle,
+      required this.imageCount,
+      this.currentCount = 0});
 }

@@ -28,7 +28,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
   int? preChapter(BuildContext context) {
     var preChapterId = context
         .read<ComicProvider>()
-        .getHistoryComicModel(getComicUniqueId(comicId, extensionName))
+        .getComicModel(getComicUniqueId(comicId, extensionName))
         ?.preChapterId(historyChapterId);
 
     if (preChapterId == null) {
@@ -47,7 +47,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
   int? nextChapter(BuildContext context) {
     var nextChapterId = context
         .read<ComicProvider>()
-        .getHistoryComicModel(getComicUniqueId(comicId, extensionName))
+        .getComicModel(getComicUniqueId(comicId, extensionName))
         ?.nextChapterId(historyChapterId);
 
     if (nextChapterId == null) {
@@ -81,7 +81,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
   Future<int?> init(BuildContext context) async {
     var p = context.read<ComicProvider>();
     ComicModel comicModel =
-        p.getHistoryComicModel(getComicUniqueId(comicId, extensionName))!;
+        p.getComicModel(getComicUniqueId(comicId, extensionName))!;
 
     ChapterDetail? detail = await getChapterDetails(
         comicModel, extensionName, comicId, initChapterId);
@@ -133,7 +133,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     }
     var comicModel = context
         .read<ComicProvider>()
-        .getHistoryComicModel(getComicUniqueId(comicId, extensionName));
+        .getComicModel(getComicUniqueId(comicId, extensionName));
     if (comicModel == null) {
       return '0/0';
     }
@@ -145,8 +145,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
   Future<int> supplementChapter(BuildContext context, bool isNext) async {
     var p = context.read<ComicProvider>();
-    var comicModel =
-        p.getHistoryComicModel(getComicUniqueId(comicId, extensionName));
+    var comicModel = p.getComicModel(getComicUniqueId(comicId, extensionName));
 
     if (comicModel == null) return -1;
 

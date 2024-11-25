@@ -190,12 +190,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                       comicModel.extra,
                     ),
                   ),
-                  // builder: (context) => ComicReaderPage(
-                  //     widget.extensionName,
-                  //     chapter.value.id,
-                  //     comicModel.id,
-                  //     chapter.value.title,
-                  //     comicModel.extra),
                 ),
               );
             },

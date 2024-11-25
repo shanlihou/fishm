@@ -3,6 +3,7 @@ const int extensionStatusInstalled = 2;
 const yamlExtensionKey = 'extensions';
 const tempImageDir = 'img_tmp';
 const archiveImageDir = 'archive_img';
+const cbzDir = 'cbz';
 const yamlMainKey = 'main';
 
 enum NetImageType {

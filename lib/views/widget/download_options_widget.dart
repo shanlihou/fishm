@@ -42,7 +42,8 @@ class DownloadOptionsWidget extends StatelessWidget {
                   comicId: comicModel.id,
                   chapterId: chapter.id,
                   chapterName: chapter.title,
-                  comicTitle: comicModel.title));
+                  comicTitle: comicModel.title,
+                  imageCount: chapter.images.length));
             },
             child: const Icon(CupertinoIcons.cloud_download,
                 color: CupertinoColors.systemGrey),

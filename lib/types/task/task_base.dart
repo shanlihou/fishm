@@ -11,7 +11,6 @@ abstract class TaskBase {
   TaskBase({required this.id, this.status = TaskStatus.ready});
   Stream<bool> run(BuildContext context);
 
-  double progress();
   void reset();
   String displayText();
 
