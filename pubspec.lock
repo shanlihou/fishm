@@ -338,6 +338,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  ftp_server:
+    dependency: "direct main"
+    description:
+      name: ftp_server
+      sha256: d7776fe99f42011404159b57569ba03b6e9cd7c118538ac1290d2c52dffefe63
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   glob:
     dependency: transitive
     description:

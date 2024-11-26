@@ -34,14 +34,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
 
   Widget _buildIconAndText(
       ComicChapterStatus status, ComicProvider comicProvider) {
-    if (status == ComicChapterStatus.normal) {
-      return Row(
-        children: [
-          Image.asset(download2, width: 60.w, height: 60.h),
-          SizedBox(width: 30.w),
-          Text(status.name),
-        ],
-      );
+    if (status == ComicChapterStatus.downloaded) {
+      return Image.asset(goToRead, width: 60.w, height: 60.h);
     } else if (status == ComicChapterStatus.downloading) {
       int cnt = getChapterImageCount(
           widget.extensionName, widget.comicId, widget.chapterId);
@@ -56,7 +50,7 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
 
       return Text(text);
     } else {
-      return Text(status.name);
+      return Image.asset(download2, width: 60.w, height: 60.h);
     }
   }
 
@@ -69,7 +63,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
 
     return GestureDetector(
       onTap: () {
-        if (status != ComicChapterStatus.normal) {
+        if (status == ComicChapterStatus.downloaded ||
+            status == ComicChapterStatus.downloading) {
           return;
         }
 

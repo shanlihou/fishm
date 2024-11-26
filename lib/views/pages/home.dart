@@ -7,6 +7,7 @@ import '../../const/assets_const.dart';
 import '../../types/provider/task_provider.dart';
 import '../mixin/lua_mixin.dart';
 import '../mixin/task_mixin.dart';
+import '../tabs/import_comic_tab.dart';
 import '../tabs/my_tab.dart';
 import '../tabs/search_tab.dart';
 import '../widget/bottom_app_bar_widget.dart';
@@ -67,7 +68,7 @@ class _HomeState extends State<Home>
             ExtensionsTab(),
             SearchTab(),
             BookShelfTab(),
-            ExploreTab(),
+            ImportComicTab(),
             MyTab(),
           ],
           titles: [
