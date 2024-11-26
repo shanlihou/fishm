@@ -11,7 +11,7 @@ import '../provider/comic_provider.dart';
 import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';
 
-class ExtensionComicReaderContext extends ComicReaderContext {
+class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
   final String extensionName;
   final String comicId;
   final String initChapterId;
@@ -22,8 +22,6 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
   ExtensionComicReaderContext(this.extensionName, this.comicId,
       this.initChapterId, this.initPage, this.extra);
-
-  final ReaderChapters<ChapterDetail> _readerChapters = ReaderChapters();
 
   @override
   int? preChapter(BuildContext context) {
@@ -36,7 +34,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
       return null;
     }
 
-    return _readerChapters.chapterFirstPageIndex(preChapterId);
+    return readerChapters.chapterFirstPageIndex(preChapterId);
   }
 
   @override
@@ -44,7 +42,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
   @override
   int? getAbsolutePage(int chapterPage) {
-    return _readerChapters.calcPage(historyChapterId, chapterPage);
+    return readerChapters.calcPage(historyChapterId, chapterPage);
   }
 
   @override
@@ -58,20 +56,12 @@ class ExtensionComicReaderContext extends ComicReaderContext {
       return null;
     }
 
-    return _readerChapters.chapterFirstPageIndex(nextChapterId);
-  }
-
-  @override
-  int lastChapterFirstPageIndex() {
-    var ret =
-        _readerChapters.getChapterIamgeRange(_readerChapters.lastChapterId());
-
-    return ret?.$1 ?? 0;
+    return readerChapters.chapterFirstPageIndex(nextChapterId);
   }
 
   @override
   void recordHistory(BuildContext context, int index) {
-    var ret = _readerChapters.imageUrl(index);
+    var ret = readerChapters.imageUrl(index);
     if (ret == null) {
       return;
     }
@@ -99,10 +89,10 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
     await p.saveComic(comicModel);
 
-    _readerChapters.addChapter(detail, initChapterId);
+    readerChapters.addChapter(detail, initChapterId);
     int initPage = this.initPage ?? 1;
 
-    if (_readerChapters.imageUrl(initPage) == null) {
+    if (readerChapters.imageUrl(initPage) == null) {
       initPage = 1;
     }
 
@@ -110,16 +100,44 @@ class ExtensionComicReaderContext extends ComicReaderContext {
   }
 
   @override
-  int get imageCount => _readerChapters.imageCount;
+  int get imageCount => readerChapters.imageCount;
 
   @override
   (String?, String?) buildMiddleText(BuildContext context, int index) {
-    return ('', '');
+    var preRet = readerChapters.imageUrl(index - 1);
+    var nextRet = readerChapters.imageUrl(index + 1);
+    var comicModel = context
+        .read<ComicProvider>()
+        .getComicModel(getComicUniqueId(comicId, extensionName));
+
+    if (comicModel == null) return (null, null);
+
+    if (preRet == null && nextRet == null) {
+      return (null, null);
+    }
+
+    if (preRet == null) {
+      String preChapterId = comicModel.preChapterId(nextRet!.$3) ?? '';
+      String? preChapterTitle = comicModel.getChapterTitle(preChapterId);
+      String? nextChapterTitle = comicModel.getChapterTitle(nextRet.$3);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    if (nextRet == null) {
+      String nextChapterId = comicModel.nextChapterId(preRet.$3) ?? '';
+      String? preChapterTitle = comicModel.getChapterTitle(preRet.$3);
+      String? nextChapterTitle = comicModel.getChapterTitle(nextChapterId);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    String? preChapterTitle = comicModel.getChapterTitle(preRet.$3);
+    String? nextChapterTitle = comicModel.getChapterTitle(nextRet.$3);
+    return (preChapterTitle, nextChapterTitle);
   }
 
   @override
   Widget? getImage(BuildContext context, int index) {
-    var ret = _readerChapters.imageUrl(index);
+    var ret = readerChapters.imageUrl(index);
     if (ret == null) {
       return null;
     } else {
@@ -134,12 +152,12 @@ class ExtensionComicReaderContext extends ComicReaderContext {
 
   @override
   int chapterImageCount() {
-    return _readerChapters.getChapterImageCount(historyChapterId);
+    return readerChapters.getChapterImageCount(historyChapterId);
   }
 
   @override
   String getPageText(BuildContext context, int index) {
-    var ret = _readerChapters.imageUrl(index);
+    var ret = readerChapters.imageUrl(index);
     if (ret == null) {
       return '0/0';
     }
@@ -163,25 +181,25 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     if (comicModel == null) return -1;
 
     if (isNext) {
-      String last = _readerChapters.lastChapterId();
+      String last = readerChapters.lastChapterId();
       String? nextChapterId = comicModel.nextChapterId(last);
       if (nextChapterId == null) return -1;
       ChapterDetail detail = (await getChapterDetails(
           comicModel, extensionName, comicId, nextChapterId))!;
       await p.saveComic(comicModel);
-      _readerChapters.addChapter(detail, nextChapterId);
-      _readerChapters.frontPop();
-      return _readerChapters.firstMiddlePageIndex();
+      readerChapters.addChapter(detail, nextChapterId);
+      readerChapters.frontPop();
+      return readerChapters.firstMiddlePageIndex();
     } else {
-      String first = _readerChapters.firstChapterId();
+      String first = readerChapters.firstChapterId();
       String? preChapterId = comicModel.preChapterId(first);
       if (preChapterId == null) return -1;
       ChapterDetail detail = (await getChapterDetails(
           comicModel, extensionName, comicId, preChapterId))!;
       await p.saveComic(comicModel);
-      _readerChapters.addChapterHead(detail, preChapterId);
-      _readerChapters.backPop();
-      return _readerChapters.firstMiddlePageIndex();
+      readerChapters.addChapterHead(detail, preChapterId);
+      readerChapters.backPop();
+      return readerChapters.firstMiddlePageIndex();
     }
   }
 }

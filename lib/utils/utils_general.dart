@@ -18,6 +18,8 @@ import '../models/db/comic_model.dart';
 import '../models/db/extensions.dart' as model_extensions;
 import '../types/common/alias.dart';
 import '../types/manager/global_manager.dart';
+import '../types/provider/comic_provider.dart';
+import '../types/provider/task_provider.dart';
 
 void openAppSettings() {
   if (Platform.isAndroid) {}
@@ -423,4 +425,51 @@ double pm(double pcValue, double mobileValue) {
 
 String buildTaskId(String extensionName, String comicId, String chapterId) {
   return 'down_${extensionName}_${comicId}_$chapterId';
+}
+
+int getChapterImageCount(
+    String extensionName, String comicId, String chapterId) {
+  String folder = imageChapterFolder(extensionName, comicId, chapterId);
+  Directory dir = Directory(folder);
+  if (!dir.existsSync()) {
+    return 0;
+  }
+  return dir.listSync().where((entity) {
+    String path = entity.path.toLowerCase();
+    return path.endsWith('.png') || path.endsWith('.jpg');
+  }).length;
+}
+
+ComicChapterStatus getChapterStatus(
+    ComicProvider comicProvider,
+    TaskProvider taskProvider,
+    String comicId,
+    String extensionName,
+    String chapterId) {
+  ComicModel? comicModel =
+      comicProvider.getComicModel(getComicUniqueId(comicId, extensionName));
+  if (comicModel == null) {
+    return ComicChapterStatus.loading;
+  }
+
+  ChapterModel? chapterModel = comicModel.getChapterModel(chapterId);
+  if (chapterModel == null) {
+    return ComicChapterStatus.loading;
+  }
+
+  if (chapterModel.images.isEmpty) {
+    return ComicChapterStatus.downloading;
+  }
+
+  int cnt = getChapterImageCount(extensionName, comicId, chapterId);
+  if (cnt == chapterModel.images.length) {
+    return ComicChapterStatus.downloaded;
+  }
+
+  var taskId = buildTaskId(extensionName, comicId, chapterId);
+  if (taskProvider.isHasTask(taskId)) {
+    return ComicChapterStatus.downloading;
+  }
+
+  return ComicChapterStatus.normal;
 }

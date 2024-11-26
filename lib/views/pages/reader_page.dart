@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 
+import '../../common/log.dart';
 import '../../const/general_const.dart';
 import '../../types/context/comic_reader_context.dart';
 import '../../utils/utils_general.dart';
@@ -55,11 +56,11 @@ class _ReaderPageState extends State<ReaderPage> {
         return;
       }
 
-      if (_preloadController!.positions.isEmpty) {
+      if (_page == null) {
         return;
       }
 
-      widget.readerContext.recordHistory(context, _page);
+      widget.readerContext.recordHistory(context, _page!);
     });
   }
 
@@ -175,57 +176,70 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Future<bool> _doOption() async {
-    if (_initOption == InitOption.init) {
-      int? newPage = await widget.readerContext.init(context);
-      if (newPage == null) {
-        return false;
+    try {
+      if (_initOption == InitOption.init) {
+        int? newPage = await widget.readerContext.init(context);
+        if (newPage == null) {
+          return false;
+        }
+
+        _setPageController(PreloadPageController(initialPage: newPage));
+        _pageText.value = widget.readerContext.getPageText(context, newPage);
+        widget.readerContext.recordHistory(context, newPage);
+      } else if (_initOption == InitOption.pre) {
+        int newPage =
+            await widget.readerContext.supplementChapter(context, false);
+
+        if (newPage == -1) {
+          newPage = 0;
+        }
+
+        _setPageController(PreloadPageController(initialPage: newPage));
+        widget.readerContext.recordHistory(context, newPage);
+      } else if (_initOption == InitOption.next) {
+        int newPage =
+            await widget.readerContext.supplementChapter(context, true);
+
+        if (newPage == -1) {
+          newPage = widget.readerContext.imageCount - 1;
+        }
+
+        _setPageController(PreloadPageController(initialPage: newPage));
+        widget.readerContext.recordHistory(context, newPage);
+      } else if (_initOption == InitOption.preChapter) {
+        await widget.readerContext.supplementChapter(context, false);
+
+        _setPageController(PreloadPageController(initialPage: 1));
+        widget.readerContext.recordHistory(context, 1);
+        _menuPage.value = MenuPageValue(true, 1);
+        _pageText.value = widget.readerContext.getPageText(context, 1);
+      } else if (_initOption == InitOption.nextChapter) {
+        await widget.readerContext.supplementChapter(context, true);
+
+        int newPage = widget.readerContext.lastChapterFirstPageIndex();
+        _setPageController(PreloadPageController(initialPage: newPage));
+        widget.readerContext.recordHistory(context, newPage);
+        _pageText.value = widget.readerContext.getPageText(context, newPage);
+        _menuPage.value = MenuPageValue(true, 1);
       }
 
-      _setPageController(PreloadPageController(initialPage: newPage));
-      _pageText.value = widget.readerContext.getPageText(context, newPage);
-      widget.readerContext.recordHistory(context, newPage);
-    } else if (_initOption == InitOption.pre) {
-      int newPage =
-          await widget.readerContext.supplementChapter(context, false);
-
-      if (newPage == -1) {
-        newPage = 0;
-      }
-
-      _setPageController(PreloadPageController(initialPage: newPage));
-      widget.readerContext.recordHistory(context, newPage);
-    } else if (_initOption == InitOption.next) {
-      int newPage = await widget.readerContext.supplementChapter(context, true);
-
-      if (newPage == -1) {
-        newPage = widget.readerContext.imageCount - 1;
-      }
-
-      _setPageController(PreloadPageController(initialPage: newPage));
-      widget.readerContext.recordHistory(context, newPage);
-    } else if (_initOption == InitOption.preChapter) {
-      await widget.readerContext.supplementChapter(context, false);
-
-      _setPageController(PreloadPageController(initialPage: 1));
-      widget.readerContext.recordHistory(context, 1);
-      _menuPage.value = MenuPageValue(true, 1);
-      _pageText.value = widget.readerContext.getPageText(context, 1);
-    } else if (_initOption == InitOption.nextChapter) {
-      await widget.readerContext.supplementChapter(context, true);
-
-      int newPage = widget.readerContext.lastChapterFirstPageIndex();
-      _setPageController(PreloadPageController(initialPage: newPage));
-      widget.readerContext.recordHistory(context, newPage);
-      _pageText.value = widget.readerContext.getPageText(context, newPage);
-      _menuPage.value = MenuPageValue(true, 1);
+      _initOption = InitOption.none;
+    } catch (e, s) {
+      Log.instance.e('doOption error: $e, $s');
+      return false;
     }
-
-    _initOption = InitOption.none;
-
     return true;
   }
 
-  int get _page {
+  int? get _page {
+    if (_preloadController == null) {
+      return null;
+    }
+
+    if (_preloadController!.positions.isEmpty) {
+      return null;
+    }
+
     return (_preloadController?.page ?? 0).round();
   }
 
@@ -234,7 +248,11 @@ class _ReaderPageState extends State<ReaderPage> {
       return;
     }
 
-    int currentIndex = _page;
+    if (_page == null) {
+      return;
+    }
+
+    int currentIndex = _page!;
     if (currentIndex > 0) {
       _preloadController?.jumpToPage(currentIndex - 1);
     }
@@ -245,7 +263,11 @@ class _ReaderPageState extends State<ReaderPage> {
       return;
     }
 
-    int currentIndex = _page;
+    if (_page == null) {
+      return;
+    }
+
+    int currentIndex = _page!;
     if (currentIndex < widget.readerContext.imageCount - 1) {
       _preloadController?.jumpToPage(currentIndex + 1);
     }

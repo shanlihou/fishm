@@ -3,18 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../const/assets_const.dart';
+import '../../const/general_const.dart';
 import '../../models/db/comic_model.dart';
 import '../../types/provider/comic_provider.dart';
 import '../../types/provider/task_provider.dart';
 import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
-
-enum ComicChapterStatus {
-  loading,
-  downloading,
-  downloaded,
-  normal,
-}
 
 class ComicChapterStatusWidget extends StatefulWidget {
   final String extensionName;
@@ -38,50 +32,6 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
     super.initState();
   }
 
-  int _getImageCount() {
-    String folder = imageChapterFolder(
-        widget.extensionName, widget.comicId, widget.chapterId);
-    Directory dir = Directory(folder);
-    if (!dir.existsSync()) {
-      return 0;
-    }
-    return dir.listSync().where((entity) {
-      String path = entity.path.toLowerCase();
-      return path.endsWith('.png') || path.endsWith('.jpg');
-    }).length;
-  }
-
-  ComicChapterStatus _getChapterStatus(
-      ComicProvider comicProvider, TaskProvider taskProvider) {
-    ComicModel? comicModel = comicProvider
-        .getComicModel(getComicUniqueId(widget.comicId, widget.extensionName));
-    if (comicModel == null) {
-      return ComicChapterStatus.loading;
-    }
-
-    ChapterModel? chapterModel = comicModel.getChapterModel(widget.chapterId);
-    if (chapterModel == null) {
-      return ComicChapterStatus.loading;
-    }
-
-    if (chapterModel.images.isEmpty) {
-      return ComicChapterStatus.downloading;
-    }
-
-    int cnt = _getImageCount();
-    if (cnt == chapterModel.images.length) {
-      return ComicChapterStatus.downloaded;
-    }
-
-    var taskId =
-        buildTaskId(widget.extensionName, widget.comicId, widget.chapterId);
-    if (taskProvider.isHasTask(taskId)) {
-      return ComicChapterStatus.downloading;
-    }
-
-    return ComicChapterStatus.normal;
-  }
-
   Widget _buildIconAndText(
       ComicChapterStatus status, ComicProvider comicProvider) {
     if (status == ComicChapterStatus.normal) {
@@ -93,7 +43,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
         ],
       );
     } else if (status == ComicChapterStatus.downloading) {
-      int cnt = _getImageCount();
+      int cnt = getChapterImageCount(
+          widget.extensionName, widget.comicId, widget.chapterId);
       int total = comicProvider
               .getComicModel(
                   getComicUniqueId(widget.comicId, widget.extensionName))
@@ -113,7 +64,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
   Widget build(BuildContext context) {
     var comicProvider = context.watch<ComicProvider>();
     var taskProvider = context.watch<TaskProvider>();
-    ComicChapterStatus status = _getChapterStatus(comicProvider, taskProvider);
+    ComicChapterStatus status = getChapterStatus(comicProvider, taskProvider,
+        widget.comicId, widget.extensionName, widget.chapterId);
 
     return GestureDetector(
       onTap: () {

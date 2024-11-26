@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:toonfu/utils/utils_general.dart';
 
 import '../../const/general_const.dart';
 import '../../views/widget/net_image.dart';
-import '../common/reader_chapters.dart';
 import '../common/reader_chapters.dart';
 import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';
@@ -18,22 +18,31 @@ class LocalChapterDetail extends ReaderChapter {
   LocalChapterDetail(this.images);
 }
 
-class LocalComicReaderContext extends ComicReaderContext {
+class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
   String cbzDir;
   String imageSaveDir = "";
   List<String> _cbzPaths = [];
   int? initCbzIndex;
   int? initCbzPage;
-  final ReaderChapters<LocalChapterDetail> _readerChapters = ReaderChapters();
+  int historyPage = 0;
+  String historyChapterId = "";
 
   LocalComicReaderContext(this.cbzDir, {this.initCbzIndex, this.initCbzPage});
 
   @override
-  void recordHistory(BuildContext context, int page) {}
+  void recordHistory(BuildContext context, int index) {
+    var ret = readerChapters.imageUrl(index);
+    if (ret == null) {
+      return;
+    }
+
+    historyPage = ret.$2 + 1;
+    historyChapterId = ret.$3;
+  }
 
   @override
   Widget? getImage(BuildContext context, int page) {
-    var ret = _readerChapters.imageUrl(page);
+    var ret = readerChapters.imageUrl(page);
     if (ret == null) {
       return null;
     } else {
@@ -44,20 +53,49 @@ class LocalComicReaderContext extends ComicReaderContext {
 
   @override
   (String?, String?) buildMiddleText(BuildContext context, int page) {
-    return (null, null);
+    var preRet = readerChapters.imageUrl(page - 1);
+    var nextRet = readerChapters.imageUrl(page + 1);
+
+    if (preRet == null && nextRet == null) {
+      return (null, null);
+    }
+
+    if (preRet == null) {
+      String preChapterId = _getPreChapterId(nextRet!.$3) ?? '';
+      String preChapterTitle = _chapterTitle(preChapterId);
+      String nextChapterTitle = _chapterTitle(nextRet.$3);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    if (nextRet == null) {
+      String nextChapterId = _getNextChapterId(preRet.$3) ?? '';
+      String preChapterTitle = _chapterTitle(preRet.$3);
+      String nextChapterTitle = _chapterTitle(nextChapterId);
+      return (preChapterTitle, nextChapterTitle);
+    }
+
+    String preChapterTitle = _chapterTitle(preRet.$3);
+    String nextChapterTitle = _chapterTitle(nextRet.$3);
+    return (preChapterTitle, nextChapterTitle);
+  }
+
+  String _chapterTitle(String chapterId) {
+    return osPathSplit(chapterId).last.split('.').first;
   }
 
   @override
-  int get imageCount => _readerChapters.imageCount;
+  int get imageCount => readerChapters.imageCount;
 
   @override
   String getPageText(BuildContext context, int index) {
-    var ret = _readerChapters.imageUrl(index);
+    var ret = readerChapters.imageUrl(index);
     if (ret == null) {
       return '0/0';
     }
 
-    return '${ret.$3} ${ret.$2 + 1}/${ret.$4}';
+    String chapterName = _chapterTitle(ret.$3);
+
+    return '${chapterName} ${ret.$2 + 1}/${ret.$4}';
   }
 
   Future<(List<String>, String)> _loadCbzByIndex(int index) async {
@@ -111,43 +149,83 @@ class LocalComicReaderContext extends ComicReaderContext {
 
     print('cbzPaths: $_cbzPaths');
 
-    var (imagePaths, curDir) = await _loadCbzByIndex(initCbzIndex ?? 0);
+    int curIndex = initCbzIndex ?? 0;
+
+    var (imagePaths, curDir) = await _loadCbzByIndex(curIndex);
     print('imagePaths: $imagePaths');
 
-    _readerChapters.addChapter(LocalChapterDetail(imagePaths), curDir);
+    readerChapters.addChapter(
+        LocalChapterDetail(imagePaths), _cbzPaths[curIndex]);
     return 1;
   }
 
-  @override
-  Future<int> supplementChapter(BuildContext context, bool next) async {
-    return 0;
+  String? _getNextChapterId(String curChapterId) {
+    int idx = _cbzPaths.indexOf(curChapterId);
+    if (idx == _cbzPaths.length - 1) return null;
+
+    return _cbzPaths[idx + 1];
+  }
+
+  String? _getPreChapterId(String curChapterId) {
+    int idx = _cbzPaths.indexOf(curChapterId);
+    if (idx == 0) return null;
+
+    return _cbzPaths[idx - 1];
   }
 
   @override
-  int lastChapterFirstPageIndex() {
-    return 0;
+  Future<int> supplementChapter(BuildContext context, bool isNext) async {
+    if (isNext) {
+      String last = readerChapters.lastChapterId();
+      String? nextChapterId = _getNextChapterId(last);
+      if (nextChapterId == null) return -1;
+
+      int nextIndex = _cbzPaths.indexOf(nextChapterId);
+      print('nextIndex: $nextIndex, nextChapterId: $nextChapterId');
+      var (imagePaths, curDir) = await _loadCbzByIndex(nextIndex);
+      readerChapters.addChapter(LocalChapterDetail(imagePaths), nextChapterId);
+      readerChapters.frontPop();
+      return readerChapters.firstMiddlePageIndex();
+    } else {
+      String first = readerChapters.firstChapterId();
+      String? preChapterId = _getPreChapterId(first);
+      if (preChapterId == null) return -1;
+
+      int preIndex = _cbzPaths.indexOf(preChapterId);
+      var (imagePaths, curDir) = await _loadCbzByIndex(preIndex);
+      readerChapters.addChapterHead(
+          LocalChapterDetail(imagePaths), preChapterId);
+      readerChapters.backPop();
+      return readerChapters.firstMiddlePageIndex();
+    }
   }
 
   @override
   int? preChapter(BuildContext context) {
-    return null;
+    String? preChapterId = _getPreChapterId(historyChapterId);
+    if (preChapterId == null) return null;
+
+    return readerChapters.chapterFirstPageIndex(preChapterId);
   }
 
   @override
   int? nextChapter(BuildContext context) {
-    return null;
+    String? nextChapterId = _getNextChapterId(historyChapterId);
+    if (nextChapterId == null) return null;
+
+    return readerChapters.chapterFirstPageIndex(nextChapterId);
   }
 
   @override
   int? getAbsolutePage(int page) {
-    return null;
+    return readerChapters.calcPage(historyChapterId, page);
   }
 
   @override
   int chapterImageCount() {
-    return 0;
+    return readerChapters.getChapterImageCount(historyChapterId);
   }
 
   @override
-  int get historyChapterPage => 0;
+  int get historyChapterPage => historyPage;
 }

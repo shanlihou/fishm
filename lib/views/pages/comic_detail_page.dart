@@ -17,6 +17,7 @@ import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
 import '../../types/context/extension_comic_reader_context.dart';
+import '../../types/provider/task_provider.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
 import '../widget/comic_chapter_status_widget.dart';
@@ -152,6 +153,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Future<void> _exportChapterToCbz(
       BuildContext buildContext, ChapterModel chapter) async {
+    var comicProvider = buildContext.read<ComicProvider>();
+    var taskProvider = buildContext.read<TaskProvider>();
+    ComicChapterStatus status = getChapterStatus(comicProvider, taskProvider,
+        widget.comicItem.comicId, widget.extensionName, chapter.id);
+
+    if (status != ComicChapterStatus.downloaded) {
+      Log.instance.d('chapter is not downloaded');
+      return;
+    }
+
     String folder = imageChapterFolder(
         widget.extensionName, widget.comicItem.comicId, chapter.id);
     var encoder = ZipFileEncoder();

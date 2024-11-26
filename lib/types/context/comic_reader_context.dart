@@ -1,6 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-abstract class ComicReaderContext {
+import '../common/reader_chapters.dart';
+
+abstract class ComicReaderContext<T extends ReaderChapter> {
+  final ReaderChapters<T> readerChapters = ReaderChapters();
+
   void recordHistory(BuildContext context, int page);
   Widget? getImage(BuildContext context, int page);
   (String?, String?) buildMiddleText(BuildContext context, int page);
@@ -13,7 +17,12 @@ abstract class ComicReaderContext {
 
   Future<int> supplementChapter(BuildContext context, bool next);
 
-  int lastChapterFirstPageIndex();
+  int lastChapterFirstPageIndex() {
+    var ret =
+        readerChapters.getChapterIamgeRange(readerChapters.lastChapterId());
+
+    return ret?.$1 ?? 0;
+  }
 
   int? preChapter(BuildContext context);
 
