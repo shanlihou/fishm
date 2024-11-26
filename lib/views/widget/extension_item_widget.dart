@@ -100,7 +100,7 @@ class ExtensionItemWidget extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: pm(20, 44.spMin),
+            fontSize: pm(20, 38.spMin),
             color: CupertinoColors.white,
           )),
     );
@@ -114,7 +114,7 @@ class ExtensionItemWidget extends StatelessWidget {
       case ExtensionStatus.installed:
         return Text(AppLocalizations.of(context)!.installed,
             style: TextStyle(
-              fontSize: pm(22, 44.spMin),
+              fontSize: pm(22, 40.spMin),
               color: CupertinoColors.white,
             ));
       default:
@@ -130,7 +130,7 @@ class ExtensionItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => _toExtensionConfigPage(context, extension.name),
       child: Image.asset(
-        extensionSettings,
+        extensionSetting3,
         width: pm(45, 90.w),
         height: pm(45, 90.h),
         fit: BoxFit.fill,
@@ -167,31 +167,32 @@ class ExtensionItemWidget extends StatelessWidget {
             margin: EdgeInsets.only(left: 20.w),
             alignment: Alignment.bottomLeft,
             width: 40.w,
-            height: 120.h,
+            height: 160.h,
             child: GestureDetector(
               onTap: () => onLongPress?.call(extension),
               child: Image.asset(
                 extensionDelete,
-                width: pm(15, 40.w),
-                height: pm(15, 40.h),
+                width: pm(15, 30.w),
+                height: pm(15, 30.h),
                 fit: BoxFit.fill,
               ),
             ),
           ),
           Container(
               width: 200.w,
-              margin: EdgeInsets.fromLTRB(104.w, 54.h, 60.w, 66.h),
+              margin: EdgeInsets.fromLTRB(74.w, 54.h, 60.w, 66.h),
               child: Text(
                 extension.displayName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: pm(20, 56.spMin),
+                  fontSize: pm(20, 48.spMin),
                   color: CupertinoColors.white,
                 ),
               )),
           Container(
-              padding: EdgeInsets.only(right: 40.w),
+              width: 200.w,
+              padding: EdgeInsets.only(right: 40.w, left: 40.w),
               child: Text(
                 extension.version,
                 maxLines: 1,

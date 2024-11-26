@@ -40,7 +40,8 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
   Widget _buildTaskStatus(TaskDownload task) {
     if (task.status == TaskStatus.running) {
       return Text(
-        style: TextStyle(color: const Color.fromARGB(255, 18, 148, 199)),
+        style: TextStyle(
+            fontSize: 40.spMin, color: const Color.fromARGB(255, 18, 148, 199)),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         '${task.currentCount}/${task.imageCount}',
@@ -48,7 +49,11 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
     } else if (task.status == TaskStatus.finished) {
       return GestureDetector(
         onTap: () => _gotoReaderPage(context, task),
-        child: Image.asset(goToRead),
+        child: Image.asset(
+          goToRead,
+          width: 60.w,
+          height: 60.h,
+        ),
       );
     } else if (task.status == TaskStatus.failed) {
       return const Icon(CupertinoIcons.xmark_circle,
@@ -56,6 +61,7 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
     }
 
     return Text(
+      style: TextStyle(fontSize: 40.spMin),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       task.status.name,
@@ -83,7 +89,7 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                   children: [
                     if (index != 0)
                       Container(
-                        height: 1,
+                        height: 0.7.h,
                         margin: EdgeInsets.only(left: 40.w, right: 40.w),
                         color: CupertinoColors.separator,
                       ),
@@ -94,15 +100,20 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                              width: 400.w,
+                              width: 550.w,
                               child: Text(
+                                  style: TextStyle(
+                                    fontSize: 40.spMin,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   task.displayText())),
-                          SizedBox(
-                              width: 200.w,
-                              height: 80.h,
-                              child: _buildTaskStatus(task)),
+                          Expanded(
+                            child: Container(
+                                alignment: Alignment.centerRight,
+                                height: 90.h,
+                                child: _buildTaskStatus(task)),
+                          ),
                         ],
                       ),
                     ),

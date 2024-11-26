@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../const/assets_const.dart';
 import '../../models/db/comic_model.dart';
@@ -86,7 +87,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
     if (status == ComicChapterStatus.normal) {
       return Row(
         children: [
-          Image.asset(download2),
+          Image.asset(download2, width: 60.w, height: 60.h),
+          SizedBox(width: 30.w),
           Text(status.name),
         ],
       );
@@ -142,7 +144,9 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
             comicTitle: comicModel.title,
             imageCount: chapterModel.images.length));
       },
-      child: _buildIconAndText(status, comicProvider),
+      child: Container(
+          margin: EdgeInsets.fromLTRB(0, 0, 10.w, 0),
+          child: _buildIconAndText(status, comicProvider)),
     );
   }
 }

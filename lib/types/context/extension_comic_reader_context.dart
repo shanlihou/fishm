@@ -39,12 +39,15 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     return _readerChapters.chapterFirstPageIndex(preChapterId);
   }
 
+  @override
   int get historyChapterPage => historyPage;
 
+  @override
   int? getAbsolutePage(int chapterPage) {
     return _readerChapters.calcPage(historyChapterId, chapterPage);
   }
 
+  @override
   int? nextChapter(BuildContext context) {
     var nextChapterId = context
         .read<ComicProvider>()
@@ -58,6 +61,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
     return _readerChapters.chapterFirstPageIndex(nextChapterId);
   }
 
+  @override
   int lastChapterFirstPageIndex() {
     var ret =
         _readerChapters.getChapterIamgeRange(_readerChapters.lastChapterId());
@@ -80,6 +84,7 @@ class ExtensionComicReaderContext extends ComicReaderContext {
         historyChapterId, historyPage);
   }
 
+  @override
   Future<int?> init(BuildContext context) async {
     var p = context.read<ComicProvider>();
     ComicModel comicModel =

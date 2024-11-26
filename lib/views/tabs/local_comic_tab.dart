@@ -15,7 +15,7 @@ class LocalComicTab extends StatefulWidget {
 }
 
 class _LocalComicTabState extends State<LocalComicTab> {
-  List<String> _comics = [];
+  final List<String> _comics = [];
 
   @override
   void initState() {

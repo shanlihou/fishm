@@ -108,8 +108,8 @@ class TaskDownload extends TaskBase {
       chapterId: json['chapterId'],
       chapterName: json['chapterName'],
       comicTitle: json['comicTitle'],
-      imageCount: json['imageCount'],
-      currentCount: json['currentCount'],
+      imageCount: json['imageCount'] ?? 0,
+      currentCount: json['currentCount'] ?? 0,
     );
     task.createTime = DateTime.parse(json['createTime']);
     task.status = TaskStatus.values[json['status']];

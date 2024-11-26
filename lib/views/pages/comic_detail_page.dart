@@ -12,6 +12,7 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
+import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
@@ -151,13 +152,16 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   Future<void> _exportChapterToCbz(
       BuildContext buildContext, ChapterModel chapter) async {
-    print('export chapter to cbz: ${chapter.id}');
     String folder = imageChapterFolder(
         widget.extensionName, widget.comicItem.comicId, chapter.id);
-    print('folder: $folder');
     var encoder = ZipFileEncoder();
+
+    String outName =
+        '${widget.extensionName}-${widget.comicItem.title}-${chapter.title}.cbz';
+
     await encoder.zipDirectoryAsync(Directory(folder),
-        filename: 'tmp/test.cbz');
+        filename: '$cbzOutputDir/$outName');
+    Log.instance.d('export chapter to cbz: $outName');
   }
 
   Widget _buildChapterItem(
@@ -176,7 +180,12 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
         child: Row(
           children: [
-            Expanded(child: Text(chapter.title)),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: Text(chapter.title),
+              ),
+            ),
             Align(
               alignment: Alignment.centerRight,
               child: ComicChapterStatusWidget(

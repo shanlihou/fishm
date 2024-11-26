@@ -56,7 +56,7 @@ class _HomeState extends State<Home>
                 value == '' ? AppLocalizations.of(context)!.favorite : value);
           },
         ),
-        trailing: Row(
+        trailing: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [],
         ),

@@ -12,6 +12,7 @@ import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';
 
 class LocalChapterDetail extends ReaderChapter {
+  @override
   final List<String> images;
 
   LocalChapterDetail(this.images);
@@ -60,9 +61,9 @@ class LocalComicReaderContext extends ComicReaderContext {
   }
 
   Future<(List<String>, String)> _loadCbzByIndex(int index) async {
-    var _curDir = '$imageSaveDir/$index';
-    String _initCbzPath = _cbzPaths[index];
-    final bytes = await File(_initCbzPath).readAsBytes();
+    var curDir = '$imageSaveDir/$index';
+    String initCbzPath = _cbzPaths[index];
+    final bytes = await File(initCbzPath).readAsBytes();
     final archive = ZipDecoder().decodeBytes(bytes);
 
     int writeIdx = 1;
@@ -70,7 +71,7 @@ class LocalComicReaderContext extends ComicReaderContext {
     for (final file in archive) {
       if (file.isFile) {
         var suffix = file.name.split('.').last;
-        String newFileName = '$_curDir/${writeIdx}.$suffix';
+        String newFileName = '$curDir/$writeIdx.$suffix';
 
         imagePaths.add(newFileName);
         if (File(newFileName).existsSync()) {
@@ -86,7 +87,7 @@ class LocalComicReaderContext extends ComicReaderContext {
       }
     }
 
-    return (imagePaths, _curDir);
+    return (imagePaths, curDir);
   }
 
   @override
@@ -98,9 +99,17 @@ class LocalComicReaderContext extends ComicReaderContext {
     imageSaveDir = '$archiveCbzImageDir/$urlEncodedCbzDir';
 
     bool isDir = await Directory(cbzDir).exists();
-    if (!isDir) {
+    if (isDir) {
+      _cbzPaths = await Directory(cbzDir)
+          .list()
+          .where((e) => e.path.endsWith('.cbz'))
+          .map((e) => e.path)
+          .toList();
+    } else {
       _cbzPaths = [cbzDir];
     }
+
+    print('cbzPaths: $_cbzPaths');
 
     var (imagePaths, curDir) = await _loadCbzByIndex(initCbzIndex ?? 0);
     print('imagePaths: $imagePaths');

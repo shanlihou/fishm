@@ -5,6 +5,7 @@ const tempImageDir = 'img_tmp';
 const archiveImageDir = 'archive_img';
 const archiveCbzImageDir = 'archive_cbz_img';
 const cbzDir = 'cbz';
+const cbzOutputDir = 'cbz_output';
 const yamlMainKey = 'main';
 
 enum NetImageType {

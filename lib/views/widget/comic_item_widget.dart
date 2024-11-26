@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../types/context/net_iamge_context.dart';
+import '../../utils/utils_general.dart';
 import '../class/comic_item.dart';
 import '../pages/comic_detail_page.dart';
 import 'net_image.dart';
@@ -67,7 +68,8 @@ class ComicItemWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      fontSize: pm(12, 36.spMin),
                       color: CupertinoColors.white,
                     ),
                     maxLines: 1,

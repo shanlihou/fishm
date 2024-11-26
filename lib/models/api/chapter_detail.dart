@@ -2,6 +2,7 @@ import '../../types/common/reader_chapter_base.dart';
 import '../../types/common/reader_chapters.dart';
 
 class ChapterDetail extends ReaderChapter {
+  @override
   List<String> images;
   Map<String, dynamic> extra;
 
