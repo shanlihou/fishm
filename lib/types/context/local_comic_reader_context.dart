@@ -181,7 +181,6 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
       if (nextChapterId == null) return -1;
 
       int nextIndex = _cbzPaths.indexOf(nextChapterId);
-      print('nextIndex: $nextIndex, nextChapterId: $nextChapterId');
       var (imagePaths, curDir) = await _loadCbzByIndex(nextIndex);
       readerChapters.addChapter(LocalChapterDetail(imagePaths), nextChapterId);
       readerChapters.frontPop();
