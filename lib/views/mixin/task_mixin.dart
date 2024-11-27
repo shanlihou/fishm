@@ -19,16 +19,28 @@ mixin TaskMixin {
         continue;
       }
 
+      if (task.status == TaskStatus.deleted) {
+        continue;
+      }
+
       provider.changeTaskStatus(task.id, TaskStatus.running);
 
       try {
         await for (var ret in task.run(getContext())) {
+          if (task.status == TaskStatus.deleted) {
+            break;
+          }
+
           if (!ret) {
             provider.changeTaskStatus(task.id, TaskStatus.failed);
             continue;
           }
 
           provider.onTaskUpdate(task.id);
+        }
+
+        if (task.status == TaskStatus.deleted) {
+          continue;
         }
 
         provider.changeTaskStatus(task.id, TaskStatus.finished);

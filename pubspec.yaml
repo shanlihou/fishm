@@ -114,6 +114,9 @@ flutter:
     - assets/images/icon/history.png
     - assets/images/icon/download2.png
     - assets/images/icon/go-to-read.png
+    - assets/images/icon/import-on.png
+    - assets/images/icon/import-off.png
+    - assets/images/icon/import-big.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

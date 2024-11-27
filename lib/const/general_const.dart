@@ -46,6 +46,7 @@ enum TaskStatus {
   running,
   finished,
   failed,
+  deleted,
 }
 
 const downloadImageRetry = 5;

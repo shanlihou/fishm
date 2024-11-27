@@ -38,6 +38,27 @@ void _gotoReaderPage(BuildContext context, TaskDownload task) {
 }
 
 class _DownloadTaskTabState extends State<DownloadTaskTab> {
+  List<bool> _selectedTasks = [];
+  int _selectNum = 0;
+
+  void _deleteTasks() {
+    var p = context.read<TaskProvider>();
+    var tasks = p.getTasks();
+    if (tasks.length != _selectedTasks.length) {
+      return;
+    }
+
+    List<String> ids = [];
+
+    for (var i = 0; i < tasks.length; i++) {
+      if (_selectedTasks[i]) {
+        ids.add(tasks[i].id);
+      }
+    }
+
+    p.removeTasks(ids);
+  }
+
   Widget _buildTaskStatus(TaskDownload task) {
     if (task.status == TaskStatus.running || task.status == TaskStatus.ready) {
       return Text(
@@ -71,74 +92,149 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskProvider>(
-      builder: (context, provider, child) {
-        var tasks = provider.getTasks();
-        return ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            var task = tasks[index];
-            return GestureDetector(
-              onLongPress: () {
-                provider.removeTask(task.id);
-              },
-              child: Container(
-                width: double.infinity,
-                color: CupertinoColors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (index != 0)
-                      Container(
-                        height: 0.7.h,
-                        margin: EdgeInsets.only(left: 40.w, right: 40.w),
-                        color: CupertinoColors.separator,
-                      ),
-                    Container(
-                      margin: EdgeInsets.only(
-                          left: 80.w, right: 80.w, top: 20.h, bottom: 20.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      children: [
+        Expanded(
+          child: Consumer<TaskProvider>(
+            builder: (context, provider, child) {
+              var tasks = provider.getTasks();
+              if (tasks.length != _selectedTasks.length) {
+                _selectedTasks = List.filled(tasks.length, false);
+                _selectNum = 0;
+              }
+
+              return ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (context, index) {
+                  var task = tasks[index];
+                  return GestureDetector(
+                    onLongPress: () {
+                      provider.removeTask(task.id);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      color: CupertinoColors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 20.w),
-                                height: 40.h,
-                                width: 40.w,
-                                child: CupertinoRadio(
-                                  value: TaskStatus.running,
-                                  groupValue: task.status,
-                                  onChanged: (value) {},
-                                ),
-                              ),
-                              SizedBox(
-                                  width: 550.w,
-                                  child: Text(
-                                      style: TextStyle(
-                                        fontSize: 40.spMin,
+                          if (index != 0)
+                            Container(
+                              height: 0.7.h,
+                              margin: EdgeInsets.only(left: 40.w, right: 40.w),
+                              color: CupertinoColors.separator,
+                            ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: 80.w,
+                                right: 80.w,
+                                top: 20.h,
+                                bottom: 20.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(right: 20.w),
+                                      height: 40.h,
+                                      width: 40.w,
+                                      child: CupertinoCheckbox(
+                                        shape: const CircleBorder(),
+                                        value: _selectedTasks[index],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            print('value: $value');
+                                            bool val = value ?? false;
+                                            _selectedTasks[index] = val;
+
+                                            if (val) {
+                                              _selectNum++;
+                                            } else {
+                                              _selectNum--;
+                                            }
+                                          });
+                                        },
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      task.displayText())),
-                            ],
-                          ),
-                          Expanded(
-                            child: Container(
-                                alignment: Alignment.centerRight,
-                                height: 90.h,
-                                child: _buildTaskStatus(task)),
+                                    ),
+                                    SizedBox(
+                                        width: 550.w,
+                                        child: Text(
+                                            style: TextStyle(
+                                              fontSize: 40.spMin,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            task.displayText())),
+                                  ],
+                                ),
+                                Expanded(
+                                  child: Container(
+                                      alignment: Alignment.centerRight,
+                                      height: 90.h,
+                                      child: _buildTaskStatus(task)),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        Container(
+          height: 150.h,
+          width: double.infinity,
+          color: CupertinoColors.white,
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 20.w),
+                  child: CupertinoCheckbox(
+                    value:
+                        _selectNum == _selectedTasks.length && _selectNum != 0,
+                    onChanged: (value) {
+                      bool val = value ?? false;
+                      if (val) {
+                        _selectedTasks =
+                            List.filled(_selectedTasks.length, true);
+                        _selectNum = _selectedTasks.length;
+                      } else {
+                        _selectedTasks =
+                            List.filled(_selectedTasks.length, false);
+                        _selectNum = 0;
+                      }
+                      setState(() {});
+                    },
+                  ),
                 ),
+                Text('Select All'),
+              ],
+            ),
+            SizedBox(
+              width: 200.w,
+              height: 100.h,
+              child: CupertinoButton(
+                color: CupertinoColors.systemRed,
+                padding: EdgeInsets.all(0),
+                child: Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  'Delete',
+                  style: TextStyle(
+                      color: CupertinoColors.white, fontSize: pm(16, 50.spMin)),
+                ),
+                onPressed: _deleteTasks,
               ),
-            );
-          },
-        );
-      },
+            ),
+          ]),
+        ),
+      ],
     );
   }
 }

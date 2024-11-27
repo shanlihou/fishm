@@ -25,6 +25,13 @@ class TaskProvider extends ChangeNotifier {
     return null;
   }
 
+  void removeTasks(List<String> ids) {
+    for (var id in ids) {
+      removeTask(id, notify: false);
+    }
+    notifyListeners();
+  }
+
   List<TaskDownload> getTasks() {
     var tasks = this.tasks.values.toList();
     tasks.sort((a, b) => a.createTime!.compareTo(b.createTime!));
@@ -44,10 +51,17 @@ class TaskProvider extends ChangeNotifier {
     return tasks.containsKey(id);
   }
 
-  void removeTask(String id) {
-    tasks.remove(id);
+  void removeTask(String id, {bool notify = true}) {
+    var task = tasks.remove(id);
+    if (task == null) {
+      return;
+    }
+
+    task.setStatus(TaskStatus.deleted);
     Hive.box(taskHiveKey).delete(id);
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   void addTask(TaskDownload task) {

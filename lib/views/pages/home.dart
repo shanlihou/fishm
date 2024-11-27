@@ -73,11 +73,11 @@ class _HomeState extends State<Home>
           titles: [
             AppLocalizations.of(context)!.extensions,
             AppLocalizations.of(context)!.search,
-            AppLocalizations.of(context)!.explore,
+            AppLocalizations.of(context)!.import,
             AppLocalizations.of(context)!.my,
           ],
-          iconOffs: const [extensionOff, searchOff, modeOff, myOff],
-          iconOns: const [extensionOn, searchOn, modeOn, myOn],
+          iconOffs: const [extensionOff, searchOff, importOff, myOff],
+          iconOns: const [extensionOn, searchOn, importOn, myOn],
         ),
       ),
     );

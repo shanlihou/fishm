@@ -23,5 +23,10 @@
     "baseline": "我是有底线的",
     "findMore": "发现更多漫画",
     "update": "更新",
-    "install": "安装"
+    "install": "安装",
+    "import": "导入",
+    "importDesc": "从本地文件导入漫画",
+    "stepX": "步骤 {step}",
+    "step1": "请将漫画文件夹放在以下目录",
+    "copyPath": "复制路径"
 }

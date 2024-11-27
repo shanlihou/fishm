@@ -42,5 +42,17 @@
   "baseline": "I have a bottom line",
   "findMore": "Find more comics",
   "update": "Update",
-  "install": "Install"
+  "install": "Install",
+  "import": "Import",
+  "importDesc": "Import comics from local files",
+  "stepX": "Step {step}",
+  "@stepX": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "step1": "Please put the comic folder in below directory",
+  "copyPath": "Copy path"
 }
