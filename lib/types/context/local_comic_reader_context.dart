@@ -95,7 +95,7 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
 
     String chapterName = _chapterTitle(ret.$3);
 
-    return '${chapterName} ${ret.$2 + 1}/${ret.$4}';
+    return '$chapterName ${ret.$2 + 1}/${ret.$4}';
   }
 
   Future<(List<String>, String)> _loadCbzByIndex(int index) async {

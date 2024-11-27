@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,7 @@ void _gotoReaderPage(BuildContext context, TaskDownload task) {
 
 class _DownloadTaskTabState extends State<DownloadTaskTab> {
   Widget _buildTaskStatus(TaskDownload task) {
-    if (task.status == TaskStatus.running) {
+    if (task.status == TaskStatus.running || task.status == TaskStatus.ready) {
       return Text(
         style: TextStyle(
             fontSize: 40.spMin, color: const Color.fromARGB(255, 18, 148, 199)),
@@ -99,15 +100,29 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                              width: 550.w,
-                              child: Text(
-                                  style: TextStyle(
-                                    fontSize: 40.spMin,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  task.displayText())),
+                          Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(right: 20.w),
+                                height: 40.h,
+                                width: 40.w,
+                                child: CupertinoRadio(
+                                  value: TaskStatus.running,
+                                  groupValue: task.status,
+                                  onChanged: (value) {},
+                                ),
+                              ),
+                              SizedBox(
+                                  width: 550.w,
+                                  child: Text(
+                                      style: TextStyle(
+                                        fontSize: 40.spMin,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      task.displayText())),
+                            ],
+                          ),
                           Expanded(
                             child: Container(
                                 alignment: Alignment.centerRight,

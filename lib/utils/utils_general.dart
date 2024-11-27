@@ -20,6 +20,7 @@ import '../types/common/alias.dart';
 import '../types/manager/global_manager.dart';
 import '../types/provider/comic_provider.dart';
 import '../types/provider/task_provider.dart';
+import '../types/task/task_download.dart';
 
 void openAppSettings() {
   if (Platform.isAndroid) {}
@@ -458,7 +459,7 @@ ComicChapterStatus getChapterStatus(
   }
 
   if (chapterModel.images.isEmpty) {
-    return ComicChapterStatus.downloading;
+    return ComicChapterStatus.loading;
   }
 
   int cnt = getChapterImageCount(extensionName, comicId, chapterId);
@@ -472,4 +473,40 @@ ComicChapterStatus getChapterStatus(
   }
 
   return ComicChapterStatus.normal;
+}
+
+void addDownloadTask(
+    ComicProvider comicProvider,
+    TaskProvider taskProvider,
+    String comicId,
+    String extensionName,
+    String chapterId,
+    ComicChapterStatus? status) {
+  status ??= getChapterStatus(
+      comicProvider, taskProvider, comicId, extensionName, chapterId);
+
+  if (status != ComicChapterStatus.normal) {
+    return;
+  }
+
+  ComicModel? comicModel =
+      comicProvider.getComicModel(getComicUniqueId(comicId, extensionName));
+  if (comicModel == null) {
+    return;
+  }
+
+  ChapterModel? chapterModel = comicModel.getChapterModel(chapterId);
+  if (chapterModel == null) {
+    return;
+  }
+
+  var id = buildTaskId(extensionName, comicId, chapterId);
+  taskProvider.addTask(TaskDownload(
+      id: id,
+      extensionName: extensionName,
+      comicId: comicId,
+      chapterId: chapterId,
+      chapterName: chapterModel.title,
+      comicTitle: comicModel.title,
+      imageCount: chapterModel.images.length));
 }

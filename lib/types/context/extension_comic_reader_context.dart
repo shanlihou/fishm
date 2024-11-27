@@ -6,7 +6,6 @@ import '../../models/api/chapter_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../utils/utils_general.dart';
 import '../../views/widget/net_image.dart';
-import '../common/reader_chapters.dart';
 import '../provider/comic_provider.dart';
 import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';

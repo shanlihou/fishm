@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +48,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
       var text = '$cnt/$total';
 
       return Text(text);
+    } else if (status == ComicChapterStatus.loading) {
+      return Icon(CupertinoIcons.hourglass, size: 60.w);
     } else {
       return Image.asset(download2, width: 60.w, height: 60.h);
     }
@@ -63,33 +64,8 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
 
     return GestureDetector(
       onTap: () {
-        if (status == ComicChapterStatus.downloaded ||
-            status == ComicChapterStatus.downloading) {
-          return;
-        }
-
-        ComicModel? comicModel = comicProvider.getComicModel(
-            getComicUniqueId(widget.comicId, widget.extensionName));
-        if (comicModel == null) {
-          return;
-        }
-
-        ChapterModel? chapterModel =
-            comicModel.getChapterModel(widget.chapterId);
-        if (chapterModel == null) {
-          return;
-        }
-
-        var id =
-            buildTaskId(widget.extensionName, widget.comicId, widget.chapterId);
-        taskProvider.addTask(TaskDownload(
-            id: id,
-            extensionName: widget.extensionName,
-            comicId: widget.comicId,
-            chapterId: widget.chapterId,
-            chapterName: chapterModel.title,
-            comicTitle: comicModel.title,
-            imageCount: chapterModel.images.length));
+        addDownloadTask(comicProvider, taskProvider, widget.comicId,
+            widget.extensionName, widget.chapterId, status);
       },
       child: Container(
           margin: EdgeInsets.fromLTRB(0, 0, 10.w, 0),

@@ -22,7 +22,7 @@ class _ImportComicTabState extends State<ImportComicTab> {
         username: 'toonfu',
         password: 'toonfu',
         sharedDirectories: [
-          Directory.current.path + '/' + 'cbz',
+          '${Directory.current.path}/cbz',
         ],
         startingDirectory: 'ftp',
         serverType: ServerType.readAndWrite,

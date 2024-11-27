@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/const/color_const.dart';
@@ -20,6 +20,7 @@ import '../../types/context/extension_comic_reader_context.dart';
 import '../../types/provider/task_provider.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
+import '../dialog/loading_dialog.dart';
 import '../widget/comic_chapter_status_widget.dart';
 import '../widget/net_image.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -306,6 +307,25 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
   }
 
+  void _downloadAllChapters() {
+    var entry = showLoadingDialog(context);
+
+    var comicProvider = context.read<ComicProvider>();
+    var taskProvider = context.read<TaskProvider>();
+    ComicModel? comicModel = comicProvider.getComicModel(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+    if (comicModel == null) {
+      return;
+    }
+
+    for (var chapter in comicModel.chapters) {
+      addDownloadTask(comicProvider, taskProvider, widget.comicItem.comicId,
+          widget.extensionName, chapter.id, null);
+    }
+
+    entry.remove();
+  }
+
   @override
   Widget build(BuildContext context) {
     _initWithContext();
@@ -315,152 +335,199 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         middle: Text(widget.comicItem.title),
       ),
       child: SafeArea(
-        child: EasyRefresh(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(60.w),
-              color: backgroundColor06,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 800.h,
-                    child: Row(
+        child: Column(
+          children: [
+            Expanded(
+              child: EasyRefresh(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.all(60.w),
+                    color: backgroundColor06,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 600.w,
                           height: 800.h,
-                          child: Stack(
-                            // image and favorite button
+                          child: Row(
                             children: [
-                              Positioned.fill(
-                                child: NetImage(
-                                  NetImageContextCover(
-                                    widget.extensionName,
-                                    widget.comicItem.comicId,
-                                    widget.comicItem.imageUrl,
-                                  ),
-                                  width: 600.w,
-                                  height: 800.h,
-                                ),
-                              ),
-                              Positioned(
-                                right: 10.w,
-                                top: 10.h,
-                                child: GestureDetector(
-                                  onTap: _toggleFavorite,
-                                  child: Consumer<ComicProvider>(
-                                    builder: (context, comicProvider, child) =>
-                                        Image.asset(
-                                      comicProvider.isFavoriteComic(
-                                              getComicUniqueId(
-                                                  widget.comicItem.comicId,
-                                                  widget.extensionName))
-                                          ? addToShelfOn
-                                          : addToShelf,
-                                      width: 150.w,
-                                      height: 150.h,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(child: Container()),
-                        material.SizedBox(
-                          width: 400.w,
-                          child: Column(
-                            children: [
-                              Text(widget.comicItem.title,
-                                  maxLines: 1, overflow: TextOverflow.ellipsis),
-                              Text(
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
-                              Expanded(child: Container()),
                               SizedBox(
-                                width: 400.w,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                width: 600.w,
+                                height: 800.h,
+                                child: Stack(
+                                  // image and favorite button
                                   children: [
-                                    Image.asset(
-                                        width: 60.w, height: 60.h, history),
-                                    SizedBox(width: 20.w),
+                                    Positioned.fill(
+                                      child: NetImage(
+                                        NetImageContextCover(
+                                          widget.extensionName,
+                                          widget.comicItem.comicId,
+                                          widget.comicItem.imageUrl,
+                                        ),
+                                        width: 600.w,
+                                        height: 800.h,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 10.w,
+                                      top: 10.h,
+                                      child: GestureDetector(
+                                        onTap: _toggleFavorite,
+                                        child: Consumer<ComicProvider>(
+                                          builder:
+                                              (context, comicProvider, child) =>
+                                                  Image.asset(
+                                            comicProvider.isFavoriteComic(
+                                                    getComicUniqueId(
+                                                        widget
+                                                            .comicItem.comicId,
+                                                        widget.extensionName))
+                                                ? addToShelfOn
+                                                : addToShelf,
+                                            width: 150.w,
+                                            height: 150.h,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                              material.SizedBox(
+                                width: 400.w,
+                                child: Column(
+                                  children: [
+                                    Text(widget.comicItem.title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis),
+                                    Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                                    Expanded(child: Container()),
                                     SizedBox(
-                                      width: 200.w,
-                                      child: Consumer<ComicProvider>(
-                                        builder: (context, comicProvider,
-                                                child) =>
-                                            Text(
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                comicProvider.getReadHistory(
-                                                        getComicUniqueId(
-                                                            widget.comicItem
-                                                                .comicId,
-                                                            widget
-                                                                .extensionName)) ??
-                                                    ''),
+                                      width: 400.w,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                              width: 60.w,
+                                              height: 60.h,
+                                              history),
+                                          SizedBox(width: 20.w),
+                                          SizedBox(
+                                            width: 200.w,
+                                            child: Consumer<ComicProvider>(
+                                              builder: (context, comicProvider,
+                                                      child) =>
+                                                  Text(
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      comicProvider.getReadHistory(
+                                                              getComicUniqueId(
+                                                                  widget
+                                                                      .comicItem
+                                                                      .comicId,
+                                                                  widget
+                                                                      .extensionName)) ??
+                                                          ''),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    SizedBox(
+                                      width: 400.w,
+                                      child: material.ElevatedButton(
+                                        style:
+                                            material.ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.r),
+                                                ),
+                                                backgroundBuilder: (context,
+                                                        states, child) =>
+                                                    Container(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                                colors: [
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  131,
+                                                                  190,
+                                                                  253),
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  153,
+                                                                  149,
+                                                                  249),
+                                                            ]),
+                                                      ),
+                                                      child: child,
+                                                    )),
+                                        onPressed: () {
+                                          _readComic(context);
+                                        },
+                                        child: Text('read',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: pm(20, 40.spMin),
+                                                color: CupertinoColors.white)),
                                       ),
                                     )
                                   ],
                                 ),
-                              ),
-                              SizedBox(height: 10.h),
-                              SizedBox(
-                                width: 400.w,
-                                child: material.ElevatedButton(
-                                  style: material.ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.r),
-                                      ),
-                                      backgroundBuilder: (context, states,
-                                              child) =>
-                                          Container(
-                                            decoration: const BoxDecoration(
-                                              gradient: LinearGradient(colors: [
-                                                Color.fromARGB(
-                                                    255, 131, 190, 253),
-                                                Color.fromARGB(
-                                                    255, 153, 149, 249),
-                                              ]),
-                                            ),
-                                            child: child,
-                                          )),
-                                  onPressed: () {
-                                    _readComic(context);
-                                  },
-                                  child: Text('read',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: pm(20, 40.spMin),
-                                          color: CupertinoColors.white)),
-                                ),
                               )
                             ],
                           ),
+                        ),
+                        Consumer<ComicProvider>(
+                          builder: (context, comicProvider, child) {
+                            ComicModel? comicModel =
+                                comicProvider.getComicModel(getComicUniqueId(
+                                    widget.comicItem.comicId,
+                                    widget.extensionName));
+                            return comicModel == null
+                                ? const Center(
+                                    child: CupertinoActivityIndicator())
+                                : _buildChapterList(context, comicModel);
+                          },
                         )
                       ],
                     ),
                   ),
-                  Consumer<ComicProvider>(
-                    builder: (context, comicProvider, child) {
-                      ComicModel? comicModel = comicProvider.getComicModel(
-                          getComicUniqueId(
-                              widget.comicItem.comicId, widget.extensionName));
-                      return comicModel == null
-                          ? const Center(child: CupertinoActivityIndicator())
-                          : _buildChapterList(context, comicModel);
-                    },
-                  )
-                ],
+                ),
               ),
             ),
-          ),
+            Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: 120.h,
+              color: CupertinoColors.white,
+              child: GestureDetector(
+                onTap: _downloadAllChapters,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      download2,
+                      width: 80.w,
+                      height: 80.h,
+                    ),
+                    const Text('Download all')
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
