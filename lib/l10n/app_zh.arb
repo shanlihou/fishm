@@ -28,5 +28,10 @@
     "importDesc": "从本地文件导入漫画",
     "stepX": "步骤 {step}",
     "step1": "请将漫画文件夹放在以下目录",
-    "copyPath": "复制路径"
+    "step2": "到 {tab} 页签下阅读。",
+    "copyPath": "复制路径",
+    "step2Prefix": "到",
+    "step2Suffix": "页签下阅读。",
+    "bookshelf": "书架",
+    "local": "本地"
 }

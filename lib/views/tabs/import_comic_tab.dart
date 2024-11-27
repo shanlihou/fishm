@@ -30,6 +30,12 @@ class _ImportComicTabState extends State<ImportComicTab> {
     return Directory.current.path + '/' + cbzDir;
   }
 
+  String _buildStep2Tab() {
+    String bookshelf = AppLocalizations.of(context)!.bookshelf;
+    String local = AppLocalizations.of(context)!.local;
+    return ' ${bookshelf} - ${local} ';
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -112,6 +118,23 @@ class _ImportComicTabState extends State<ImportComicTab> {
               height: 300.h,
               color: CupertinoColors.white,
               margin: EdgeInsets.all(30.h),
+              padding: EdgeInsets.all(30.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(AppLocalizations.of(context)!.stepX(2)),
+                  Row(
+                    children: [
+                      Text(AppLocalizations.of(context)!.step2Prefix),
+                      Text(_buildStep2Tab(),
+                          style: TextStyle(
+                              color: CupertinoColors.systemBlue,
+                              fontWeight: FontWeight.bold)),
+                      Text(AppLocalizations.of(context)!.step2Suffix),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

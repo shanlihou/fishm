@@ -54,5 +54,17 @@
     }
   },
   "step1": "Please put the comic folder in below directory",
-  "copyPath": "Copy path"
+  "copyPath": "Copy path",
+  "step2": "Read in {tab} tab",
+  "@step2": {
+    "placeholders": {
+      "tab": {
+        "type": "String"
+      }
+    }
+  },
+  "step2Prefix": "Read in",
+  "step2Suffix": "tab",
+  "bookshelf": "Bookshelf",
+  "local": "Local"
 }

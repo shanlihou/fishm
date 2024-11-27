@@ -198,12 +198,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                 child: Text(chapter.title),
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ComicChapterStatusWidget(
-                extensionName: widget.extensionName,
-                comicId: widget.comicItem.comicId,
-                chapterId: chapter.id,
+            SizedBox(
+              width: 200.w,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: ComicChapterStatusWidget(
+                  extensionName: widget.extensionName,
+                  comicId: widget.comicItem.comicId,
+                  chapterId: chapter.id,
+                ),
               ),
             ),
           ],
