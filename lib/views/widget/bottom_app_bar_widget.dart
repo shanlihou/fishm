@@ -10,6 +10,7 @@ class BottomAppBarWidget extends StatefulWidget {
   final List<String> iconOffs;
   final List<String> iconOns;
   final PageController pageController = PageController();
+  final ValueChanged<int> onTap;
 
   BottomAppBarWidget({
     super.key,
@@ -17,6 +18,7 @@ class BottomAppBarWidget extends StatefulWidget {
     required this.titles,
     required this.iconOffs,
     required this.iconOns,
+    required this.onTap,
   });
 
   @override
@@ -34,6 +36,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
   void _onTap(int index) {
     Log.instance.d('onTap: $index');
     widget.pageController.jumpToPage(index);
+    widget.onTap(index);
     setState(() {
       _currentIndex = index;
     });
@@ -89,17 +92,16 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
             ],
           ),
         ),
-        // 中间凸起的按钮
         Positioned(
           left: 0,
           right: 0,
-          bottom: 55.h, // 调整按钮位置
+          bottom: 55.h,
           child: Center(
             child: SizedBox(
               width: 212.h,
               height: 212.h,
               child: GestureDetector(
-                onTap: () => _onTap(2), // 点击中间按钮时的回调
+                onTap: () => _onTap(2),
                 child: Image.asset(
                   _isMiddle(_currentIndex) ? shelfOn : shelfOff,
                   width: 212.h,

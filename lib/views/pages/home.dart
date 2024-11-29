@@ -44,6 +44,18 @@ class _HomeState extends State<Home>
     });
   }
 
+  String _getLabel(int index) {
+    var labels = [
+      AppLocalizations.of(context)!.extensions,
+      AppLocalizations.of(context)!.search,
+      AppLocalizations.of(context)!.bookshelf,
+      AppLocalizations.of(context)!.import,
+      AppLocalizations.of(context)!.my,
+    ];
+
+    return labels[index];
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -63,6 +75,9 @@ class _HomeState extends State<Home>
       ),
       child: SafeArea(
         child: BottomAppBarWidget(
+          onTap: (index) {
+            curLabel.value = _getLabel(index);
+          },
           pages: const [
             ExtensionsTab(),
             SearchTab(),

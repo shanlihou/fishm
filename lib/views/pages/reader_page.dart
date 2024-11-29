@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
@@ -315,7 +315,7 @@ class _ReaderPageState extends State<ReaderPage> {
         Expanded(
           flex: 2,
           child: Container(
-            color: CupertinoColors.systemRed,
+            color: CupertinoColors.white,
           ),
         ),
         Expanded(
@@ -330,49 +330,49 @@ class _ReaderPageState extends State<ReaderPage> {
             ),
           ),
         ),
-        Expanded(
-          flex: 2,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 0.1.sw),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: _preChapter,
-                  icon: const Icon(CupertinoIcons.back),
-                ),
-                Expanded(
-                  child: Material(
-                    child: SliderTheme(
-                      data: SliderThemeData(
-                        trackHeight: 2,
-                        overlayShape: SliderComponentShape.noOverlay,
-                        thumbShape: SliderComponentShape.noThumb,
-                      ),
-                      child: ValueListenableBuilder(
-                        valueListenable: _sliderValue,
-                        builder: (context, value, child) {
-                          return Slider(
-                            min: 1,
-                            max: imageCount.toDouble(),
-                            divisions: imageCount - 1,
-                            value: value,
-                            label: value.toInt().toString(),
-                            onChanged: (value) {
-                              _sliderValue.value = value;
-                              _jumpToPage(value.toInt());
-                            },
-                          );
-                        },
-                      ),
+        Container(
+          height: 200.h,
+          color: CupertinoColors.white,
+          padding: EdgeInsets.symmetric(horizontal: 0.1.sw),
+          child: Row(
+            children: [
+              material.IconButton(
+                onPressed: _preChapter,
+                icon: const Icon(CupertinoIcons.back),
+              ),
+              Expanded(
+                child: material.Material(
+                  child: material.SliderTheme(
+                    data: material.SliderThemeData(
+                      inactiveTrackColor: CupertinoColors.systemBlue,
+                      trackHeight: 2,
+                      overlayShape: material.SliderComponentShape.noOverlay,
+                      thumbShape: material.SliderComponentShape.noThumb,
+                    ),
+                    child: ValueListenableBuilder(
+                      valueListenable: _sliderValue,
+                      builder: (context, value, child) {
+                        return material.Slider(
+                          min: 1,
+                          max: imageCount.toDouble(),
+                          divisions: imageCount - 1,
+                          value: value,
+                          label: value.toInt().toString(),
+                          onChanged: (value) {
+                            _sliderValue.value = value;
+                            _jumpToPage(value.toInt());
+                          },
+                        );
+                      },
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: _nextChapter,
-                  icon: const Icon(CupertinoIcons.forward),
-                ),
-              ],
-            ),
+              ),
+              material.IconButton(
+                onPressed: _nextChapter,
+                icon: const Icon(CupertinoIcons.forward),
+              ),
+            ],
           ),
         ),
       ],

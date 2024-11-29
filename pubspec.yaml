@@ -57,6 +57,7 @@ dependencies:
   talker_flutter: ^4.4.1
   device_info_plus: ^11.1.0
   ftp_server: ^1.0.4
+  syncfusion_flutter_sliders: ^27.2.4
 
 dev_dependencies:
   flutter_test:
