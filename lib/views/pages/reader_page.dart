@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gradient_borders/box_borders/gradient_box_border.dart';
+import 'package:interactive_slider/interactive_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -12,6 +14,7 @@ import '../../common/log.dart';
 import '../../const/general_const.dart';
 import '../../types/context/comic_reader_context.dart';
 import '../../utils/utils_general.dart';
+import '../class/hollow_slider_tumb_shape.dart';
 
 enum InitOption {
   none,
@@ -145,14 +148,20 @@ class _ReaderPageState extends State<ReaderPage> {
         valueListenable: _lockSwap,
         builder: (context, value, child) {
           return PreloadPageView.builder(
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.horizontal,
               itemCount: widget.readerContext.imageCount,
               physics: value ? const NeverScrollableScrollPhysics() : null,
               preloadPagesCount: 4,
               controller: _preloadController,
               onPageChanged: (index) {
                 if (index == 0) {
-                  _initOption = InitOption.pre;
+                  print(
+                      'on page changed: $index, ${widget.readerContext.imageCount}');
+                  if (widget.readerContext.imageCount <= 1) {
+                    _initOption = InitOption.init;
+                  } else {
+                    _initOption = InitOption.pre;
+                  }
                   setState(() {});
                 } else if (index == widget.readerContext.imageCount - 1) {
                   _initOption = InitOption.next;
@@ -332,9 +341,18 @@ class _ReaderPageState extends State<ReaderPage> {
           ),
         ),
         Container(
+          margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
           height: 200.h,
-          color: CupertinoColors.white,
-          padding: EdgeInsets.symmetric(horizontal: 0.1.sw),
+          decoration: BoxDecoration(
+            color: CupertinoColors.white.withOpacity(0.5),
+            border: GradientBoxBorder(
+                gradient: LinearGradient(colors: [
+              CupertinoColors.systemBlue.withOpacity(0.5),
+              CupertinoColors.systemGreen.withOpacity(0.5),
+            ])),
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          padding: EdgeInsets.all(10.r),
           child: Row(
             children: [
               material.IconButton(
@@ -343,41 +361,45 @@ class _ReaderPageState extends State<ReaderPage> {
               ),
               Expanded(
                 child: material.Material(
-                  child: material.Theme(
-                    data: material.ThemeData(
-                      brightness: Brightness.light,
-                      scaffoldBackgroundColor: CupertinoColors.white,
-                      primaryColor: CupertinoColors.systemBlue,
-                      primaryColorDark: CupertinoColors.systemBlue,
-                      primaryColorLight: CupertinoColors.systemBlue,
-                      canvasColor: CupertinoColors.white,
-                    ),
-                    child: material.SliderTheme(
-                      data: material.SliderThemeData.fromPrimaryColors(
-                        primaryColor: CupertinoColors.systemBlue,
-                        primaryColorDark: CupertinoColors.systemBlue,
-                        primaryColorLight: CupertinoColors.systemBlue,
-                        valueIndicatorTextStyle: const TextStyle(
-                          color: CupertinoColors.black,
-                        ),
-                      ),
-                      child: ValueListenableBuilder(
-                        valueListenable: _sliderValue,
-                        builder: (context, value, child) {
-                          return material.Slider(
-                            min: 1,
-                            max: imageCount.toDouble(),
-                            divisions: imageCount - 1,
-                            value: value,
-                            label: value.toInt().toString(),
-                            onChanged: (value) {
-                              _sliderValue.value = value;
-                              _jumpToPage(value.toInt());
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                  color: CupertinoColors.white.withOpacity(0.5),
+                  child: ValueListenableBuilder(
+                    valueListenable: _sliderValue,
+                    builder: (context, value, child) {
+                      if (imageCount == 0) {
+                        return Container();
+                      }
+
+                      return Column(
+                        children: [
+                          material.SliderTheme(
+                            data: material.SliderThemeData(
+                              activeTrackColor:
+                                  const Color.fromARGB(255, 0xa4, 0x9e, 0xdc),
+                              tickMarkShape:
+                                  material.SliderTickMarkShape.noTickMark,
+                              thumbShape: HollowSliderThumbShape(
+                                radius: 30.r,
+                                color:
+                                    const Color.fromARGB(255, 0xa4, 0x9e, 0xdc),
+                                borderWidth: 5.r,
+                              ),
+                            ),
+                            child: material.Slider(
+                              min: 1,
+                              max: imageCount.toDouble(),
+                              divisions: imageCount - 1,
+                              value: value,
+                              label: value.toInt().toString(),
+                              onChanged: (value) {
+                                _sliderValue.value = value;
+                                _jumpToPage(value.toInt());
+                              },
+                            ),
+                          ),
+                          Text('${value.toInt()}/$imageCount'),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

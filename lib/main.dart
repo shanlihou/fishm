@@ -86,8 +86,8 @@ class MyApp extends StatelessWidget {
                 ],
                 title: 'ToonFu',
                 theme: const CupertinoThemeData(
-                  primaryColor: CupertinoColors.black,
-                  primaryContrastingColor: CupertinoColors.systemBlue,
+                  primaryColor: CupertinoColors.systemPurple,
+                  primaryContrastingColor: CupertinoColors.systemYellow,
                   barBackgroundColor: CupertinoColors.white,
                   scaffoldBackgroundColor: CupertinoColors.white,
                   brightness: Brightness.light,

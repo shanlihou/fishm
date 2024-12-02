@@ -58,6 +58,10 @@ dependencies:
   device_info_plus: ^11.1.0
   ftp_server: ^1.0.4
   syncfusion_flutter_sliders: ^27.2.4
+  # interactive_slider: ^0.4.0
+  interactive_slider: 
+    path: E:\shgithub\flutter\interactive_slider
+  gradient_borders: ^1.0.1
 
 dev_dependencies:
   flutter_test:
