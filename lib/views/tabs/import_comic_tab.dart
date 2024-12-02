@@ -25,15 +25,15 @@ class _ImportComicTabState extends State<ImportComicTab> {
 
   String _buildImportDir() {
     if (Platform.isWindows) {
-      return Directory.current.path + '\\' + cbzDir;
+      return '${Directory.current.path}\\$cbzDir';
     }
-    return Directory.current.path + '/' + cbzDir;
+    return '${Directory.current.path}/$cbzDir';
   }
 
   String _buildStep2Tab() {
     String bookshelf = AppLocalizations.of(context)!.bookshelf;
     String local = AppLocalizations.of(context)!.local;
-    return ' ${bookshelf} - ${local} ';
+    return ' $bookshelf - $local ';
   }
 
   @override
@@ -127,7 +127,7 @@ class _ImportComicTabState extends State<ImportComicTab> {
                     children: [
                       Text(AppLocalizations.of(context)!.step2Prefix),
                       Text(_buildStep2Tab(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: CupertinoColors.systemBlue,
                               fontWeight: FontWeight.bold)),
                       Text(AppLocalizations.of(context)!.step2Suffix),

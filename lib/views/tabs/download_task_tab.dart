@@ -212,7 +212,7 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                     },
                   ),
                 ),
-                Text('Select All'),
+                const Text('Select All'),
               ],
             ),
             SizedBox(
@@ -220,7 +220,8 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
               height: 100.h,
               child: CupertinoButton(
                 color: CupertinoColors.systemRed,
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
+                onPressed: _deleteTasks,
                 child: Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -228,7 +229,6 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                   style: TextStyle(
                       color: CupertinoColors.white, fontSize: pm(16, 50.spMin)),
                 ),
-                onPressed: _deleteTasks,
               ),
             ),
           ]),

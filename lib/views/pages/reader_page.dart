@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../common/log.dart';
 import '../../const/general_const.dart';
@@ -342,28 +343,40 @@ class _ReaderPageState extends State<ReaderPage> {
               ),
               Expanded(
                 child: material.Material(
-                  child: material.SliderTheme(
-                    data: material.SliderThemeData(
-                      inactiveTrackColor: CupertinoColors.systemBlue,
-                      trackHeight: 2,
-                      overlayShape: material.SliderComponentShape.noOverlay,
-                      thumbShape: material.SliderComponentShape.noThumb,
+                  child: material.Theme(
+                    data: material.ThemeData(
+                      brightness: Brightness.light,
+                      scaffoldBackgroundColor: CupertinoColors.white,
+                      primaryColor: CupertinoColors.systemBlue,
+                      primaryColorDark: CupertinoColors.systemBlue,
+                      primaryColorLight: CupertinoColors.systemBlue,
+                      canvasColor: CupertinoColors.white,
                     ),
-                    child: ValueListenableBuilder(
-                      valueListenable: _sliderValue,
-                      builder: (context, value, child) {
-                        return material.Slider(
-                          min: 1,
-                          max: imageCount.toDouble(),
-                          divisions: imageCount - 1,
-                          value: value,
-                          label: value.toInt().toString(),
-                          onChanged: (value) {
-                            _sliderValue.value = value;
-                            _jumpToPage(value.toInt());
-                          },
-                        );
-                      },
+                    child: material.SliderTheme(
+                      data: material.SliderThemeData.fromPrimaryColors(
+                        primaryColor: CupertinoColors.systemBlue,
+                        primaryColorDark: CupertinoColors.systemBlue,
+                        primaryColorLight: CupertinoColors.systemBlue,
+                        valueIndicatorTextStyle: const TextStyle(
+                          color: CupertinoColors.black,
+                        ),
+                      ),
+                      child: ValueListenableBuilder(
+                        valueListenable: _sliderValue,
+                        builder: (context, value, child) {
+                          return material.Slider(
+                            min: 1,
+                            max: imageCount.toDouble(),
+                            divisions: imageCount - 1,
+                            value: value,
+                            label: value.toInt().toString(),
+                            onChanged: (value) {
+                              _sliderValue.value = value;
+                              _jumpToPage(value.toInt());
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
