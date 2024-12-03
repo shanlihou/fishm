@@ -125,6 +125,7 @@ flutter:
     - assets/images/icon/source-big.png
     - assets/images/icon/source-add.png
     - assets/images/icon/source-delete.png
+    - assets/images/icon/network-big.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -67,5 +67,6 @@
   "step2Suffix": "tab",
   "bookshelf": "Bookshelf",
   "local": "Local",
-  "sourceComment": "The following are added sources, please be careful to delete"
+  "sourceComment": "The following are added sources, please be careful to delete",
+  "networkManager": "Network manager"
 }

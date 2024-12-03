@@ -132,6 +132,7 @@ Widget buildCommonBase(BuildContext context, String imagePath, String title) {
   return Column(
     children: [
       Container(
+        width: double.infinity,
         margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
         child: Image.asset(
           imagePath,

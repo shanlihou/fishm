@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../const/assets_const.dart';
+import '../../../const/color_const.dart';
 import '../../../types/manager/global_manager.dart';
 import '../../../types/provider/setting_provider.dart';
 
 import 'package:flutter_gen/gen_l10n/localizations.dart';
+
+import '../../../utils/utils_widget.dart';
 
 class NetworkSettings extends StatefulWidget {
   const NetworkSettings({super.key});
@@ -100,7 +105,71 @@ class _NetworkSettingsState extends State<NetworkSettings> {
       ),
       child: SafeArea(
         child: Column(
-          children: children,
+          children: [
+            buildCommonBase(context, networkBig,
+                AppLocalizations.of(context)!.networkManager),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: CupertinoColors.white,
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: CupertinoColors.systemGrey),
+              ),
+              margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(AppLocalizations.of(context)!.proxy),
+                      CupertinoSwitch(
+                        activeColor: primaryTextColor,
+                        value: p.settings?.enableProxy ?? false,
+                        onChanged: (value) {
+                          p.settings?.enableProxy = value;
+                          globalManager.resetProxy(p);
+                          p.saveSettings();
+                        },
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: 1.h,
+                    color: CupertinoColors.systemGrey,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(AppLocalizations.of(context)!.host),
+                      Expanded(
+                        child: CupertinoTextField(
+                          controller: _hostController,
+                          placeholder: AppLocalizations.of(context)!.host,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: 1.h,
+                    color: CupertinoColors.systemGrey,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(AppLocalizations.of(context)!.port),
+                      Expanded(
+                        child: CupertinoTextField(
+                          controller: _portController,
+                          placeholder: AppLocalizations.of(context)!.port,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
