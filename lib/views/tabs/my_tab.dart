@@ -68,7 +68,7 @@ class MyTab extends StatelessWidget {
             _buildSettingGroup([
               _buildSettingItem(
                   context,
-                  mySetting,
+                  mySource,
                   AppLocalizations.of(context)!.sources,
                   (context) => const SourcesSettings()),
               _buildSettingItem(

@@ -13,3 +13,5 @@ const sliderColor = Color(0xFFA49EDC);
 const primaryTextColor = Color.fromARGB(255, 0xab, 0xa2, 0xf3);
 
 const importTextColor = Color(0xff94a9f5);
+
+const commonBlue = Color.fromARGB(255, 131, 190, 253);

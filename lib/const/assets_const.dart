@@ -27,3 +27,7 @@ const String goToRead = 'assets/images/icon/go-to-read.png';
 const String importOff = 'assets/images/icon/import-off.png';
 const String importOn = 'assets/images/icon/import-on.png';
 const String importBig = 'assets/images/icon/import-big.png';
+const String readerAddToShelf = 'assets/images/icon/reader-add-to-shelf.png';
+const String readerAddToShelfOn =
+    'assets/images/icon/reader-add-to-shelf-on.png';
+const String mySource = 'assets/images/icon/my-source.png';

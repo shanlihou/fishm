@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../views/widget/select_widget.dart';
 import '../common/reader_chapters.dart';
 
 abstract class ComicReaderContext<T extends ReaderChapter> {
@@ -10,6 +11,12 @@ abstract class ComicReaderContext<T extends ReaderChapter> {
   (String?, String?) buildMiddleText(BuildContext context, int page);
 
   int get imageCount;
+
+  List<SelectMenuItem> getChapterItems(BuildContext context);
+
+  String getTitle(BuildContext context);
+
+  String getChapterTitle(BuildContext context, String chapterId);
 
   String getPageText(BuildContext context, int page);
 
@@ -33,4 +40,8 @@ abstract class ComicReaderContext<T extends ReaderChapter> {
   int chapterImageCount();
 
   int get historyChapterPage;
+
+  int currentChapterIndex(BuildContext context);
+
+  Future<void> jumpToChapter(BuildContext context, String chapterId);
 }

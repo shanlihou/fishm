@@ -461,11 +461,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                                         gradient:
                                                             LinearGradient(
                                                                 colors: [
-                                                              Color.fromARGB(
-                                                                  255,
-                                                                  131,
-                                                                  190,
-                                                                  253),
+                                                              commonBlue,
                                                               Color.fromARGB(
                                                                   255,
                                                                   153,

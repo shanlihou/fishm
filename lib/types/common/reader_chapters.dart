@@ -8,6 +8,11 @@ class ReaderChapters<T extends ReaderChapter> {
   final List<T> chapters = [];
   final List<String> chapterIds = [];
 
+  void clear() {
+    chapters.clear();
+    chapterIds.clear();
+  }
+
   void addChapter(T detail, String id) {
     chapters.add(detail);
     chapterIds.add(id);

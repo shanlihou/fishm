@@ -121,4 +121,12 @@ class ComicModel {
     if (chapters[index].images.isEmpty) return null;
     return ChapterDetail(chapters[index].images, chapters[index].extra);
   }
+
+  List<String> getChapterTitleList() {
+    return chapters.map((e) => e.title).toList();
+  }
+
+  int getChapterIndex(String chapterId) {
+    return chapters.indexWhere((e) => e.id == chapterId);
+  }
 }

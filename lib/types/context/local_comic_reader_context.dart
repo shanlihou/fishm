@@ -7,6 +7,7 @@ import 'package:toonfu/utils/utils_general.dart';
 
 import '../../const/general_const.dart';
 import '../../views/widget/net_image.dart';
+import '../../views/widget/select_widget.dart';
 import '../common/reader_chapters.dart';
 import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';
@@ -28,6 +29,16 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
   String historyChapterId = "";
 
   LocalComicReaderContext(this.cbzDir, {this.initCbzIndex, this.initCbzPage});
+
+  @override
+  String getTitle(BuildContext context) {
+    return osPathSplit(cbzDir).last.split('.').first;
+  }
+
+  @override
+  String getChapterTitle(BuildContext context, String chapterId) {
+    return osPathSplit(chapterId).last.split('.').first;
+  }
 
   @override
   void recordHistory(BuildContext context, int index) {
@@ -227,4 +238,19 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
 
   @override
   int get historyChapterPage => historyPage;
+
+  @override
+  List<SelectMenuItem> getChapterItems(BuildContext context) {
+    throw UnimplementedError();
+  }
+
+  @override
+  int currentChapterIndex(BuildContext context) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> jumpToChapter(BuildContext context, String chapterId) async {
+    throw UnimplementedError();
+  }
 }

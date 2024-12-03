@@ -6,6 +6,7 @@ import '../../models/api/chapter_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../utils/utils_general.dart';
 import '../../views/widget/net_image.dart';
+import '../../views/widget/select_widget.dart';
 import '../provider/comic_provider.dart';
 import 'comic_reader_context.dart';
 import 'net_iamge_context.dart';
@@ -21,6 +22,24 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
 
   ExtensionComicReaderContext(this.extensionName, this.comicId,
       this.initChapterId, this.initPage, this.extra);
+
+  @override
+  String getTitle(BuildContext context) {
+    return context
+            .read<ComicProvider>()
+            .getComicModel(getComicUniqueId(comicId, extensionName))
+            ?.title ??
+        '';
+  }
+
+  @override
+  String getChapterTitle(BuildContext context, String chapterId) {
+    return context
+            .read<ComicProvider>()
+            .getComicModel(getComicUniqueId(comicId, extensionName))
+            ?.getChapterTitle(chapterId) ??
+        '';
+  }
 
   @override
   int? preChapter(BuildContext context) {
@@ -200,5 +219,43 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
       readerChapters.backPop();
       return readerChapters.firstMiddlePageIndex();
     }
+  }
+
+  @override
+  List<SelectMenuItem> getChapterItems(BuildContext context) {
+    var p = context.read<ComicProvider>();
+    var comicModel = p.getComicModel(getComicUniqueId(comicId, extensionName));
+    if (comicModel == null) return [];
+
+    List<SelectMenuItem> items = [];
+    for (var chapter in comicModel.chapters) {
+      items.add(SelectMenuItem(label: chapter.title, chapterId: chapter.id));
+    }
+
+    return items;
+  }
+
+  @override
+  int currentChapterIndex(BuildContext context) {
+    var comicModel = context
+        .read<ComicProvider>()
+        .getComicModel(getComicUniqueId(comicId, extensionName));
+    if (comicModel == null) return -1;
+    return comicModel.getChapterIndex(historyChapterId);
+  }
+
+  @override
+  Future<void> jumpToChapter(BuildContext context, String chapterId) async {
+    var p = context.read<ComicProvider>();
+    var comicModel = p.getComicModel(getComicUniqueId(comicId, extensionName));
+
+    if (comicModel == null) return;
+
+    readerChapters.clear();
+
+    ChapterDetail detail = (await getChapterDetails(
+        comicModel, extensionName, comicId, chapterId))!;
+    await p.saveComic(comicModel);
+    readerChapters.addChapter(detail, chapterId);
   }
 }

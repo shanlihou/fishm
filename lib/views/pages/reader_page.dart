@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:toonfu/const/assets_const.dart';
 
 import '../../common/log.dart';
 import '../../const/color_const.dart';
@@ -14,6 +15,7 @@ import '../../const/general_const.dart';
 import '../../types/context/comic_reader_context.dart';
 import '../../utils/utils_general.dart';
 import '../class/hollow_slider_tumb_shape.dart';
+import '../widget/select_widget.dart';
 
 enum InitOption {
   none,
@@ -22,6 +24,7 @@ enum InitOption {
   next,
   preChapter,
   nextChapter,
+  jumpToChapter,
 }
 
 class MenuPageValue {
@@ -49,6 +52,7 @@ class _ReaderPageState extends State<ReaderPage> {
       ValueNotifier(MenuPageValue(false, 0));
   final ValueNotifier<double> _sliderValue = ValueNotifier(1);
   Timer? _timer;
+  String? _jumpToChapterId;
 
   @override
   void initState() {
@@ -230,8 +234,17 @@ class _ReaderPageState extends State<ReaderPage> {
         widget.readerContext.recordHistory(context, newPage);
         _pageText.value = widget.readerContext.getPageText(context, newPage);
         _menuPage.value = MenuPageValue(true, 1);
+      } else if (_initOption == InitOption.jumpToChapter) {
+        await widget.readerContext.jumpToChapter(context, _jumpToChapterId!);
+
+        int newPage = 1;
+        _setPageController(PreloadPageController(initialPage: newPage));
+        widget.readerContext.recordHistory(context, newPage);
+        _pageText.value = widget.readerContext.getPageText(context, newPage);
+        _menuPage.value = MenuPageValue(true, 1);
       }
 
+      _jumpToChapterId = null;
       _initOption = InitOption.none;
     } catch (e, s) {
       Log.instance.e('doOption error: $e, $s');
@@ -321,12 +334,50 @@ class _ReaderPageState extends State<ReaderPage> {
 
     return Column(
       children: [
+        // top start ----------------------------
         Expanded(
           flex: 2,
           child: Container(
-            color: CupertinoColors.white,
+            alignment: Alignment.bottomLeft,
+            color: commonBlue.withOpacity(0.5),
+            child: Row(children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(
+                  size: 60.r,
+                  CupertinoIcons.back,
+                  color: CupertinoColors.white,
+                ),
+              ),
+              Container(
+                height: 60.h,
+                margin: EdgeInsets.only(left: 10.w, right: 10.w),
+                child: Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  '${widget.readerContext.getTitle(context)}',
+                  style: TextStyle(
+                      fontSize: pm(20, 40.spMin), color: CupertinoColors.white),
+                ),
+              ),
+              material.Material(
+                child: SelectWidget(
+                  valueChanged: (value) {
+                    _initOption = InitOption.jumpToChapter;
+                    _jumpToChapterId = value;
+                    setState(() {});
+                  },
+                  items: widget.readerContext.getChapterItems(context),
+                  defaultIndex:
+                      widget.readerContext.currentChapterIndex(context),
+                ),
+              ),
+            ]),
           ),
         ),
+        // top end ----------------------------
         Expanded(
           flex: 6,
           child: GestureDetector(
@@ -339,6 +390,7 @@ class _ReaderPageState extends State<ReaderPage> {
             ),
           ),
         ),
+        // bottom start ----------------------------
         Container(
           margin:
               EdgeInsets.only(top: 20.h, bottom: 40.h, left: 40.w, right: 40.w),
@@ -374,6 +426,7 @@ class _ReaderPageState extends State<ReaderPage> {
                       }
 
                       return Column(
+                        // slider start ----------------------------
                         children: [
                           Container(
                             height: 100.h,
@@ -381,11 +434,11 @@ class _ReaderPageState extends State<ReaderPage> {
                             child: material.SliderTheme(
                               data: material.SliderThemeData(
                                 trackHeight: 5.h,
-                                valueIndicatorStrokeColor:
-                                    CupertinoColors.white,
-                                valueIndicatorColor: sliderColor,
                                 activeTrackColor: sliderColor,
                                 overlayColor: sliderColor.withOpacity(0.5),
+                                overlayShape: material.RoundSliderOverlayShape(
+                                  overlayRadius: 40.r,
+                                ),
                                 tickMarkShape:
                                     material.SliderTickMarkShape.noTickMark,
                                 thumbShape: HollowSliderThumbShape(
@@ -399,7 +452,6 @@ class _ReaderPageState extends State<ReaderPage> {
                                 max: imageCount.toDouble(),
                                 divisions: imageCount - 1,
                                 value: value,
-                                label: value.toInt().toString(),
                                 onChanged: (value) {
                                   _sliderValue.value = value;
                                   _jumpToPage(value.toInt());
