@@ -357,7 +357,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 child: Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  '${widget.readerContext.getTitle(context)}',
+                  widget.readerContext.getTitle(context),
                   style: TextStyle(
                       fontSize: pm(20, 40.spMin), color: CupertinoColors.white),
                 ),

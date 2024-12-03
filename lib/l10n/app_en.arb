@@ -66,5 +66,6 @@
   "step2Prefix": "Read in",
   "step2Suffix": "tab",
   "bookshelf": "Bookshelf",
-  "local": "Local"
+  "local": "Local",
+  "sourceComment": "The following are added sources, please be careful to delete"
 }

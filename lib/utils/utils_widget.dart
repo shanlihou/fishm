@@ -93,3 +93,60 @@ void showCupertinoToast({
     overlayEntry.remove();
   });
 }
+
+Widget buildImportBase(
+    BuildContext context, String imagePath, String title, String desc) {
+  return Container(
+    width: double.infinity,
+    alignment: Alignment.center,
+    height: 500.h,
+    color: CupertinoColors.white,
+    margin: EdgeInsets.only(bottom: 30.h, top: 40.h, left: 30.w, right: 30.w),
+    child: Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
+          child: Image.asset(
+            imagePath,
+            width: 200.w,
+            height: 200.h,
+          ),
+        ),
+        Text(title,
+            style: TextStyle(
+                fontSize: pm(16, 50.spMin),
+                color: importTextColor,
+                fontWeight: FontWeight.bold)),
+        Container(
+          margin: EdgeInsets.only(top: 10.h),
+          child: Text(desc,
+              style: TextStyle(
+                  fontSize: pm(14, 48.spMin), color: CupertinoColors.black)),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildCommonBase(BuildContext context, String imagePath, String title) {
+  return Column(
+    children: [
+      Container(
+        margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
+        child: Image.asset(
+          imagePath,
+          width: 200.w,
+          height: 200.h,
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.only(bottom: 30.h),
+        child: Text(title,
+            style: TextStyle(
+                fontSize: pm(16, 50.spMin),
+                color: CupertinoColors.black,
+                fontWeight: FontWeight.bold)),
+      ),
+    ],
+  );
+}

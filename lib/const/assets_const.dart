@@ -31,3 +31,6 @@ const String readerAddToShelf = 'assets/images/icon/reader-add-to-shelf.png';
 const String readerAddToShelfOn =
     'assets/images/icon/reader-add-to-shelf-on.png';
 const String mySource = 'assets/images/icon/my-source.png';
+const String sourceBig = 'assets/images/icon/source-big.png';
+const String sourceAdd = 'assets/images/icon/source-add.png';
+const String sourceDelete = 'assets/images/icon/source-delete.png';

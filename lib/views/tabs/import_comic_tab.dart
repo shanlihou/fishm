@@ -10,6 +10,7 @@ import 'package:flutter_gen/gen_l10n/localizations.dart';
 import 'package:toonfu/const/general_const.dart';
 import '../../const/assets_const.dart';
 import '../../utils/utils_general.dart';
+import '../../utils/utils_widget.dart';
 
 class ImportComicTab extends StatefulWidget {
   const ImportComicTab({super.key});
@@ -78,38 +79,11 @@ class _ImportComicTabState extends State<ImportComicTab> {
         color: backgroundColor06,
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              height: 500.h,
-              color: CupertinoColors.white,
-              margin: EdgeInsets.only(
-                  bottom: 30.h, top: 40.h, left: 30.w, right: 30.w),
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
-                    child: Image.asset(
-                      importBig,
-                      width: 200.w,
-                      height: 200.h,
-                    ),
-                  ),
-                  Text(AppLocalizations.of(context)!.import,
-                      style: TextStyle(
-                          fontSize: pm(16, 50.spMin),
-                          color: importTextColor,
-                          fontWeight: FontWeight.bold)),
-                  Container(
-                    margin: EdgeInsets.only(top: 10.h),
-                    child: Text(AppLocalizations.of(context)!.importDesc,
-                        style: TextStyle(
-                            fontSize: pm(14, 48.spMin),
-                            color: CupertinoColors.black)),
-                  ),
-                ],
-              ),
-            ),
+            buildImportBase(
+                context,
+                importBig,
+                AppLocalizations.of(context)!.import,
+                AppLocalizations.of(context)!.importDesc),
             Container(
               padding: EdgeInsets.all(30.h),
               width: double.infinity,

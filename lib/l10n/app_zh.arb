@@ -33,5 +33,6 @@
     "step2Prefix": "到",
     "step2Suffix": "页签下阅读",
     "bookshelf": "书架",
-    "local": "本地"
+    "local": "本地",
+    "sourceComment": "以下为添加源，请谨慎删除"
 }
