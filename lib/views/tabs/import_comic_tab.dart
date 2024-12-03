@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/const/color_const.dart';
@@ -36,6 +37,40 @@ class _ImportComicTabState extends State<ImportComicTab> {
     return ' $bookshelf - $local ';
   }
 
+  Widget _buildCopyPathButton() {
+    return SizedBox(
+      height: 80.h,
+      width: 250.w,
+      child: material.Material(
+        color: material.Colors.transparent,
+        child: material.ElevatedButton(
+          style: material.ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            backgroundBuilder: (context, states, childBackButtonDispatcher) =>
+                Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color.fromARGB(255, 131, 190, 253),
+                  Color.fromARGB(255, 153, 149, 249),
+                ]),
+              ),
+              child: childBackButtonDispatcher,
+            ),
+          ),
+          child: Text(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              AppLocalizations.of(context)!.copyPath,
+              style: TextStyle(
+                  fontSize: pm(14, 30.spMin), color: CupertinoColors.white)),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: _buildImportDir()));
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -48,11 +83,12 @@ class _ImportComicTabState extends State<ImportComicTab> {
               alignment: Alignment.center,
               height: 500.h,
               color: CupertinoColors.white,
-              margin: EdgeInsets.all(30.h),
+              margin: EdgeInsets.only(
+                  bottom: 30.h, top: 40.h, left: 30.w, right: 30.w),
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 50.h, bottom: 30.h),
+                    margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
                     child: Image.asset(
                       importBig,
                       width: 200.w,
@@ -62,13 +98,13 @@ class _ImportComicTabState extends State<ImportComicTab> {
                   Text(AppLocalizations.of(context)!.import,
                       style: TextStyle(
                           fontSize: pm(16, 50.spMin),
-                          color: CupertinoColors.black,
+                          color: importTextColor,
                           fontWeight: FontWeight.bold)),
                   Container(
                     margin: EdgeInsets.only(top: 10.h),
                     child: Text(AppLocalizations.of(context)!.importDesc,
                         style: TextStyle(
-                            fontSize: pm(14, 50.spMin),
+                            fontSize: pm(14, 48.spMin),
                             color: CupertinoColors.black)),
                   ),
                 ],
@@ -83,52 +119,55 @@ class _ImportComicTabState extends State<ImportComicTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalizations.of(context)!.stepX(1)),
-                  Text(AppLocalizations.of(context)!.step1),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            _buildImportDir()),
-                      ),
-                      SizedBox(
-                        height: 100.h,
-                        child: CupertinoButton(
-                          color: CupertinoColors.systemBlue,
-                          padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          child: Text(AppLocalizations.of(context)!.copyPath,
-                              style: TextStyle(
-                                  fontSize: pm(14, 30.spMin),
-                                  color: CupertinoColors.white)),
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: _buildImportDir()));
-                          },
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10.h, top: 10.h),
+                    child: Text(
+                        style: TextStyle(
+                          fontSize: pm(16, 50.spMin),
+                          color: CupertinoColors.black.withOpacity(0.3),
                         ),
-                      ),
-                    ],
+                        AppLocalizations.of(context)!.stepX(1)),
                   ),
+                  Text(AppLocalizations.of(context)!.step1),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.h, bottom: 20.h),
+                    child: Text(
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: pm(14, 46.spMin),
+                          color: importTextColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        _buildImportDir()),
+                  ),
+                  _buildCopyPathButton(),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
-              height: 300.h,
+              height: 220.h,
               color: CupertinoColors.white,
               margin: EdgeInsets.all(30.h),
               padding: EdgeInsets.all(30.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalizations.of(context)!.stepX(2)),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10.h, top: 10.h),
+                    child: Text(
+                        style: TextStyle(
+                          fontSize: pm(16, 50.spMin),
+                          color: CupertinoColors.black.withOpacity(0.3),
+                        ),
+                        AppLocalizations.of(context)!.stepX(2)),
+                  ),
                   Row(
                     children: [
                       Text(AppLocalizations.of(context)!.step2Prefix),
                       Text(_buildStep2Tab(),
                           style: const TextStyle(
-                              color: CupertinoColors.systemBlue,
+                              color: importTextColor,
                               fontWeight: FontWeight.bold)),
                       Text(AppLocalizations.of(context)!.step2Suffix),
                     ],

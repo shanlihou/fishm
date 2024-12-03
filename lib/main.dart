@@ -14,6 +14,7 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
 import 'common/log.dart';
+import 'const/color_const.dart';
 import 'const/db_const.dart';
 import 'models/db/read_history_model.dart';
 import 'types/provider/local_provider.dart';
@@ -86,7 +87,7 @@ class MyApp extends StatelessWidget {
                 ],
                 title: 'ToonFu',
                 theme: const CupertinoThemeData(
-                  primaryColor: CupertinoColors.systemPurple,
+                  primaryColor: primaryTextColor,
                   primaryContrastingColor: CupertinoColors.systemYellow,
                   barBackgroundColor: CupertinoColors.white,
                   scaffoldBackgroundColor: CupertinoColors.white,

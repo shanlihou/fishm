@@ -5,12 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
-import 'package:interactive_slider/interactive_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../common/log.dart';
+import '../../const/color_const.dart';
 import '../../const/general_const.dart';
 import '../../types/context/comic_reader_context.dart';
 import '../../utils/utils_general.dart';
@@ -341,23 +340,28 @@ class _ReaderPageState extends State<ReaderPage> {
           ),
         ),
         Container(
-          margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-          height: 200.h,
+          margin:
+              EdgeInsets.only(top: 20.h, bottom: 40.h, left: 40.w, right: 40.w),
+          height: 250.h,
           decoration: BoxDecoration(
             color: CupertinoColors.white.withOpacity(0.5),
             border: GradientBoxBorder(
                 gradient: LinearGradient(colors: [
               CupertinoColors.systemBlue.withOpacity(0.5),
-              CupertinoColors.systemGreen.withOpacity(0.5),
+              sliderColor.withOpacity(0.5),
             ])),
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular(20.r),
           ),
           padding: EdgeInsets.all(10.r),
           child: Row(
             children: [
               material.IconButton(
                 onPressed: _preChapter,
-                icon: const Icon(CupertinoIcons.back),
+                icon: Icon(
+                  size: 60.r,
+                  CupertinoIcons.backward_end_alt,
+                  color: sliderColor,
+                ),
               ),
               Expanded(
                 child: material.Material(
@@ -371,32 +375,44 @@ class _ReaderPageState extends State<ReaderPage> {
 
                       return Column(
                         children: [
-                          material.SliderTheme(
-                            data: material.SliderThemeData(
-                              activeTrackColor:
-                                  const Color.fromARGB(255, 0xa4, 0x9e, 0xdc),
-                              tickMarkShape:
-                                  material.SliderTickMarkShape.noTickMark,
-                              thumbShape: HollowSliderThumbShape(
-                                radius: 30.r,
-                                color:
-                                    const Color.fromARGB(255, 0xa4, 0x9e, 0xdc),
-                                borderWidth: 5.r,
+                          Container(
+                            height: 100.h,
+                            margin: EdgeInsets.only(top: 50.h),
+                            child: material.SliderTheme(
+                              data: material.SliderThemeData(
+                                trackHeight: 5.h,
+                                valueIndicatorStrokeColor:
+                                    CupertinoColors.white,
+                                valueIndicatorColor: sliderColor,
+                                activeTrackColor: sliderColor,
+                                overlayColor: sliderColor.withOpacity(0.5),
+                                tickMarkShape:
+                                    material.SliderTickMarkShape.noTickMark,
+                                thumbShape: HollowSliderThumbShape(
+                                  radius: 30.r,
+                                  color: sliderColor,
+                                  borderWidth: 5.r,
+                                ),
+                              ),
+                              child: material.Slider(
+                                min: 1,
+                                max: imageCount.toDouble(),
+                                divisions: imageCount - 1,
+                                value: value,
+                                label: value.toInt().toString(),
+                                onChanged: (value) {
+                                  _sliderValue.value = value;
+                                  _jumpToPage(value.toInt());
+                                },
                               ),
                             ),
-                            child: material.Slider(
-                              min: 1,
-                              max: imageCount.toDouble(),
-                              divisions: imageCount - 1,
-                              value: value,
-                              label: value.toInt().toString(),
-                              onChanged: (value) {
-                                _sliderValue.value = value;
-                                _jumpToPage(value.toInt());
-                              },
-                            ),
                           ),
-                          Text('${value.toInt()}/$imageCount'),
+                          Text(
+                            style: const TextStyle(
+                              color: sliderColor,
+                            ),
+                            '${value.toInt()}/$imageCount',
+                          ),
                         ],
                       );
                     },
@@ -405,7 +421,11 @@ class _ReaderPageState extends State<ReaderPage> {
               ),
               material.IconButton(
                 onPressed: _nextChapter,
-                icon: const Icon(CupertinoIcons.forward),
+                icon: Icon(
+                  size: 60.r,
+                  CupertinoIcons.forward_end_alt,
+                  color: sliderColor,
+                ),
               ),
             ],
           ),

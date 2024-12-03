@@ -525,7 +525,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                       width: 80.w,
                       height: 80.h,
                     ),
-                    const Text('Download all')
+                    Container(
+                        margin: EdgeInsets.only(left: 20.w),
+                        child: const Text('Download all'))
                   ],
                 ),
               ),
