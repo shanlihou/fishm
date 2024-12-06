@@ -23,13 +23,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       fields[3] == null ? false : fields[3] as bool,
       fields[4] == null ? '' : fields[4] as String,
       fields[5] == null ? 0 : fields[5] as int,
+      fields[6] == null ? false : fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.sources)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(4)
       ..write(obj.proxyHost)
       ..writeByte(5)
-      ..write(obj.proxyPort);
+      ..write(obj.proxyPort)
+      ..writeByte(6)
+      ..write(obj.landscape);
   }
 
   @override

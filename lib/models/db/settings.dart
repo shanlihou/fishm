@@ -22,10 +22,13 @@ class Settings {
   @HiveField(5, defaultValue: 0)
   int proxyPort;
 
+  @HiveField(6, defaultValue: false)
+  bool landscape;
+
   Settings(this.sources, this.localMainLuaDeubugPath, this.language,
-      this.enableProxy, this.proxyHost, this.proxyPort);
+      this.enableProxy, this.proxyHost, this.proxyPort, this.landscape);
 
   static Settings defaultSettings() {
-    return Settings([], "", "", false, "", 0);
+    return Settings([], "", "", false, "", 0, false);
   }
 }

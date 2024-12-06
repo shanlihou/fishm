@@ -3,16 +3,19 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
-import 'package:toonfu/const/assets_const.dart';
+import 'package:provider/provider.dart';
 
 import '../../common/log.dart';
 import '../../const/color_const.dart';
 import '../../const/general_const.dart';
 import '../../types/context/comic_reader_context.dart';
+import '../../types/manager/global_manager.dart';
+import '../../types/provider/setting_provider.dart';
 import '../../utils/utils_general.dart';
 import '../class/hollow_slider_tumb_shape.dart';
 import '../widget/select_widget.dart';
@@ -69,6 +72,13 @@ class _ReaderPageState extends State<ReaderPage> {
 
       widget.readerContext.recordHistory(context, _page!);
     });
+
+    if (context.read<SettingProvider>().settings?.landscape ?? false) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
   }
 
   void _updateLockSwap() {
@@ -185,6 +195,11 @@ class _ReaderPageState extends State<ReaderPage> {
   void dispose() {
     _preloadController?.dispose();
     _timer?.cancel();
+
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    globalManager.isLandscape = false;
+
     super.dispose();
   }
 

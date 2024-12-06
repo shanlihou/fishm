@@ -35,5 +35,6 @@
     "bookshelf": "书架",
     "local": "本地",
     "sourceComment": "以下为添加源，请谨慎删除",
-    "networkManager": "网络管理"
+    "networkManager": "网络管理",
+    "clear": "清除"
 }

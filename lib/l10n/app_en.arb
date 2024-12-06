@@ -68,5 +68,6 @@
   "bookshelf": "Bookshelf",
   "local": "Local",
   "sourceComment": "The following are added sources, please be careful to delete",
-  "networkManager": "Network manager"
+  "networkManager": "Network manager",
+  "clear": "Clear"
 }

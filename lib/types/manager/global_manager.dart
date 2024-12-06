@@ -4,6 +4,7 @@ class GlobalManager {
   bool enableProxy = false;
   String proxyHost = '';
   int proxyPort = 0;
+  bool isLandscape = false;
 
   void initGlobal(SettingProvider settingProvider) {
     resetProxy(settingProvider);

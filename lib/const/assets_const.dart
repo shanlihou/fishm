@@ -35,3 +35,6 @@ const String sourceBig = 'assets/images/icon/source-big.png';
 const String sourceAdd = 'assets/images/icon/source-add.png';
 const String sourceDelete = 'assets/images/icon/source-delete.png';
 const String networkBig = 'assets/images/icon/network-big.png';
+const String generalBig = 'assets/images/icon/general-big.png';
+const String debugBig = 'assets/images/icon/debug-big.png';
+const String aboutBig = 'assets/images/icon/about-big.png';
