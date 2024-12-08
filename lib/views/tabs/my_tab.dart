@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import 'package:toonfu/const/color_const.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
+import '../../common/log.dart';
 import '../../const/assets_const.dart';
 import '../pages/settings/about_page.dart';
 import '../pages/settings/debug_setting_page.dart';
@@ -14,10 +17,15 @@ class MyTab extends StatelessWidget {
   const MyTab({super.key});
 
   Widget _buildSettingItem(
-      BuildContext context, String icon, String title, WidgetBuilder toPage) {
+      BuildContext context, String icon, String title, WidgetBuilder? toPage,
+      {VoidCallback? onPress = null}) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, CupertinoPageRoute(builder: toPage));
+        if (onPress != null) {
+          onPress();
+          return;
+        }
+        Navigator.push(context, CupertinoPageRoute(builder: toPage!));
       },
       child: Row(
         children: [
@@ -91,10 +99,18 @@ class MyTab extends StatelessWidget {
                   AppLocalizations.of(context)!.about,
                   (context) => const AboutPage()),
               _buildSettingItem(
-                  context,
-                  myDebug,
-                  AppLocalizations.of(context)!.debug,
-                  (context) => const DebugSettingPage()),
+                context,
+                myDebug,
+                AppLocalizations.of(context)!.debug,
+                // (context) => const DebugSettingPage()),
+                null,
+                onPress: () {
+                  Navigator.of(context).push(material.MaterialPageRoute(
+                    builder: (context) =>
+                        TalkerScreen(talker: Log.instance.talker),
+                  ));
+                },
+              )
             ]),
           ],
         ));

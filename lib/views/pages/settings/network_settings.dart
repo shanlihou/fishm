@@ -113,58 +113,94 @@ class _NetworkSettingsState extends State<NetworkSettings> {
               decoration: BoxDecoration(
                 color: CupertinoColors.white,
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: CupertinoColors.systemGrey),
+                boxShadow: [
+                  BoxShadow(
+                    color: settingBoxShadowColor,
+                    blurRadius: 10.r,
+                  )
+                ],
+                border: Border.all(color: settingBoxColor),
               ),
-              margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
+              margin: EdgeInsets.only(top: 20.h, left: 40.w, right: 40.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.proxy),
-                      CupertinoSwitch(
-                        activeColor: primaryTextColor,
-                        value: p.settings?.enableProxy ?? false,
-                        onChanged: (value) {
-                          p.settings?.enableProxy = value;
-                          globalManager.resetProxy(p);
-                          p.saveSettings();
-                        },
-                      ),
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 50.w, right: 50.w, top: 20.h, bottom: 20.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(AppLocalizations.of(context)!.proxy),
+                        CupertinoSwitch(
+                          activeColor: primaryTextColor,
+                          value: p.settings?.enableProxy ?? false,
+                          onChanged: (value) {
+                            p.settings?.enableProxy = value;
+                            globalManager.resetProxy(p);
+                            p.saveSettings();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
+                    margin: EdgeInsets.only(left: 50.w, right: 50.w),
                     height: 1.h,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.host),
-                      Expanded(
-                        child: CupertinoTextField(
-                          controller: _hostController,
-                          placeholder: AppLocalizations.of(context)!.host,
-                        ),
-                      ),
-                    ],
+                    color: settingBoxColor,
                   ),
                   Container(
-                    height: 1.h,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.port),
-                      Expanded(
-                        child: CupertinoTextField(
-                          controller: _portController,
-                          placeholder: AppLocalizations.of(context)!.port,
+                    margin: EdgeInsets.only(
+                        left: 50.w, right: 50.w, top: 20.h, bottom: 20.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(AppLocalizations.of(context)!.host),
+                        Expanded(
+                          child: CupertinoTextField(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: CupertinoColors.transparent),
+                            ),
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 133, 133, 134),
+                            ),
+                            controller: _hostController,
+                            placeholder: AppLocalizations.of(context)!.host,
+                            textAlign: TextAlign.right,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 50.w, right: 50.w),
+                    height: 1.h,
+                    color: settingBoxColor,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 50.w, right: 50.w, top: 20.h, bottom: 20.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(AppLocalizations.of(context)!.port),
+                        Expanded(
+                          child: CupertinoTextField(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: CupertinoColors.transparent),
+                            ),
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 133, 133, 134),
+                            ),
+                            textAlign: TextAlign.right,
+                            controller: _portController,
+                            placeholder: AppLocalizations.of(context)!.port,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

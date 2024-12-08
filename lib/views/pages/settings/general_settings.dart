@@ -4,11 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/const/color_const.dart';
 import 'package:toonfu/const/general_const.dart';
 
 import '../../../common/log.dart';
 import '../../../const/assets_const.dart';
+import '../../../const/color_const.dart';
 import '../../../types/provider/comic_provider.dart';
 import '../../../types/provider/local_provider.dart';
 import '../../../types/provider/setting_provider.dart';
@@ -52,16 +52,43 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         context.read<SettingProvider>().saveSettings();
       },
       child: Container(
+        height: 120.h,
         color: CupertinoColors.white,
-        padding: EdgeInsets.all(20.r),
+        padding:
+            EdgeInsets.only(left: 40.w, right: 40.w, top: 20.h, bottom: 20.h),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(language),
           if (context.read<LocalProvider>().locale.languageCode == languageCode)
-            Icon(
+            const Icon(
               CupertinoIcons.checkmark,
             ),
         ]),
+      ),
+    );
+  }
+
+  Widget _buildLandscape(SettingProvider provider, String title, bool value) {
+    return GestureDetector(
+      onTap: () {
+        provider.settings?.landscape = value;
+        provider.saveSettings();
+      },
+      child: Container(
+        height: 120.h,
+        color: CupertinoColors.white,
+        padding:
+            EdgeInsets.only(left: 40.w, right: 40.w, top: 20.h, bottom: 20.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title),
+            if (value == provider.settings?.landscape)
+              const Icon(
+                CupertinoIcons.checkmark,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -80,66 +107,83 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                border: Border.all(color: CupertinoColors.systemGrey),
-              ),
-              margin: EdgeInsets.all(20.r),
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.all(20.r),
-                    child: Text(AppLocalizations.of(context)!.language),
-                  ),
-                  Expanded(
-                    child: Consumer<LocalProvider>(
-                      builder: (context, provider, child) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLanguage(context, '中文', 'zh'),
-                          Container(
-                            height: 1.h,
-                            color: CupertinoColors.systemGrey,
-                          ),
-                          _buildLanguage(context, 'English', 'en'),
-                        ],
-                      ),
-                    ),
+                borderRadius: BorderRadius.circular(20.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: settingBoxShadowColor,
+                    blurRadius: 10.r,
                   ),
                 ],
+                border: Border.all(color: settingBoxColor),
               ),
-            ),
-            GestureDetector(
-              onTap: _clearAll,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: CupertinoColors.white,
-                  border: Border.all(color: CupertinoColors.systemGrey),
-                ),
-                margin: EdgeInsets.all(20.r),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              margin: EdgeInsets.all(40.r),
+              child: Consumer<LocalProvider>(
+                builder: (context, provider, child) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(AppLocalizations.of(context)!.clear),
-                    Image.asset(extensionDelete),
+                    _buildLanguage(context, '中文', 'zh'),
+                    Container(
+                      margin: EdgeInsets.only(left: 50.w, right: 50.w),
+                      height: 1.h,
+                      color: settingBoxColor,
+                    ),
+                    _buildLanguage(context, 'English', 'en'),
                   ],
                 ),
               ),
             ),
             Container(
               width: double.infinity,
-              child: Row(
-                children: [
-                  Text('横竖'),
-                  Consumer<SettingProvider>(
-                    builder: (context, provider, child) => CupertinoSwitch(
-                      value: provider.settings?.landscape ?? false,
-                      onChanged: (value) {
-                        provider.settings?.landscape = value;
-                        provider.saveSettings();
-                      },
-                    ),
+              margin: EdgeInsets.only(left: 40.w, right: 40.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: settingBoxShadowColor,
+                    blurRadius: 10.r,
                   ),
                 ],
+                border: Border.all(color: settingBoxColor),
+              ),
+              child: Consumer<SettingProvider>(
+                builder: (context, provider, child) => Column(
+                  children: [
+                    _buildLandscape(provider, '横屏', true),
+                    Container(
+                      margin: EdgeInsets.only(left: 50.w, right: 50.w),
+                      height: 1.h,
+                      color: settingBoxColor,
+                    ),
+                    _buildLandscape(provider, '竖屏', false),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: _clearAll,
+              child: Container(
+                width: double.infinity,
+                height: 120.h,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.white,
+                  border: Border.all(color: settingBoxColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: settingBoxShadowColor,
+                      blurRadius: 10.r,
+                    ),
+                  ],
+                ),
+                margin: EdgeInsets.all(40.r),
+                padding: EdgeInsets.only(
+                    left: 40.w, right: 40.w, top: 20.h, bottom: 20.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(AppLocalizations.of(context)!.clear),
+                    Icon(CupertinoIcons.delete, size: 60.w),
+                  ],
+                ),
               ),
             ),
           ],

@@ -21,6 +21,7 @@ import '../types/manager/global_manager.dart';
 import '../types/provider/comic_provider.dart';
 import '../types/provider/task_provider.dart';
 import '../types/task/task_download.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 void openAppSettings() {
   if (Platform.isAndroid) {}
@@ -416,6 +417,10 @@ String downloadImagePath(String extensionName, String comicId, String chapterId,
   return '${imageChapterFolder(extensionName, comicId, chapterId)}/$index.${getImageType(imageUrl)}';
 }
 
+bool isMobile() {
+  return Platform.isIOS || Platform.isAndroid;
+}
+
 double pm(double pcValue, double mobileValue) {
   if (Platform.isIOS || Platform.isAndroid) {
     return mobileValue;
@@ -509,4 +514,11 @@ void addDownloadTask(
       chapterName: chapterModel.title,
       comicTitle: comicModel.title,
       imageCount: chapterModel.images.length));
+}
+
+Future<File> assetToFile(String assetPath, String writePath) async {
+  final data = await rootBundle.load(assetPath);
+  return File(writePath)
+    ..writeAsBytes(
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
 }

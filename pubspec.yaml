@@ -129,6 +129,8 @@ flutter:
     - assets/images/icon/general-big.png
     - assets/images/icon/debug-big.png
     - assets/images/icon/about-big.png
+    - assets/images/icon/log.png
+    - assets/zip/tutorial.zip
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

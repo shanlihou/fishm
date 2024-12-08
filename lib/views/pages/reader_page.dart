@@ -73,11 +73,13 @@ class _ReaderPageState extends State<ReaderPage> {
       widget.readerContext.recordHistory(context, _page!);
     });
 
-    if (context.read<SettingProvider>().settings?.landscape ?? false) {
+    if (isMobile() &&
+        (context.read<SettingProvider>().settings?.landscape ?? false)) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
+      globalManager.isLandscape = true;
     }
   }
 
@@ -168,8 +170,6 @@ class _ReaderPageState extends State<ReaderPage> {
               controller: _preloadController,
               onPageChanged: (index) {
                 if (index == 0) {
-                  print(
-                      'on page changed: $index, ${widget.readerContext.imageCount}');
                   if (widget.readerContext.imageCount <= 1) {
                     _initOption = InitOption.init;
                   } else {
@@ -196,9 +196,11 @@ class _ReaderPageState extends State<ReaderPage> {
     _preloadController?.dispose();
     _timer?.cancel();
 
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    globalManager.isLandscape = false;
+    if (isMobile()) {
+      SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      globalManager.isLandscape = false;
+    }
 
     super.dispose();
   }
@@ -343,6 +345,14 @@ class _ReaderPageState extends State<ReaderPage> {
     _preloadController?.jumpToPage(absolutePage);
   }
 
+  double _vh(double horizontalValue, double verticalValue) {
+    if (globalManager.isLandscape) {
+      return horizontalValue;
+    }
+
+    return verticalValue;
+  }
+
   Widget _buildMenu() {
     _sliderValue.value = _menuPage.value.page.toDouble();
     int imageCount = widget.readerContext.chapterImageCount();
@@ -409,7 +419,7 @@ class _ReaderPageState extends State<ReaderPage> {
         Container(
           margin:
               EdgeInsets.only(top: 20.h, bottom: 40.h, left: 40.w, right: 40.w),
-          height: 250.h,
+          height: _vh(400.h, 250.h),
           decoration: BoxDecoration(
             color: CupertinoColors.white.withOpacity(0.5),
             border: GradientBoxBorder(

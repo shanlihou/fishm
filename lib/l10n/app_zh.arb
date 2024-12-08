@@ -36,5 +36,7 @@
     "local": "本地",
     "sourceComment": "以下为添加源，请谨慎删除",
     "networkManager": "网络管理",
-    "clear": "清除"
+    "clear": "清除",
+    "aboutKernal": "插件内核版本",
+    "reset": "重置"
 }

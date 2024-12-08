@@ -19,42 +19,38 @@ class _SourcesSettingsState extends State<SourcesSettings> {
   final TextEditingController _sourceUrlController = TextEditingController();
 
   Widget _buildSourceItem(String source) {
-    return Row(
-      children: [
-        Container(
-          margin:
-              EdgeInsets.only(right: 20.w, left: 20.w, top: 20.h, bottom: 10.h),
-          child: GestureDetector(
-            onTap: () {
-              context.read<SettingProvider>().removeSource(source);
-            },
-            child: Image.asset(
-              sourceDelete,
-              width: 60.w,
-              height: 60.h,
+    return Container(
+      margin: EdgeInsets.only(right: 30.w, bottom: 20.h),
+      child: Row(
+        children: [
+          Container(
+            margin: EdgeInsets.only(
+                right: 20.w, left: 20.w, top: 20.h, bottom: 10.h),
+            child: GestureDetector(
+              onTap: () {
+                context.read<SettingProvider>().removeSource(source);
+              },
+              child: Image.asset(
+                sourceDelete,
+                width: 60.w,
+                height: 60.h,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 9,
-          child: Text(source),
-        ),
-      ],
+          Expanded(
+            flex: 9,
+            child: Text(source),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('Sources'),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.xmark),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Sources'),
       ),
       child: SafeArea(
         child: Container(
@@ -65,7 +61,8 @@ class _SourcesSettingsState extends State<SourcesSettings> {
               buildCommonBase(
                   context, sourceBig, AppLocalizations.of(context)!.import),
               Container(
-                margin: EdgeInsets.only(bottom: 20.h),
+                margin: EdgeInsets.only(
+                    bottom: 20.h, left: 30.w, right: 40.w, top: 20.h),
                 child: Row(
                   children: [
                     Expanded(
@@ -96,20 +93,33 @@ class _SourcesSettingsState extends State<SourcesSettings> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Container(
+                    margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
+                    padding: EdgeInsets.only(bottom: 20.h),
                     decoration: BoxDecoration(
                       color: CupertinoColors.white,
                       borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: CupertinoColors.systemGrey),
+                      boxShadow: [
+                        BoxShadow(
+                          color: settingBoxShadowColor,
+                          blurRadius: 10.r,
+                        )
+                      ],
+                      border: Border.all(color: settingBoxColor),
                     ),
                     child: Consumer<SettingProvider>(
                       builder: (context, provider, child) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(AppLocalizations.of(context)!.sourceComment,
-                                style: TextStyle(
-                                    fontSize: 40.spMin,
-                                    color: CupertinoColors.systemGrey)),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: 20.h, left: 30.w, bottom: 20.h),
+                              child: Text(
+                                  AppLocalizations.of(context)!.sourceComment,
+                                  style: TextStyle(
+                                      fontSize: 40.spMin,
+                                      color: CupertinoColors.systemGrey)),
+                            ),
                             for (var source in provider.sources)
                               _buildSourceItem(source),
                           ],

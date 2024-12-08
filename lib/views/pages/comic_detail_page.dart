@@ -17,6 +17,7 @@ import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
 import '../../models/db/read_history_model.dart';
 import '../../types/context/extension_comic_reader_context.dart';
+import '../../types/manager/global_manager.dart';
 import '../../types/provider/task_provider.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
@@ -331,6 +332,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (globalManager.isLandscape) {
+      return const Center(child: CupertinoActivityIndicator());
+    }
+
     _initWithContext();
 
     return CupertinoPageScaffold(

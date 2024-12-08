@@ -15,3 +15,6 @@ const primaryTextColor = Color.fromARGB(255, 0xab, 0xa2, 0xf3);
 const importTextColor = Color(0xff94a9f5);
 
 const commonBlue = Color.fromARGB(255, 131, 190, 253);
+
+const settingBoxColor = Color.fromARGB(255, 234, 234, 236);
+const settingBoxShadowColor = Color.fromARGB(255, 237, 237, 238);

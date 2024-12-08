@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:toonfu/const/general_const.dart';
 import 'package:toonfu/types/provider/extension_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/types/provider/setting_provider.dart';
@@ -14,6 +15,7 @@ import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/views/pages/splash.dart';
 
 import 'common/log.dart';
+import 'const/assets_const.dart';
 import 'const/color_const.dart';
 import 'const/db_const.dart';
 import 'models/db/read_history_model.dart';
@@ -41,6 +43,21 @@ Future<void> _main() async {
     Hive.registerAdapter(ComicModelAdapter());
     Hive.registerAdapter(ChapterModelAdapter());
     Hive.registerAdapter(ReadHistoryModelAdapter());
+
+    String targetPath = '';
+    if (Platform.isWindows) {
+      targetPath = '$cbzDir\\tutorial.zip';
+    } else {
+      targetPath = '$cbzDir/tutorial.zip';
+    }
+
+    if (File(targetPath).existsSync()) {
+      Log.instance.i('tutorial zip already exists');
+    } else {
+      // create dir cbz
+      await Directory(cbzDir).create(recursive: true);
+      await assetToFile(tutorialZip, targetPath);
+    }
   } catch (e, s) {
     Log.instance.e('Hive init error e:$e, s:$s');
   }

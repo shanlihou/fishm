@@ -69,5 +69,7 @@
   "local": "Local",
   "sourceComment": "The following are added sources, please be careful to delete",
   "networkManager": "Network manager",
-  "clear": "Clear"
+  "clear": "Clear",
+  "aboutKernal": "Plugin kernel version",
+  "reset": "Reset"
 }

@@ -38,3 +38,6 @@ const String networkBig = 'assets/images/icon/network-big.png';
 const String generalBig = 'assets/images/icon/general-big.png';
 const String debugBig = 'assets/images/icon/debug-big.png';
 const String aboutBig = 'assets/images/icon/about-big.png';
+const String logImg = 'assets/images/icon/log.png';
+
+const String tutorialZip = 'assets/zip/tutorial.zip';

@@ -1,12 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../../common/log.dart';
-import '../../../types/provider/setting_provider.dart';
+import '../../../const/assets_const.dart';
+import '../../../utils/utils_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class DebugSettingPage extends StatefulWidget {
   const DebugSettingPage({super.key});
@@ -25,8 +24,13 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
       child: SafeArea(
         child: Column(
           children: [
+            buildCommonBase(
+              context,
+              debugBig,
+              AppLocalizations.of(context)!.debug,
+            ),
             CupertinoButton(
-              child: const Text('console'),
+              child: Image.asset(logImg),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) =>
@@ -34,27 +38,27 @@ class _DebugSettingPageState extends State<DebugSettingPage> {
                 ));
               },
             ),
-            GestureDetector(
-              onTap: () async {
-                var provider = context.read<SettingProvider>();
-                var path = await _showEditPathDialog(context);
-                if (path != "") {
-                  provider.settings?.localMainLuaDeubugPath = path;
-                  await provider.saveSettings();
-                }
-              },
-              child: Row(
-                children: [
-                  const Text('debug path: '),
-                  Text(context
-                          .watch<SettingProvider>()
-                          .settings
-                          ?.localMainLuaDeubugPath ??
-                      ""),
-                ],
-              ),
-            ),
-            Text('current: ${Directory.current}'),
+            // GestureDetector(
+            //   onTap: () async {
+            //     var provider = context.read<SettingProvider>();
+            //     var path = await _showEditPathDialog(context);
+            //     if (path != "") {
+            //       provider.settings?.localMainLuaDeubugPath = path;
+            //       await provider.saveSettings();
+            //     }
+            //   },
+            //   child: Row(
+            //     children: [
+            //       const Text('debug path: '),
+            //       Text(context
+            //               .watch<SettingProvider>()
+            //               .settings
+            //               ?.localMainLuaDeubugPath ??
+            //           ""),
+            //     ],
+            //   ),
+            // ),
+            //Text('current: ${Directory.current}'),
           ],
         ),
       ),

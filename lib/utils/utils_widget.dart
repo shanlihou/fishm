@@ -133,7 +133,7 @@ Widget buildCommonBase(BuildContext context, String imagePath, String title) {
     children: [
       Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: 70.h, bottom: 30.h),
+        margin: EdgeInsets.only(top: 70.h, bottom: 20.h),
         child: Image.asset(
           imagePath,
           width: 200.w,
@@ -142,12 +142,41 @@ Widget buildCommonBase(BuildContext context, String imagePath, String title) {
       ),
       Container(
         margin: EdgeInsets.only(bottom: 30.h),
-        child: Text(title,
-            style: TextStyle(
-                fontSize: pm(16, 50.spMin),
-                color: CupertinoColors.black,
-                fontWeight: FontWeight.bold)),
+        child: SizedBox(
+          height: 70.h,
+          child: Text(title,
+              style: TextStyle(
+                  fontSize: pm(16, 50.spMin),
+                  color: CupertinoColors.black,
+                  fontWeight: FontWeight.normal)),
+        ),
       ),
     ],
+  );
+}
+
+Widget buildElevatedButton(
+    BuildContext context, String text, VoidCallback onPressed) {
+  return material.ElevatedButton(
+    style: material.ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.r),
+        ),
+        backgroundBuilder: (context, states, child) => Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  commonBlue,
+                  Color.fromARGB(255, 153, 149, 249),
+                ]),
+              ),
+              child: child,
+            )),
+    onPressed: onPressed,
+    child: Text(text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+            fontSize: pm(20, 40.spMin), color: CupertinoColors.white)),
   );
 }
