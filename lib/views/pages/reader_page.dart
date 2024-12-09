@@ -17,6 +17,7 @@ import '../../types/context/comic_reader_context.dart';
 import '../../types/manager/global_manager.dart';
 import '../../types/provider/setting_provider.dart';
 import '../../utils/utils_general.dart';
+import '../../utils/utils_widget.dart';
 import '../class/hollow_slider_tumb_shape.dart';
 import '../widget/select_widget.dart';
 
@@ -265,7 +266,8 @@ class _ReaderPageState extends State<ReaderPage> {
       _initOption = InitOption.none;
     } catch (e, s) {
       Log.instance.e('doOption error: $e, $s');
-      return false;
+      showCupertinoToast(context: context, message: 'doOption error: $e');
+      return true;
     }
     return true;
   }

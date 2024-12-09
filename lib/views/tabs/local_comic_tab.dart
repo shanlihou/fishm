@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:toonfu/utils/utils_general.dart';
 
 import '../../common/log.dart';
 import '../../const/general_const.dart';
@@ -16,6 +17,7 @@ class LocalComicTab extends StatefulWidget {
 
 class _LocalComicTabState extends State<LocalComicTab> {
   final List<String> _comics = [];
+  final List<String> _displayComics = [];
 
   @override
   void initState() {
@@ -27,9 +29,21 @@ class _LocalComicTabState extends State<LocalComicTab> {
   Future<void> _loadLocalComics() async {
     var files = await Directory(cbzDir).list().toList();
     Log.instance.d('local comics: ${files.length}');
+    _comics.clear();
+    _displayComics.clear();
     for (var file in files) {
       Log.instance.d('local comic: $file');
       _comics.add(file.path);
+
+      // basename
+      var basename = osPathSplit(file.path).last;
+      if (basename.endsWith('.cbz')) {
+        basename = basename.substring(0, basename.length - 4);
+      } else if (basename.endsWith('.zip')) {
+        basename = basename.substring(0, basename.length - 4);
+      }
+
+      _displayComics.add(basename);
     }
 
     setState(() {});
@@ -53,7 +67,7 @@ class _LocalComicTabState extends State<LocalComicTab> {
                             readerContext:
                                 LocalComicReaderContext(_comics[index]))));
               },
-              child: Text(_comics[index]));
+              child: Text(_displayComics[index]));
         },
       ),
     );

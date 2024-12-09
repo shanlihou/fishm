@@ -241,16 +241,32 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
 
   @override
   List<SelectMenuItem> getChapterItems(BuildContext context) {
-    throw UnimplementedError();
+    List<SelectMenuItem> items = [];
+    for (var path in _cbzPaths) {
+      var basename = osPathSplit(path).last;
+      if (basename.endsWith('.cbz')) {
+        basename = basename.substring(0, basename.length - 4);
+      } else if (basename.endsWith('.zip')) {
+        basename = basename.substring(0, basename.length - 4);
+      }
+
+      items.add(SelectMenuItem(label: basename, chapterId: path));
+    }
+
+    return items;
   }
 
   @override
   int currentChapterIndex(BuildContext context) {
-    throw UnimplementedError();
+    return _cbzPaths.indexOf(historyChapterId);
   }
 
   @override
   Future<void> jumpToChapter(BuildContext context, String chapterId) async {
-    throw UnimplementedError();
+    readerChapters.clear();
+    var (imagePaths, curDir) =
+        await _loadCbzByIndex(_cbzPaths.indexOf(chapterId));
+    readerChapters.addChapter(LocalChapterDetail(imagePaths), chapterId);
+    historyChapterId = chapterId;
   }
 }

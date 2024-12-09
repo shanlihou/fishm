@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/localizations.dart';
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
 import '../pages/settings/about_page.dart';
-import '../pages/settings/debug_setting_page.dart';
 import '../pages/settings/general_settings.dart';
 import '../pages/settings/network_settings.dart';
 import '../pages/settings/sources_settings.dart';
