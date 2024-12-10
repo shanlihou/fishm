@@ -24,7 +24,7 @@ class GeneralSettings extends StatefulWidget {
 }
 
 class _GeneralSettingsState extends State<GeneralSettings> {
-  Future<void> _clearAll() async {
+  Future<void> _clearAll(BuildContext context) async {
     var entry = showLoadingDialog(context);
     var root = Directory(archiveImageDir);
     for (var extensionPath in root.listSync()) {
@@ -41,6 +41,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       }
     }
     entry.remove();
+    if (context.mounted) {
+      showCupertinoToast(context: context, message: '已清除');
+    }
   }
 
   Widget _buildLanguage(
@@ -160,7 +163,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               ),
             ),
             GestureDetector(
-              onTap: _clearAll,
+              onTap: () => _clearAll(context),
               child: Container(
                 width: double.infinity,
                 height: 120.h,

@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toonfu/utils/utils_general.dart';
 
 import '../../common/log.dart';
+import '../../const/assets_const.dart';
 import '../../const/general_const.dart';
 import '../../types/context/local_comic_reader_context.dart';
 import '../pages/reader_page.dart';
@@ -49,6 +51,45 @@ class _LocalComicTabState extends State<LocalComicTab> {
     setState(() {});
   }
 
+  Widget _buildComicItem(BuildContext context, int index) {
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: (context) => ReaderPage(
+                      readerContext: LocalComicReaderContext(_comics[index]))));
+        },
+        child: Container(
+            width: double.infinity,
+            color: CupertinoColors.white,
+            child: Column(
+              children: [
+                if (index != 0)
+                  Container(
+                    height: 0.7.h,
+                    margin: EdgeInsets.only(left: 40.w, right: 40.w),
+                    color: CupertinoColors.separator,
+                  ),
+                Row(
+                  children: [
+                    Text(_displayComics[index]),
+                    Expanded(
+                        child: Container(
+                      alignment: Alignment.centerRight,
+                      height: 90.h,
+                      child: Image.asset(
+                        goToRead,
+                        width: 60.w,
+                        height: 60.h,
+                      ),
+                    ))
+                  ],
+                ),
+              ],
+            )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,16 +99,7 @@ class _LocalComicTabState extends State<LocalComicTab> {
       child: ListView.builder(
         itemCount: _comics.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => ReaderPage(
-                            readerContext:
-                                LocalComicReaderContext(_comics[index]))));
-              },
-              child: Text(_displayComics[index]));
+          return _buildComicItem(context, index);
         },
       ),
     );

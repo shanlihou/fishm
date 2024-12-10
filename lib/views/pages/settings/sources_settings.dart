@@ -46,6 +46,17 @@ class _SourcesSettingsState extends State<SourcesSettings> {
     );
   }
 
+  Future<void> _onPressAdd(BuildContext context) async {
+    for (var source in context.read<SettingProvider>().sources) {
+      if (source == _sourceUrlController.text) {
+        showCupertinoToast(context: context, message: '已存在');
+        return;
+      }
+    }
+
+    context.read<SettingProvider>().addSource(_sourceUrlController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -77,9 +88,7 @@ class _SourcesSettingsState extends State<SourcesSettings> {
                         margin: EdgeInsets.only(left: 20.w),
                         child: GestureDetector(
                           onTap: () {
-                            context
-                                .read<SettingProvider>()
-                                .addSource(_sourceUrlController.text);
+                            _onPressAdd(context);
                           },
                           child: Image.asset(
                             sourceAdd,

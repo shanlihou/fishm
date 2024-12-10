@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
@@ -101,6 +102,8 @@ class _AboutPageState extends State<AboutPage> {
                             onTap: () {
                               if (!isResetting) {
                                 _onResetPressed(context);
+                                showCupertinoToast(
+                                    context: context, message: '已重置');
                               }
                             },
                             child: Text('reset',
@@ -168,11 +171,19 @@ class _AboutPageState extends State<AboutPage> {
                             color: CupertinoColors.secondaryLabel)),
                   ),
                   Expanded(
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: Text('copy',
-                          style: TextStyle(
-                              fontSize: 50.sp, color: primaryTextColor)),
+                    child: GestureDetector(
+                      onTap: () {
+                        Clipboard.setData(
+                            const ClipboardData(text: 'shanlihou@gmail.com'));
+                        showCupertinoToast(
+                            context: context, message: '已复制到剪贴板');
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text('copy',
+                            style: TextStyle(
+                                fontSize: 50.sp, color: primaryTextColor)),
+                      ),
                     ),
                   ),
                 ],
