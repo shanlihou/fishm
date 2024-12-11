@@ -347,14 +347,6 @@ class _ReaderPageState extends State<ReaderPage> {
     _preloadController?.jumpToPage(absolutePage);
   }
 
-  double _vh(double horizontalValue, double verticalValue) {
-    if (globalManager.isLandscape) {
-      return horizontalValue;
-    }
-
-    return verticalValue;
-  }
-
   Widget _buildMenu() {
     _sliderValue.value = _menuPage.value.page.toDouble();
     int imageCount = widget.readerContext.chapterImageCount();
@@ -362,34 +354,47 @@ class _ReaderPageState extends State<ReaderPage> {
     return Column(
       children: [
         // top start ----------------------------
-        Expanded(
-          flex: 2,
-          child: Container(
-            alignment: Alignment.bottomLeft,
-            color: commonBlue.withOpacity(0.5),
-            child: Row(children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(
-                  size: 60.r,
-                  CupertinoIcons.back,
-                  color: CupertinoColors.white,
-                ),
+        Container(
+          decoration: BoxDecoration(
+            color: CupertinoColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: CupertinoColors.black.withOpacity(0.1),
+                blurRadius: 10.r,
+                offset: Offset(0, 10.r),
               ),
-              Container(
-                height: 60.h,
-                margin: EdgeInsets.only(left: 10.w, right: 10.w),
-                child: Text(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  widget.readerContext.getTitle(context),
-                  style: TextStyle(
-                      fontSize: pm(20, 40.spMin), color: CupertinoColors.white),
-                ),
+            ],
+          ),
+          height: 150.h,
+          alignment: Alignment.bottomLeft,
+          padding: EdgeInsets.only(left: 40.w),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                size: 60.r,
+                CupertinoIcons.back,
+                color: primaryTextColor,
               ),
-              material.Material(
+            ),
+            Container(
+              height: 150.h,
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(left: 10.w, right: 20.w),
+              child: Text(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                widget.readerContext.getTitle(context),
+                style: TextStyle(
+                    fontSize: vh(20.spMin, 48.spMin), color: primaryTextColor),
+              ),
+            ),
+            Expanded(child: Container()),
+            Container(
+              margin: EdgeInsets.only(right: 40.w),
+              child: material.Material(
                 child: SelectWidget(
                   valueChanged: (value) {
                     _initOption = InitOption.jumpToChapter;
@@ -401,8 +406,8 @@ class _ReaderPageState extends State<ReaderPage> {
                       widget.readerContext.currentChapterIndex(context),
                 ),
               ),
-            ]),
-          ),
+            ),
+          ]),
         ),
         // top end ----------------------------
         Expanded(
@@ -421,7 +426,7 @@ class _ReaderPageState extends State<ReaderPage> {
         Container(
           margin:
               EdgeInsets.only(top: 20.h, bottom: 40.h, left: 40.w, right: 40.w),
-          height: _vh(400.h, 250.h),
+          height: vh(300.h, 250.h),
           decoration: BoxDecoration(
             color: CupertinoColors.white.withOpacity(0.5),
             border: GradientBoxBorder(
@@ -595,7 +600,9 @@ class _ReaderPageState extends State<ReaderPage> {
                 builder: (context, value, child) {
                   return Text(
                     value,
-                    style: const TextStyle(color: CupertinoColors.black),
+                    style: TextStyle(
+                        color: CupertinoColors.black.withOpacity(0.7),
+                        fontSize: vh(20.spMin, 48.spMin)),
                   );
                 },
               ),

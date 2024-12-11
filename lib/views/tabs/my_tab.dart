@@ -38,7 +38,7 @@ class MyTab extends StatelessWidget {
               height: 75.h,
               width: 75.w,
               margin: EdgeInsets.only(right: 33.w),
-              child: const Icon(CupertinoIcons.right_chevron)),
+              child: Icon(size: 65.r, CupertinoIcons.right_chevron)),
         ],
       ),
     );

@@ -406,6 +406,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                 width: 400.w,
                                 child: Column(
                                   children: [
+                                    // title
                                     Text(widget.comicItem.title,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis),
@@ -431,9 +432,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                               builder: (context, comicProvider,
                                                       child) =>
                                                   Text(
+                                                      style: TextStyle(
+                                                          color: CupertinoColors
+                                                              .black
+                                                              .withOpacity(0.5),
+                                                          fontSize: pm(20.spMin,
+                                                              48.spMin)),
                                                       maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
                                                       comicProvider.getReadHistory(
                                                               getComicUniqueId(
                                                                   widget
@@ -512,10 +519,18 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               ),
             ),
             Container(
+              decoration: BoxDecoration(
+                color: CupertinoColors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: CupertinoColors.black.withOpacity(0.1),
+                    blurRadius: 10.r,
+                  ),
+                ],
+              ),
               alignment: Alignment.center,
               width: double.infinity,
-              height: 120.h,
-              color: CupertinoColors.white,
+              height: 150.h,
               child: GestureDetector(
                 onTap: _downloadAllChapters,
                 child: Row(

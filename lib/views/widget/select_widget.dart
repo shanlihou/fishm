@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../common/log.dart';
 import '../../const/color_const.dart';
+import '../../utils/utils_general.dart';
 
 class SelectMenuItem {
   String label;
@@ -43,7 +45,7 @@ class _SelectWidgetState extends State<SelectWidget> {
   Widget build(BuildContext context) {
     return PopupMenuButton<SelectMenuItem>(
       // initialValue: currentValue,
-      color: commonBlue.withOpacity(0.5),
+      color: Colors.white,
       offset: const Offset(25, 30),
       enableFeedback: true,
       child: Listener(
@@ -53,12 +55,14 @@ class _SelectWidgetState extends State<SelectWidget> {
           });
         },
         child: Container(
-          color: commonBlue.withOpacity(0.5),
+          color: Colors.white,
           child: Row(
             children: [
               Text(
                 label,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(
+                    color: Colors.black.withOpacity(0.7),
+                    fontSize: vh(20.spMin, 48.spMin)),
               ),
               isExpand
                   ? const Icon(Icons.arrow_drop_up)
@@ -86,10 +90,13 @@ class _SelectWidgetState extends State<SelectWidget> {
         return widget.items
             .map(
               (item) => PopupMenuItem<SelectMenuItem>(
+                height: 90.h,
                 value: item,
                 child: Text(
                   item.label,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      color: Colors.black.withOpacity(0.7),
+                      fontSize: vh(20.spMin, 38.spMin)),
                 ),
               ),
             )

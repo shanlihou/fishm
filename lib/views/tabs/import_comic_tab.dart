@@ -87,7 +87,7 @@ class _ImportComicTabState extends State<ImportComicTab> {
             Container(
               padding: EdgeInsets.all(30.h),
               width: double.infinity,
-              height: 400.h,
+              height: 500.h,
               color: CupertinoColors.white,
               margin: EdgeInsets.all(30.h),
               child: Column(

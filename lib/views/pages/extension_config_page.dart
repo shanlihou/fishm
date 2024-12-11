@@ -40,7 +40,7 @@ class _ExtensionConfigPageState extends State<ExtensionConfigPage> {
     Log.instance.d(ret.toString());
   }
 
-  Widget _buildConfigItem(String key, String value) {
+  Widget _buildConfigItem(String key, String value, bool isFirst) {
     return LabelAndEdit(
       label: key,
       initialValue: value,
@@ -49,6 +49,7 @@ class _ExtensionConfigPageState extends State<ExtensionConfigPage> {
           setConfigs(widget.extensionName, {key: value});
         }
       },
+      isFirst: isFirst,
     );
   }
 
@@ -64,7 +65,8 @@ class _ExtensionConfigPageState extends State<ExtensionConfigPage> {
             return ListView.builder(
               itemCount: value.length,
               itemBuilder: (context, index) {
-                return _buildConfigItem(value[index].$1, value[index].$2);
+                return _buildConfigItem(
+                    value[index].$1, value[index].$2, index == 0);
               },
             );
           }),

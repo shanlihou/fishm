@@ -522,3 +522,11 @@ Future<File> assetToFile(String assetPath, String writePath) async {
     ..writeAsBytes(
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
 }
+
+double vh(double horizontalValue, double verticalValue) {
+  if (globalManager.isLandscape) {
+    return horizontalValue;
+  }
+
+  return verticalValue;
+}

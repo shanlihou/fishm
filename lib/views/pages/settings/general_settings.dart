@@ -63,7 +63,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(language),
           if (context.read<LocalProvider>().locale.languageCode == languageCode)
-            const Icon(
+            Icon(
+              size: 60.r,
               CupertinoIcons.checkmark,
             ),
         ]),
@@ -87,7 +88,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           children: [
             Text(title),
             if (value == provider.settings?.landscape)
-              const Icon(
+              Icon(
+                size: 60.r,
                 CupertinoIcons.checkmark,
               ),
           ],

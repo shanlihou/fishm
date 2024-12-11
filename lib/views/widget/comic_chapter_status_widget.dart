@@ -45,7 +45,10 @@ class _ComicChapterStatusWidgetState extends State<ComicChapterStatusWidget> {
           0;
       var text = '$cnt/$total';
 
-      return Text(text);
+      return Text(text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: pm(20.spMin, 40.spMin)));
     } else if (status == ComicChapterStatus.loading) {
       return Icon(CupertinoIcons.hourglass, size: 60.w);
     } else {
