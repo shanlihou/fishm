@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../common/log.dart';
-import '../../const/color_const.dart';
 import '../../utils/utils_general.dart';
 
 class SelectMenuItem {

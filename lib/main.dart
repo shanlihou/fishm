@@ -20,6 +20,7 @@ import 'const/color_const.dart';
 import 'const/db_const.dart';
 import 'models/db/read_history_model.dart';
 import 'types/provider/local_provider.dart';
+import 'types/provider/tab_provider.dart';
 import 'types/provider/task_provider.dart';
 import 'utils/utils_general.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -70,6 +71,7 @@ Future<void> _main() async {
       ChangeNotifierProvider(create: (_) => ExtensionProvider()),
       ChangeNotifierProvider(create: (_) => ComicProvider()),
       ChangeNotifierProvider(create: (_) => TaskProvider()),
+      ChangeNotifierProvider(create: (_) => TabProvider()),
     ],
     child: const MyApp(),
   ));

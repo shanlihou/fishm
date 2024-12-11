@@ -6,7 +6,8 @@ import 'package:flutter_gen/gen_l10n/localizations.dart';
 import '../const/color_const.dart';
 import 'utils_general.dart';
 
-Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
+Widget comicTabBaseline(BuildContext context,
+    {Color? backgroundColor, VoidCallback? onTap}) {
   Widget line = Expanded(
     child: Container(
       // #BBBBBB 100%
@@ -36,14 +37,19 @@ Widget comicTabBaseline(BuildContext context, {Color? backgroundColor}) {
                     )),
               ),
               Expanded(
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    AppLocalizations.of(context)!.findMore,
-                    style: TextStyle(
-                      // #B886F8 88%
-                      color: const Color(0xFFB886F8).withOpacity(0.88),
-                      fontSize: pm(12, 28.spMin),
+                child: GestureDetector(
+                  onTap: () {
+                    onTap?.call();
+                  },
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      AppLocalizations.of(context)!.findMore,
+                      style: TextStyle(
+                        // #B886F8 88%
+                        color: const Color(0xFFB886F8).withOpacity(0.88),
+                        fontSize: pm(12, 28.spMin),
+                      ),
                     ),
                   ),
                 ),

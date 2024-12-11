@@ -104,13 +104,11 @@ Future<bool> initDirectory() async {
   return true;
 }
 
-Future<void> downloadMainLua() async {
+Future<bool> downloadMainLua() async {
   Dio dio = Dio();
   for (var url in mainRelease) {
     try {
-      print('will set proxy?, ${globalManager.enableProxy}');
       if (globalManager.enableProxy) {
-        print('${globalManager.proxyHost}, ${globalManager.proxyPort}');
         setDioProxy(globalManager.proxyHost, globalManager.proxyPort, dio);
       }
       await dio.download(url, mainYamlDownloadPath);
@@ -124,13 +122,15 @@ Future<void> downloadMainLua() async {
     for (var data in doc[yamlMainKey]) {
       try {
         await downloadMainLuaByUrl(data['url']);
-        return;
+        return true;
       } catch (e) {
         Log.instance.e('downloadMainLuaTmp down url: ${data['url']} error: $e');
         continue;
       }
     }
   }
+
+  return false;
 }
 
 Future<void> downloadMainLuaByUrl(String mainUrl) async {
@@ -212,12 +212,13 @@ Future<void> copyMainLuaLocal(String mainLuaDebugPath) async {
   await copyDir(mainLuaDebugPath, mainDir);
 }
 
-Future<void> resetMainLua(String mainLuaDebugPath) async {
+Future<bool> resetMainLua(String mainLuaDebugPath) async {
   if (mainLuaDebugPath.isEmpty) {
-    await downloadMainLua();
+    return await downloadMainLua();
   } else {
     await copyMainLuaLocal(mainLuaDebugPath);
   }
+  return true;
 }
 
 Future<void> initMainLua(String mainLuaDebugPath) async {

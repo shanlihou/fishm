@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/const/general_const.dart';
 
 import '../../models/db/comic_model.dart';
 import '../../types/provider/comic_provider.dart';
+import '../../types/provider/tab_provider.dart';
 import '../../utils/utils_widget.dart';
 import '../class/comic_item.dart';
 import '../widget/comic_item_widget.dart';
@@ -54,7 +56,9 @@ class FavoriteTab extends StatelessWidget {
                     )
                 ],
               ),
-            comicTabBaseline(context),
+            comicTabBaseline(context, onTap: () {
+              context.read<TabProvider>().setCurrentIndex(tabSearch);
+            }),
           ],
         ),
       ),

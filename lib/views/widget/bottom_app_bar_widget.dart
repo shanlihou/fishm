@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../common/log.dart';
 import '../../const/assets_const.dart';
+import '../../const/general_const.dart';
+import '../../types/provider/tab_provider.dart';
 
 class BottomAppBarWidget extends StatefulWidget {
   final List<Widget> pages;
@@ -10,7 +13,6 @@ class BottomAppBarWidget extends StatefulWidget {
   final List<String> iconOffs;
   final List<String> iconOns;
   final PageController pageController = PageController();
-  final ValueChanged<int> onTap;
 
   BottomAppBarWidget({
     super.key,
@@ -18,7 +20,6 @@ class BottomAppBarWidget extends StatefulWidget {
     required this.titles,
     required this.iconOffs,
     required this.iconOns,
-    required this.onTap,
   });
 
   @override
@@ -26,20 +27,15 @@ class BottomAppBarWidget extends StatefulWidget {
 }
 
 class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
-  int _currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
   }
 
   void _onTap(int index) {
-    Log.instance.d('onTap: $index');
     widget.pageController.jumpToPage(index);
-    widget.onTap(index);
-    setState(() {
-      _currentIndex = index;
-    });
+    TabProvider tabProvider = context.read<TabProvider>();
+    tabProvider.setCurrentIndex(index);
   }
 
   bool _isMiddle(int index) {
@@ -48,6 +44,10 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    TabProvider tabProvider = context.watch<TabProvider>();
+    if (widget.pageController.hasClients) {
+      widget.pageController.jumpToPage(tabProvider.currentIndex);
+    }
     return Stack(
       children: [
         Positioned.fill(
@@ -61,7 +61,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                 ),
               ),
               CupertinoTabBar(
-                currentIndex: _currentIndex,
+                currentIndex: tabProvider.currentIndex,
                 onTap: _onTap,
                 height: 184.h,
                 items: List.generate(widget.titles.length + 1, (index) {
@@ -101,9 +101,9 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
               width: 212.h,
               height: 212.h,
               child: GestureDetector(
-                onTap: () => _onTap(2),
+                onTap: () => _onTap(tabShelf),
                 child: Image.asset(
-                  _isMiddle(_currentIndex) ? shelfOn : shelfOff,
+                  _isMiddle(tabProvider.currentIndex) ? shelfOn : shelfOff,
                   width: 212.h,
                   height: 212.h,
                 ),

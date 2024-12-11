@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:toonfu/views/tabs/bookshelf.dart';
 import '../../const/assets_const.dart';
+import '../../types/provider/tab_provider.dart';
 import '../../types/provider/task_provider.dart';
 import '../mixin/lua_mixin.dart';
 import '../mixin/task_mixin.dart';
@@ -22,8 +23,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home>
     with SingleTickerProviderStateMixin, LuaMixin, TaskMixin {
-  ValueNotifier<String> curLabel = ValueNotifier('');
-
   @override
   void initState() {
     super.initState();
@@ -61,13 +60,10 @@ class _HomeState extends State<Home>
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
-        middle: ValueListenableBuilder(
-          valueListenable: curLabel,
-          builder: (context, value, child) {
-            return Text(
-                value == '' ? AppLocalizations.of(context)!.favorite : value);
-          },
-        ),
+        middle: Consumer<TabProvider>(builder: (context, tabProvider, child) {
+          var text = _getLabel(tabProvider.currentIndex);
+          return Text(text);
+        }),
         trailing: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [],
@@ -75,9 +71,6 @@ class _HomeState extends State<Home>
       ),
       child: SafeArea(
         child: BottomAppBarWidget(
-          onTap: (index) {
-            curLabel.value = _getLabel(index);
-          },
           pages: const [
             ExtensionsTab(),
             SearchTab(),

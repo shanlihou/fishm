@@ -36,19 +36,21 @@ class _AboutPageState extends State<AboutPage> {
     });
   }
 
-  Future<void> _onResetPressed(BuildContext buildContext) async {
+  Future<bool> _onResetPressed(BuildContext buildContext) async {
     setState(() {
       isResetting = true;
     });
 
     var settingProvider = buildContext.read<SettingProvider>();
-    await resetMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
+    bool ret = await resetMainLua(
+        settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
     setState(() {
       isResetting = false;
     });
 
     actionsManager.resetMainLua();
+    return ret;
   }
 
   @override
@@ -99,16 +101,26 @@ class _AboutPageState extends State<AboutPage> {
                         child: Container(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              print('onTap, ${isResetting}');
                               if (!isResetting) {
-                                _onResetPressed(context);
-                                showCupertinoToast(
-                                    context: context, message: '已重置');
+                                bool ret = await _onResetPressed(context);
+                                if (ret) {
+                                  showCupertinoToast(
+                                      context: context, message: '已重置');
+                                } else {
+                                  showCupertinoToast(
+                                      context: context, message: '重置失败');
+                                }
                               }
                             },
                             child: Text('reset',
                                 style: TextStyle(
-                                    fontSize: 50.sp, color: primaryTextColor)),
+                                    fontSize: 50.sp,
+                                    color: isResetting
+                                        ? CupertinoColors.systemGrey
+                                            .withOpacity(0.5)
+                                        : primaryTextColor)),
                           ),
                         ),
                       ),

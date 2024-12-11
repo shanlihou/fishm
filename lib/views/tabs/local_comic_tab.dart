@@ -62,29 +62,32 @@ class _LocalComicTabState extends State<LocalComicTab> {
         },
         child: Container(
             width: double.infinity,
+            height: 150.h,
+            margin: EdgeInsets.only(left: 40.w, right: 40.w),
             color: CupertinoColors.white,
             child: Column(
               children: [
                 if (index != 0)
                   Container(
                     height: 0.7.h,
-                    margin: EdgeInsets.only(left: 40.w, right: 40.w),
                     color: CupertinoColors.separator,
                   ),
-                Row(
-                  children: [
-                    Text(_displayComics[index]),
-                    Expanded(
-                        child: Container(
-                      alignment: Alignment.centerRight,
-                      height: 90.h,
-                      child: Image.asset(
-                        goToRead,
-                        width: 60.w,
-                        height: 60.h,
-                      ),
-                    ))
-                  ],
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(_displayComics[index]),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Image.asset(
+                          goToRead,
+                          width: 60.w,
+                          height: 60.h,
+                        ),
+                      ))
+                    ],
+                  ),
                 ),
               ],
             )));

@@ -2,6 +2,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/views/pages/settings/sources_settings.dart';
 
 import '../../../const/general_const.dart';
 import '../../../models/db/extensions.dart' as model_extensions;
@@ -73,7 +74,12 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
                 .toList();
 
             children.add(comicTabBaseline(context,
-                backgroundColor: CupertinoColors.white));
+                backgroundColor: CupertinoColors.white, onTap: () {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => const SourcesSettings()));
+            }));
 
             return Container(
               margin: EdgeInsets.fromLTRB(43.w, 0.h, 43.w, 44.h),

@@ -13,7 +13,8 @@ import '../../dialog/install_confirm_dialog.dart';
 import '../../widget/extension_item_widget.dart';
 
 class ExtensionInstalledTab extends StatefulWidget {
-  const ExtensionInstalledTab({super.key});
+  final VoidCallback onTap;
+  const ExtensionInstalledTab({super.key, required this.onTap});
 
   @override
   State<ExtensionInstalledTab> createState() => _ExtensionInstalledTabState();
@@ -89,8 +90,10 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
             )
             .toList();
 
-        children.add(
-            comicTabBaseline(context, backgroundColor: CupertinoColors.white));
+        children.add(comicTabBaseline(context,
+            backgroundColor: CupertinoColors.white, onTap: () {
+          widget.onTap();
+        }));
 
         return Container(
           margin: EdgeInsets.fromLTRB(43.w, 0.h, 43.w, 44.h),

@@ -5,6 +5,8 @@ import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
 
+import '../../const/general_const.dart';
+import '../../types/provider/tab_provider.dart';
 import '../../utils/utils_widget.dart';
 import '../class/comic_item.dart';
 import '../dialog/install_confirm_dialog.dart';
@@ -68,7 +70,9 @@ class HistoryTab extends StatelessWidget {
                     )
                 ],
               ),
-            comicTabBaseline(context),
+            comicTabBaseline(context, onTap: () {
+              context.read<TabProvider>().setCurrentIndex(tabSearch);
+            }),
           ],
         ),
       ),

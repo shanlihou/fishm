@@ -97,8 +97,11 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
             child: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                ExtensionInstalledTab(),
+              children: [
+                ExtensionInstalledTab(onTap: () {
+                  _curPage.value = 1;
+                  _pageController.jumpToPage(1);
+                }),
                 ExtensionStoreTab(),
               ],
             ),

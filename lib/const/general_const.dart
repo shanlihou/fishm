@@ -31,7 +31,7 @@ const double tapThreshold = 10;
 const int readerFlagsFinger = 0;
 const int readerFlagsScale = 1;
 
-const bool isDebug = false;
+const bool isDebug = true;
 
 enum ComicChapterStatus {
   loading,
@@ -52,3 +52,9 @@ enum TaskStatus {
 const downloadImageRetry = 5;
 
 const taskTypeDownload = 1;
+
+const int tabExtension = 0;
+const int tabSearch = 1;
+const int tabShelf = 2;
+const int tabImport = 3;
+const int tabMy = 4;
