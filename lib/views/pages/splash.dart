@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../common/log.dart';
+import '../../const/assets_const.dart';
 import '../../types/manager/global_manager.dart';
 import '../../types/manager/plugin_db_manager.dart';
 import '../../types/provider/comic_provider.dart';
@@ -23,20 +25,21 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _isInit = false;
-  String _stepText = 'loading';
+  int _step = 0;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _updateStepText(String text) {
+  void _updateStep(int step) {
+    Log.instance.d('update step: $step');
     if (!mounted) {
       return;
     }
 
     setState(() {
-      _stepText = text;
+      _step = step;
     });
   }
 
@@ -50,27 +53,27 @@ class _SplashScreenState extends State<SplashScreen> {
     var comicProvider = buildContext.read<ComicProvider>();
     var taskProvider = buildContext.read<TaskProvider>();
 
-    _updateStepText('init directory');
+    _updateStep(1);
     while (!await initDirectory()) {
       Log.instance.d('init directory failed, retry...');
       await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     _isInit = true;
-    _updateStepText('load settings');
+    _updateStep(2);
     await settingProvider.loadSettings();
-    _updateStepText('init global');
+    _updateStep(3);
     globalManager.initGlobal(settingProvider);
-    _updateStepText('load extensions');
+    _updateStep(4);
     await extensionProvider.loadExtensions();
-    _updateStepText('load comics');
+    _updateStep(5);
     await comicProvider.loadComics();
-    _updateStepText('load tasks');
+    _updateStep(6);
     await taskProvider.loadTasks();
-    _updateStepText('init main lua');
+    _updateStep(7);
     await initMainLua(settingProvider.settings?.localMainLuaDeubugPath ?? "");
 
-    _updateStepText('set locale');
+    _updateStep(8);
     if (settingProvider.settings?.language == "") {
       String language = Localizations.localeOf(buildContext).languageCode;
       context.read<LocalProvider>().setLocale(Locale(language));
@@ -80,10 +83,12 @@ class _SplashScreenState extends State<SplashScreen> {
           .setLocale(Locale(settingProvider.settings?.language ?? "en"));
     }
 
-    _updateStepText('init plugins');
+    _updateStep(9);
     pluginDbManager.initPlugins(extensionProvider.extensionNames());
 
-    _updateStepText('go to home');
+    await Future.delayed(const Duration(seconds: 5));
+
+    _updateStep(10);
     Navigator.pushReplacement(
       buildContext,
       CupertinoPageRoute(builder: (context) => const Home()),
@@ -94,11 +99,28 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     _init(context);
     return CupertinoPageScaffold(
-      child: Center(
+      child: Container(
+        alignment: Alignment.center,
+        height: double.infinity,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(fit: BoxFit.contain, loadingImg),
             CupertinoButton(
-              child: Text(_stepText),
+              child: Row(
+                // display _step num circle
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                    _step,
+                    (index) => Container(
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.systemBlue,
+                            shape: BoxShape.circle,
+                          ),
+                          width: 10.w,
+                          height: 10.h,
+                        )),
+              ),
               onPressed: () {
                 Navigator.of(context).push(material.MaterialPageRoute(
                   builder: (context) =>

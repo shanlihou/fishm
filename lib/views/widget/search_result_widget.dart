@@ -114,12 +114,18 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
   @override
   Widget build(BuildContext context) {
     Widget result;
+    double height = 0.4.sw;
+    double width = 1.sw;
     if (_isLoading && _comicItems.isEmpty) {
-      result = const Center(child: CupertinoActivityIndicator());
+      result = Container(
+          height: height,
+          width: width,
+          alignment: Alignment.center,
+          child: CupertinoActivityIndicator());
     } else {
       result = SizedBox(
-        height: 0.4.sw,
-        width: 1.sw,
+        height: height,
+        width: width,
         child: EasyRefresh(
           controller: _easyRefreshController,
           header: SearchHeader(),

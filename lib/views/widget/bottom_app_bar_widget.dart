@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/log.dart';
 import '../../const/assets_const.dart';
 import '../../const/general_const.dart';
 import '../../types/provider/tab_provider.dart';

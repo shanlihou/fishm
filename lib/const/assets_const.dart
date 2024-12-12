@@ -39,5 +39,8 @@ const String generalBig = 'assets/images/icon/general-big.png';
 const String debugBig = 'assets/images/icon/debug-big.png';
 const String aboutBig = 'assets/images/icon/about-big.png';
 const String logImg = 'assets/images/icon/log.png';
+const String betweenImg = 'assets/images/loading/between.png';
+const String loadingImg = 'assets/images/loading/loading.png';
+const String loadingGif = 'assets/images/loading/loading.gif';
 
 const String tutorialZip = 'assets/zip/tutorial.zip';

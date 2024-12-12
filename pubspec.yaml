@@ -130,6 +130,9 @@ flutter:
     - assets/images/icon/debug-big.png
     - assets/images/icon/about-big.png
     - assets/images/icon/log.png
+    - assets/images/loading/between.png
+    - assets/images/loading/loading.gif
+    - assets/images/loading/loading.png
     - assets/zip/tutorial.zip
 
   # The following line ensures that the Material Icons font is
