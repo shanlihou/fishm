@@ -17,7 +17,7 @@ class MyTab extends StatelessWidget {
 
   Widget _buildSettingItem(
       BuildContext context, String icon, String title, WidgetBuilder? toPage,
-      {VoidCallback? onPress = null}) {
+      {VoidCallback? onPress}) {
     return GestureDetector(
       onTap: () {
         if (onPress != null) {

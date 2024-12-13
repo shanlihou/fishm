@@ -11,6 +11,7 @@ import '../../types/provider/task_provider.dart';
 import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
 import '../pages/reader_page.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class DownloadTaskTab extends StatefulWidget {
   const DownloadTaskTab({super.key});
@@ -142,7 +143,6 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                                         value: _selectedTasks[index],
                                         onChanged: (value) {
                                           setState(() {
-                                            print('value: $value');
                                             bool val = value ?? false;
                                             _selectedTasks[index] = val;
 
@@ -212,7 +212,7 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                     },
                   ),
                 ),
-                const Text('Select All'),
+                Text(AppLocalizations.of(context)!.selectAll),
               ],
             ),
             SizedBox(
@@ -225,7 +225,7 @@ class _DownloadTaskTabState extends State<DownloadTaskTab> {
                 child: Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  'Delete',
+                  AppLocalizations.of(context)!.delete,
                   style: TextStyle(
                       color: CupertinoColors.white, fontSize: pm(16, 50.spMin)),
                 ),

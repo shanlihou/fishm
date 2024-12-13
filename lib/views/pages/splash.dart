@@ -113,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 children: List.generate(
                     _step,
                     (index) => Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: CupertinoColors.systemBlue,
                             shape: BoxShape.circle,
                           ),

@@ -5,6 +5,7 @@ import 'package:toonfu/views/tabs/download_task_tab.dart';
 import 'favorite_tab.dart';
 import 'history_tab.dart';
 import 'local_comic_tab.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class BookShelfTab extends StatefulWidget {
   const BookShelfTab({super.key});
@@ -94,7 +95,12 @@ class _BookShelfTabState extends State<BookShelfTab> {
     double addValue = 170.h;
     int index = 0;
     List<Widget> children = [];
-    List<String> titles = ['收藏', '历史', '本地', '下载'];
+    List<String> titles = [
+      AppLocalizations.of(context)!.favorite,
+      AppLocalizations.of(context)!.history,
+      AppLocalizations.of(context)!.local,
+      AppLocalizations.of(context)!.download
+    ];
     for (String title in titles) {
       var tab = _buildTabItem(current, title, index++);
       current += addValue;

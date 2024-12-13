@@ -66,6 +66,9 @@ class _ImportComicTabState extends State<ImportComicTab> {
                   fontSize: pm(14, 30.spMin), color: CupertinoColors.white)),
           onPressed: () {
             Clipboard.setData(ClipboardData(text: _buildImportDir()));
+            showCupertinoToast(
+                context: context,
+                message: AppLocalizations.of(context)!.copied);
           },
         ),
       ),

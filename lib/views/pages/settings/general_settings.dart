@@ -153,13 +153,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               child: Consumer<SettingProvider>(
                 builder: (context, provider, child) => Column(
                   children: [
-                    _buildLandscape(provider, '横屏', true),
+                    _buildLandscape(provider,
+                        AppLocalizations.of(context)!.landscape, true),
                     Container(
                       margin: EdgeInsets.only(left: 50.w, right: 50.w),
                       height: 1.h,
                       color: settingBoxColor,
                     ),
-                    _buildLandscape(provider, '竖屏', false),
+                    _buildLandscape(provider,
+                        AppLocalizations.of(context)!.portrait, false),
                   ],
                 ),
               ),

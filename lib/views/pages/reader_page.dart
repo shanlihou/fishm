@@ -9,6 +9,7 @@ import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
+import 'package:toonfu/const/assets_const.dart';
 
 import '../../common/log.dart';
 import '../../const/color_const.dart';
@@ -109,23 +110,61 @@ class _ReaderPageState extends State<ReaderPage> {
     _updateLockSwap();
   }
 
+  Widget _buildMiddle(int index) {
+    var (pre, next) = widget.readerContext.buildMiddleText(context, index);
+    double marginH = 300.h;
+    double marginV = 50.w;
+    double marginMiddle = 100.w;
+    return SizedBox(
+      width: 1.sw,
+      height: 1.sh,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: marginH, left: marginV),
+              child: Row(
+                children: [
+                  const Icon(CupertinoIcons.backward_end_alt),
+                  Container(
+                    margin: EdgeInsets.only(left: marginMiddle),
+                    child: Text(pre ?? '',
+                        style: TextStyle(
+                            fontSize: 40.spMin, color: primaryTextColor)),
+                  ),
+                ],
+              ),
+            ),
+            Image.asset(betweenImg),
+            Container(
+              width: double.infinity,
+              alignment: Alignment.centerRight,
+              margin: EdgeInsets.only(top: marginH, right: marginV),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: marginMiddle),
+                    child: Text(next ?? '',
+                        style: TextStyle(
+                            fontSize: 40.spMin, color: primaryTextColor)),
+                  ),
+                  const Icon(CupertinoIcons.forward_end_alt),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildImage(BuildContext context, int index) {
     var imageWidget = widget.readerContext.getImage(context, index);
 
     if (imageWidget == null) {
-      var (pre, next) = widget.readerContext.buildMiddleText(context, index);
-      return SizedBox(
-        width: 1.sw,
-        height: 1.sh,
-        child: Center(
-          child: Column(
-            children: [
-              Text(pre ?? ''),
-              Text(next ?? ''),
-            ],
-          ),
-        ),
-      );
+      return _buildMiddle(index);
     }
 
     return PhotoView.customChild(

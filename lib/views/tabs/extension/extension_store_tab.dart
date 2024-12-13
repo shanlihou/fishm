@@ -12,6 +12,7 @@ import '../../../types/provider/setting_provider.dart';
 import '../../../utils/utils_general.dart';
 import '../../../utils/utils_widget.dart';
 import '../../widget/extension_item_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class ExtensionStoreTab extends StatefulWidget {
   const ExtensionStoreTab({super.key});
@@ -73,7 +74,8 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
                 )
                 .toList();
 
-            children.add(comicTabBaseline(context,
+            children.add(comicTabBaseline(
+                context, AppLocalizations.of(context)!.findMoreExtension,
                 backgroundColor: CupertinoColors.white, onTap: () {
               Navigator.push(
                   context,

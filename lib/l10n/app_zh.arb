@@ -38,5 +38,20 @@
     "networkManager": "网络管理",
     "clear": "清除",
     "aboutKernal": "插件内核版本",
-    "reset": "重置"
+    "reset": "重置",
+    "landscape": "横屏",
+    "portrait": "竖屏",
+    "exist": "已存在",
+    "sourceUrl": "源地址",
+    "copy": "复制",
+    "contactUs": "联系我们",
+    "copied": "已复制到剪贴板",
+    "toonfuVersion": "Toonfu版本",
+    "resetSuccess": "已重置",
+    "resetFailed": "重置失败",
+    "delete": "删除",
+    "selectAll": "全选",
+    "nameOfComic": "漫画名称",
+    "download": "下载",
+    "findMoreExtension": "发现更多扩展"
 }

@@ -6,7 +6,7 @@ import 'package:flutter_gen/gen_l10n/localizations.dart';
 import '../const/color_const.dart';
 import 'utils_general.dart';
 
-Widget comicTabBaseline(BuildContext context,
+Widget comicTabBaseline(BuildContext context, String title,
     {Color? backgroundColor, VoidCallback? onTap}) {
   Widget line = Expanded(
     child: Container(
@@ -44,7 +44,7 @@ Widget comicTabBaseline(BuildContext context,
                   child: Container(
                     alignment: Alignment.topCenter,
                     child: Text(
-                      AppLocalizations.of(context)!.findMore,
+                      title,
                       style: TextStyle(
                         // #B886F8 88%
                         color: const Color(0xFFB886F8).withOpacity(0.88),

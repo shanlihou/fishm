@@ -121,7 +121,7 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
           height: height,
           width: width,
           alignment: Alignment.center,
-          child: CupertinoActivityIndicator());
+          child: const CupertinoActivityIndicator());
     } else {
       result = SizedBox(
         height: height,
@@ -164,7 +164,7 @@ class _SearchResultWidgetState extends State<SearchResultWidget> {
             margin: EdgeInsets.fromLTRB(40.w, 20.h, 20.w, 0),
             child: Text(
                 style: const TextStyle(color: lineColor),
-                '${AppLocalizations.of(context)!.extensions} : ${widget.extensionName}'),
+                '${AppLocalizations.of(context)!.extensions} : ${widget.displayName}'),
           ),
           Container(
             margin: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),

@@ -9,6 +9,7 @@ import '../../types/provider/tab_provider.dart';
 import '../../utils/utils_widget.dart';
 import '../class/comic_item.dart';
 import '../widget/comic_item_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class FavoriteTab extends StatelessWidget {
   const FavoriteTab({super.key});
@@ -56,7 +57,8 @@ class FavoriteTab extends StatelessWidget {
                     )
                 ],
               ),
-            comicTabBaseline(context, onTap: () {
+            comicTabBaseline(context, AppLocalizations.of(context)!.findMore,
+                onTap: () {
               context.read<TabProvider>().setCurrentIndex(tabSearch);
             }),
           ],

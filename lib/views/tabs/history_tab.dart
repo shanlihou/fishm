@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:toonfu/models/db/comic_model.dart';
 import 'package:toonfu/types/provider/comic_provider.dart';
 import 'package:toonfu/utils/utils_general.dart';
-
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 import '../../const/general_const.dart';
 import '../../types/provider/tab_provider.dart';
 import '../../utils/utils_widget.dart';
@@ -70,7 +70,8 @@ class HistoryTab extends StatelessWidget {
                     )
                 ],
               ),
-            comicTabBaseline(context, onTap: () {
+            comicTabBaseline(context, AppLocalizations.of(context)!.findMore,
+                onTap: () {
               context.read<TabProvider>().setCurrentIndex(tabSearch);
             }),
           ],

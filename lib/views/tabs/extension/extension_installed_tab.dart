@@ -11,6 +11,7 @@ import '../../../utils/utils_widget.dart';
 import '../../dialog/install_confirm_dialog.dart';
 
 import '../../widget/extension_item_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class ExtensionInstalledTab extends StatefulWidget {
   final VoidCallback onTap;
@@ -90,7 +91,8 @@ class _ExtensionInstalledTabState extends State<ExtensionInstalledTab> {
             )
             .toList();
 
-        children.add(comicTabBaseline(context,
+        children.add(comicTabBaseline(
+            context, AppLocalizations.of(context)!.findMoreExtension,
             backgroundColor: CupertinoColors.white, onTap: () {
           widget.onTap();
         }));

@@ -102,7 +102,7 @@ class _ExtensionsTabState extends State<ExtensionsTab> {
                   _curPage.value = 1;
                   _pageController.jumpToPage(1);
                 }),
-                ExtensionStoreTab(),
+                const ExtensionStoreTab(),
               ],
             ),
           ),

@@ -59,6 +59,7 @@ dependencies:
   ftp_server: ^1.0.4
   # interactive_slider: ^0.4.0
   gradient_borders: ^1.0.1
+  gif: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -49,7 +49,8 @@ class _SourcesSettingsState extends State<SourcesSettings> {
   Future<void> _onPressAdd(BuildContext context) async {
     for (var source in context.read<SettingProvider>().sources) {
       if (source == _sourceUrlController.text) {
-        showCupertinoToast(context: context, message: '已存在');
+        showCupertinoToast(
+            context: context, message: AppLocalizations.of(context)!.exist);
         return;
       }
     }
@@ -60,8 +61,8 @@ class _SourcesSettingsState extends State<SourcesSettings> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Sources'),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(AppLocalizations.of(context)!.sources),
       ),
       child: SafeArea(
         child: Container(
@@ -80,7 +81,7 @@ class _SourcesSettingsState extends State<SourcesSettings> {
                         flex: 9,
                         child: CupertinoTextField(
                           controller: _sourceUrlController,
-                          placeholder: 'Source url',
+                          placeholder: AppLocalizations.of(context)!.sourceUrl,
                           placeholderStyle: const TextStyle(
                               color: CupertinoColors.systemGrey),
                         )),

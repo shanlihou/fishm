@@ -5,6 +5,7 @@ import 'package:toonfu/const/color_const.dart';
 
 import '../../types/provider/extension_provider.dart';
 import '../widget/search_result_widget.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
@@ -55,7 +56,7 @@ class _SearchTabState extends State<SearchTab> {
               width: 0.6.sw,
               child: CupertinoTextField(
                 controller: _searchController,
-                placeholder: 'name of comic',
+                placeholder: AppLocalizations.of(context)!.nameOfComic,
                 decoration: BoxDecoration(
                   color: CupertinoColors.white,
                   borderRadius: BorderRadius.circular(10),

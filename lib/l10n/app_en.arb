@@ -71,5 +71,20 @@
   "networkManager": "Network manager",
   "clear": "Clear",
   "aboutKernal": "Plugin kernel version",
-  "reset": "Reset"
+  "reset": "Reset",
+  "landscape": "Landscape",
+  "portrait": "Portrait",
+  "exist": "Exist",
+  "sourceUrl": "Source url",
+  "copy": "Copy",
+  "contactUs": "Contact us",
+  "copied": "Copied to clipboard",
+  "toonfuVersion": "Toonfu version",
+  "resetSuccess": "Reset success",
+  "resetFailed": "Reset failed",
+  "delete": "Delete",
+  "selectAll": "Select All",
+  "nameOfComic": "Comic name",
+  "download": "Download",
+  "findMoreExtension": "Find more extensions"
 }

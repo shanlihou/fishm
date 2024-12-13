@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:gif/gif.dart';
+import 'package:toonfu/const/assets_const.dart';
 
 import '../../const/general_const.dart';
 import '../../types/context/net_iamge_context.dart';
@@ -117,6 +119,7 @@ class _NetImageState extends State<NetImage> {
     }
 
     if (_isDownloaded) {
+      // if (false) {
       return Container(
         width: widget.width,
         height: widget.height,
@@ -134,8 +137,13 @@ class _NetImageState extends State<NetImage> {
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: const Center(
-        child: Text('Image not found'),
+      child: Center(
+        child: Gif(
+          image: const AssetImage(loadingGif),
+          // fps: 30,
+          autostart: Autostart.loop,
+          duration: const Duration(seconds: 1),
+        ),
       ),
     );
   }

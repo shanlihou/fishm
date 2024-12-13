@@ -7,6 +7,7 @@ const archiveCbzImageDir = 'archive_cbz_img';
 const cbzDir = 'cbz';
 const cbzOutputDir = 'cbz_output';
 const yamlMainKey = 'main';
+const toonfuVersion = 'v1.0.0';
 
 enum NetImageType {
   normal,
@@ -31,7 +32,7 @@ const double tapThreshold = 10;
 const int readerFlagsFinger = 0;
 const int readerFlagsScale = 1;
 
-const bool isDebug = true;
+const bool isDebug = false;
 
 enum ComicChapterStatus {
   loading,

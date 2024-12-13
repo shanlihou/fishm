@@ -8,6 +8,7 @@ import 'package:toonfu/utils/utils_widget.dart';
 import '../../../api/flutter_call_lua/method.dart';
 import '../../../const/assets_const.dart';
 import '../../../const/color_const.dart';
+import '../../../const/general_const.dart';
 import '../../../types/manager/actions.dart';
 import '../../../types/provider/setting_provider.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
@@ -56,8 +57,8 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('About'),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(AppLocalizations.of(context)!.about),
       ),
       child: SafeArea(
         child: Column(
@@ -102,19 +103,22 @@ class _AboutPageState extends State<AboutPage> {
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
                             onTap: () async {
-                              print('onTap, ${isResetting}');
                               if (!isResetting) {
                                 bool ret = await _onResetPressed(context);
                                 if (ret) {
                                   showCupertinoToast(
-                                      context: context, message: '已重置');
+                                      context: context,
+                                      message: AppLocalizations.of(context)!
+                                          .resetSuccess);
                                 } else {
                                   showCupertinoToast(
-                                      context: context, message: '重置失败');
+                                      context: context,
+                                      message: AppLocalizations.of(context)!
+                                          .resetFailed);
                                 }
                               }
                             },
-                            child: Text('reset',
+                            child: Text(AppLocalizations.of(context)!.reset,
                                 style: TextStyle(
                                     fontSize: 50.sp,
                                     color: isResetting
@@ -146,10 +150,10 @@ class _AboutPageState extends State<AboutPage> {
               ),
               child: Row(
                 children: [
-                  const Text('toonfu版本'),
+                  Text(AppLocalizations.of(context)!.toonfuVersion),
                   Container(
                     margin: EdgeInsets.only(left: 20.w),
-                    child: Text('v1.0.0',
+                    child: Text(toonfuVersion,
                         style: TextStyle(
                             fontSize: 40.sp,
                             color: CupertinoColors.secondaryLabel)),
@@ -174,7 +178,7 @@ class _AboutPageState extends State<AboutPage> {
               ),
               child: Row(
                 children: [
-                  const Text('联系我们'),
+                  Text(AppLocalizations.of(context)!.contactUs),
                   Container(
                     margin: EdgeInsets.only(left: 20.w),
                     child: Text('shanlihou@gmail.com',
@@ -188,11 +192,12 @@ class _AboutPageState extends State<AboutPage> {
                         Clipboard.setData(
                             const ClipboardData(text: 'shanlihou@gmail.com'));
                         showCupertinoToast(
-                            context: context, message: '已复制到剪贴板');
+                            context: context,
+                            message: AppLocalizations.of(context)!.copied);
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
-                        child: Text('copy',
+                        child: Text(AppLocalizations.of(context)!.copy,
                             style: TextStyle(
                                 fontSize: 50.sp, color: primaryTextColor)),
                       ),
