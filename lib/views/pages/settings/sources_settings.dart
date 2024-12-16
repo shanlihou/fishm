@@ -100,9 +100,28 @@ class _SourcesSettingsState extends State<SourcesSettings> {
                   ],
                 ),
               ),
+              Container(
+                  margin: EdgeInsets.only(
+                      top: 0.h, left: 40.w, right: 20.w, bottom: 20.h),
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.info_circle,
+                          size: 56.spMin,
+                          color: const Color.fromARGB(255, 251, 2, 2)),
+                      Container(
+                        margin: EdgeInsets.only(left: 20.w),
+                        child: Text(AppLocalizations.of(context)!.sourceWarning,
+                            style: TextStyle(
+                                fontSize: 40.spMin,
+                                color: CupertinoColors.systemGrey)),
+                      ),
+                    ],
+                  )),
               Expanded(
                 child: SingleChildScrollView(
                   child: Container(
+                    width: double.infinity,
                     margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
                     padding: EdgeInsets.only(bottom: 20.h),
                     decoration: BoxDecoration(

@@ -101,7 +101,7 @@ class LocalComicReaderContext extends ComicReaderContext<LocalChapterDetail> {
   String getPageText(BuildContext context, int index) {
     var ret = readerChapters.imageUrl(index);
     if (ret == null) {
-      return '0/0';
+      return '';
     }
 
     String chapterName = _chapterTitle(ret.$3);

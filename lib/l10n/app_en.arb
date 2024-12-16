@@ -67,7 +67,7 @@
   "step2Suffix": "tab",
   "bookshelf": "Bookshelf",
   "local": "Local",
-  "sourceComment": "The following are added sources, please be careful to delete",
+  "sourceComment": "The following are added sources",
   "networkManager": "Network manager",
   "clear": "Clear",
   "aboutKernal": "Plugin kernel version",
@@ -86,5 +86,7 @@
   "selectAll": "Select All",
   "nameOfComic": "Comic name",
   "download": "Download",
-  "findMoreExtension": "Find more extensions"
+  "findMoreExtension": "Find more extensions",
+  "sourceWarning": "Please support the original version, be careful to choose to add the source",
+  "imageDownloadFailed": "Image download failed, please check the network and exit to retry"
 }

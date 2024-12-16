@@ -177,13 +177,13 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
   String getPageText(BuildContext context, int index) {
     var ret = readerChapters.imageUrl(index);
     if (ret == null) {
-      return '0/0';
+      return '';
     }
     var comicModel = context
         .read<ComicProvider>()
         .getComicModel(getComicUniqueId(comicId, extensionName));
     if (comicModel == null) {
-      return '0/0';
+      return '';
     }
 
     String chapterTitle = comicModel.getChapterTitle(ret.$3) ?? '';

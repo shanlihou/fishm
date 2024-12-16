@@ -112,9 +112,9 @@ class _ReaderPageState extends State<ReaderPage> {
 
   Widget _buildMiddle(int index) {
     var (pre, next) = widget.readerContext.buildMiddleText(context, index);
-    double marginH = 300.h;
+    double marginH = 0.3.sh;
     double marginV = 50.w;
-    double marginMiddle = 100.w;
+    double marginMiddle = 50.w;
     return SizedBox(
       width: 1.sw,
       height: 1.sh,
@@ -136,7 +136,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 ],
               ),
             ),
-            Image.asset(betweenImg),
+            Image.asset(betweenImg, fit: BoxFit.contain, width: 0.33.sw),
             Container(
               width: double.infinity,
               alignment: Alignment.centerRight,
@@ -215,9 +215,11 @@ class _ReaderPageState extends State<ReaderPage> {
                   } else {
                     _initOption = InitOption.pre;
                   }
+                  _pageText.value = '';
                   setState(() {});
                 } else if (index == widget.readerContext.imageCount - 1) {
                   _initOption = InitOption.next;
+                  _pageText.value = '';
                   setState(() {});
                 } else {
                   _pageText.value =

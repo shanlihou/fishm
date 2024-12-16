@@ -34,7 +34,7 @@
     "step2Suffix": "页签下阅读",
     "bookshelf": "书架",
     "local": "本地",
-    "sourceComment": "以下为添加源，请谨慎删除",
+    "sourceComment": "以下为添加源",
     "networkManager": "网络管理",
     "clear": "清除",
     "aboutKernal": "插件内核版本",
@@ -53,5 +53,7 @@
     "selectAll": "全选",
     "nameOfComic": "漫画名称",
     "download": "下载",
-    "findMoreExtension": "发现更多扩展"
+    "findMoreExtension": "发现更多扩展",
+    "sourceWarning": "请支持正版，谨慎选择添加源",
+    "imageDownloadFailed": "图片下载失败，请检查网络并退出重试"
 }

@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gif/gif.dart';
 import 'package:toonfu/const/assets_const.dart';
 
@@ -112,8 +114,9 @@ class _NetImageState extends State<NetImage> {
       return SizedBox(
         width: widget.width,
         height: widget.height,
-        child: const Center(
-          child: Text('Image download failed'),
+        child: Center(
+          child: Text(AppLocalizations.of(context)!.imageDownloadFailed,
+              style: const TextStyle(color: CupertinoColors.systemGrey)),
         ),
       );
     }
@@ -134,15 +137,19 @@ class _NetImageState extends State<NetImage> {
     }
 
     // return Image not found
+    double ratio = 0.4;
     return SizedBox(
-      width: widget.width,
+      width: (widget.width == null ? 1.sw : widget.width!) * ratio,
       height: widget.height,
       child: Center(
         child: Gif(
+          width: (widget.width == null ? 1.sw : widget.width!) * ratio,
+          height: widget.height,
           image: const AssetImage(loadingGif),
           // fps: 30,
           autostart: Autostart.loop,
-          duration: const Duration(seconds: 1),
+          duration: const Duration(milliseconds: 1400),
+          fit: BoxFit.contain,
         ),
       ),
     );
