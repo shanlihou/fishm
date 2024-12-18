@@ -71,7 +71,7 @@ class _SourcesSettingsState extends State<SourcesSettings> {
           child: Column(
             children: [
               buildCommonBase(
-                  context, sourceBig, AppLocalizations.of(context)!.import),
+                  context, sourceBig, AppLocalizations.of(context)!.sources),
               Container(
                 margin: EdgeInsets.only(
                     bottom: 20.h, left: 30.w, right: 40.w, top: 20.h),
