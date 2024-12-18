@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
-import 'package:toonfu/types/task/task_download.dart';
+import 'package:fishm/types/task/task_download.dart';
 import '../../const/db_const.dart';
 import '../../const/general_const.dart';
 

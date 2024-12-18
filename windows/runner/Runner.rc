@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.qktz" "\0"
-            VALUE "FileDescription", "toonfu" "\0"
+            VALUE "FileDescription", "fishm" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "toonfu" "\0"
+            VALUE "InternalName", "fishm" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.qktz. All rights reserved." "\0"
-            VALUE "OriginalFilename", "toonfu.exe" "\0"
-            VALUE "ProductName", "toonfu" "\0"
+            VALUE "OriginalFilename", "fishm.exe" "\0"
+            VALUE "ProductName", "fishm" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

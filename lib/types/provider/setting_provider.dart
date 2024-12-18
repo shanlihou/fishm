@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:toonfu/models/db/settings.dart' as model_settings;
+import 'package:fishm/models/db/settings.dart' as model_settings;
 
 class SettingProvider with ChangeNotifier {
   bool _isLoad = false;

@@ -9,7 +9,7 @@ import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/const/assets_const.dart';
+import 'package:fishm/const/assets_const.dart';
 
 import '../../common/log.dart';
 import '../../const/color_const.dart';

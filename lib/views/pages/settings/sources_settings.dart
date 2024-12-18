@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/types/provider/setting_provider.dart';
+import 'package:fishm/types/provider/setting_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../const/assets_const.dart';

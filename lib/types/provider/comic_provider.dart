@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
-import 'package:toonfu/models/db/comic_model.dart';
+import 'package:fishm/models/db/comic_model.dart';
 
 import '../../const/db_const.dart';
 import '../../models/db/read_history_model.dart';

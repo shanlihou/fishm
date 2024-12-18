@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/const/general_const.dart';
-import 'package:toonfu/types/provider/extension_provider.dart';
+import 'package:fishm/const/general_const.dart';
+import 'package:fishm/types/provider/extension_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/types/provider/setting_provider.dart';
+import 'package:fishm/types/provider/setting_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:toonfu/models/db/settings.dart';
-import 'package:toonfu/models/db/extensions.dart';
-import 'package:toonfu/models/db/comic_model.dart';
-import 'package:toonfu/types/provider/comic_provider.dart';
-import 'package:toonfu/views/pages/splash.dart';
+import 'package:fishm/models/db/settings.dart';
+import 'package:fishm/models/db/extensions.dart';
+import 'package:fishm/models/db/comic_model.dart';
+import 'package:fishm/types/provider/comic_provider.dart';
+import 'package:fishm/views/pages/splash.dart';
 
 import 'common/log.dart';
 import 'const/assets_const.dart';
@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
                   Locale('en'),
                   Locale('zh'),
                 ],
-                title: 'ToonFu',
+                title: 'fishm',
                 theme: const CupertinoThemeData(
                   primaryColor: primaryTextColor,
                   primaryContrastingColor: CupertinoColors.systemYellow,

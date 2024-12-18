@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/const/general_const.dart';
+import 'package:fishm/const/general_const.dart';
 
 import '../../models/db/comic_model.dart';
 import '../../types/provider/comic_provider.dart';

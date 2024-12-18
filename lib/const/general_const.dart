@@ -7,7 +7,7 @@ const archiveCbzImageDir = 'archive_cbz_img';
 const cbzDir = 'cbz';
 const cbzOutputDir = 'cbz_output';
 const yamlMainKey = 'main';
-const toonfuVersion = 'v1.0.0';
+const fishmVersion = 'v1.0.0';
 
 enum NetImageType {
   normal,

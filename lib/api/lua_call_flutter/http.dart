@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:lua_dardo_co/lua.dart';
 import 'package:dio/dio.dart';
-import 'package:toonfu/utils/utils_general.dart';
+import 'package:fishm/utils/utils_general.dart';
 import '../../common/log.dart';
 import '../../types/manager/actions.dart';
 import '../../types/manager/global_manager.dart';

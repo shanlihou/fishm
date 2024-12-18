@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/utils/utils_general.dart';
-import 'package:toonfu/utils/utils_widget.dart';
+import 'package:fishm/utils/utils_general.dart';
+import 'package:fishm/utils/utils_widget.dart';
 
 import '../../../api/flutter_call_lua/method.dart';
 import '../../../const/assets_const.dart';
@@ -150,10 +150,10 @@ class _AboutPageState extends State<AboutPage> {
               ),
               child: Row(
                 children: [
-                  Text(AppLocalizations.of(context)!.toonfuVersion),
+                  Text(AppLocalizations.of(context)!.fishmVersion),
                   Container(
                     margin: EdgeInsets.only(left: 20.w),
-                    child: Text(toonfuVersion,
+                    child: Text(fishmVersion,
                         style: TextStyle(
                             fontSize: 40.sp,
                             color: CupertinoColors.secondaryLabel)),

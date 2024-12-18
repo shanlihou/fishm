@@ -2,7 +2,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/views/pages/settings/sources_settings.dart';
+import 'package:fishm/views/pages/settings/sources_settings.dart';
 
 import '../../../const/general_const.dart';
 import '../../../models/db/extensions.dart' as model_extensions;

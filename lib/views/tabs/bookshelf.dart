@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/views/tabs/download_task_tab.dart';
+import 'package:fishm/views/tabs/download_task_tab.dart';
 
 import 'favorite_tab.dart';
 import 'history_tab.dart';

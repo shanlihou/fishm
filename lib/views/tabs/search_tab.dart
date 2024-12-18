@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/const/color_const.dart';
+import 'package:fishm/const/color_const.dart';
 
 import '../../types/provider/extension_provider.dart';
 import '../widget/search_result_widget.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:toonfu/const/color_const.dart';
+import 'package:fishm/const/color_const.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 import '../../common/log.dart';

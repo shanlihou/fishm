@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:toonfu/const/general_const.dart';
+import 'package:fishm/const/general_const.dart';
 
 import '../../../common/log.dart';
 import '../../../const/assets_const.dart';

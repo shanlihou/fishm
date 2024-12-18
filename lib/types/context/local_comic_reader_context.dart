@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/utils/utils_general.dart';
+import 'package:fishm/utils/utils_general.dart';
 
 import '../../const/general_const.dart';
 import '../../views/widget/net_image.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/views/pages/settings/sources_settings.dart';
-import 'package:toonfu/views/pages/settings/about_page.dart';
-import 'package:toonfu/views/pages/settings/debug_setting_page.dart';
-import 'package:toonfu/views/pages/settings/general_settings.dart';
+import 'package:fishm/views/pages/settings/sources_settings.dart';
+import 'package:fishm/views/pages/settings/about_page.dart';
+import 'package:fishm/views/pages/settings/debug_setting_page.dart';
+import 'package:fishm/views/pages/settings/general_settings.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 
 import 'network_settings.dart';

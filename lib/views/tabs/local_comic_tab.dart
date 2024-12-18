@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toonfu/utils/utils_general.dart';
+import 'package:fishm/utils/utils_general.dart';
 
 import '../../common/log.dart';
 import '../../const/assets_const.dart';

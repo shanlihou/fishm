@@ -1,4 +1,4 @@
-package com.qktz.toonfu
+package com.qktz.fishm
 
 import io.flutter.embedding.android.FlutterActivity
 

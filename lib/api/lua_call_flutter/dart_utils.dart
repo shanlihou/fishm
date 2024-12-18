@@ -2,7 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lua_dardo_co/lua.dart';
 import 'dart:io';
 
-import 'package:toonfu/const/lua_const.dart';
+import 'package:fishm/const/lua_const.dart';
 
 import '../../common/log.dart';
 

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gif/gif.dart';
-import 'package:toonfu/const/assets_const.dart';
+import 'package:fishm/const/assets_const.dart';
 
 import '../../const/general_const.dart';
 import '../../types/context/net_iamge_context.dart';

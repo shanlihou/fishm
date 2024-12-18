@@ -1,5 +1,5 @@
 import 'package:lua_dardo_co/lua.dart';
-import 'package:toonfu/api/flutter_call_lua/action.dart';
+import 'package:fishm/api/flutter_call_lua/action.dart';
 
 class Search extends Payload {
   String keyword;
