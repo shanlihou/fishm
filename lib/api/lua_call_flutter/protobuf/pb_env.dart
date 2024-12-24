@@ -18,47 +18,46 @@ class PbEnv {
   int pbEnum(PbField f, List<bool>? pexit, int idx) {
     var type = ls.type(idx);
     PbField? ev;
-    String? ename = ls.checkString(idx);
+    String? ename = ls.checkString(idx)!;
     if (type == LuaType.luaNumber) {
       int v = ls.toInteger(idx);
       if (pexit != null) {
         pexit[0] = (v != 0);
       }
       return b.addVarint64(v);
-    }
-    else if ((ev = f.type!.findField(ename!)) != null) {
+    } else if ((ev = f.type!.findField(ename)) != null) {
       if (pexit != null) {
         pexit[0] = ev!.number != 0;
       }
       return b.addVarint32(ev!.number);
-    }
-    else {
+    } else {
       throw Exception("Unknown enum value: $ename");
     }
   }
 
   int field(PbField f, List<bool>? pexit, int idx) {
-      switch(f.typeId) {
-        case PB_Tenum:
-          return pbEnum(f, pexit, idx);
-        case PB_Tmessage:
-          if (ls.type(idx) != LuaType.luaTable) {
-            throw Exception("Table expected for field ${f.name}");
-          }
-          b.addVarint32(0);
-          int len = b.length();
-          encode(f.type!, idx);
-          if (pexit != null) {
-            pexit[0] = (len < b.length());
-          }
-          return b.addLength(len, 1);
-        default:
-          int len = b.addType(ls, idx, f.typeId, pexit);
-          if (len <= 0) {
-            throw Exception("${(f.typeId)} expected for field '${f.name}', got ${ls.type(idx)}");
-          }
-          return len;
-      }
+    switch (f.typeId) {
+      case PB_Tenum:
+        return pbEnum(f, pexit, idx);
+      case PB_Tmessage:
+        if (ls.type(idx) != LuaType.luaTable) {
+          throw Exception("Table expected for field ${f.name}");
+        }
+        b.addVarint32(0);
+        int len = b.length();
+        encode(f.type!, idx);
+        if (pexit != null) {
+          pexit[0] = (len < b.length());
+        }
+        return b.addLength(len, 1);
+      default:
+        int len = b.addType(ls, idx, f.typeId, pexit);
+        if (len <= 0) {
+          throw Exception(
+              "${(f.typeId)} expected for field '${f.name}', got ${ls.type(idx)}");
+        }
+        return len;
+    }
   }
 
   void tagField(PbField f, int ignorezero, int idx) {
@@ -82,7 +81,7 @@ class PbEnv {
     }
 
     ls.pushNil();
-    while(ls.next(relindex(idx, 1))) {
+    while (ls.next(relindex(idx, 1))) {
       b.addVarint32(pbPair(field.number, PB_TBYTES));
       b.addVarint32(0);
       int len = b.length();
@@ -111,8 +110,7 @@ class PbEnv {
       } else {
         b.addLength(len, 1);
       }
-    }
-    else {
+    } else {
       for (i = 1; ls.rawGetI(idx, i) != LuaType.luaNil; i++) {
         tagField(f, 0, -1);
         ls.pop(1);
@@ -125,12 +123,13 @@ class PbEnv {
   void encodeOneField(PbType pt, PbField field, int idx) {
     if (field.type != null && field.type!.isMap) {
       map(field, idx);
-    }
-    else if (field.repeated) {
+    } else if (field.repeated) {
       repeated(field, idx);
-    }
-    else {
-      int ignorezero = pt.isProto3 && (field.oneofIdx == 0) && (field.typeId != PB_Tmessage) ? 1 : 0;
+    } else {
+      int ignorezero =
+          pt.isProto3 && (field.oneofIdx == 0) && (field.typeId != PB_Tmessage)
+              ? 1
+              : 0;
       tagField(field, ignorezero, idx);
     }
   }
@@ -140,7 +139,7 @@ class PbEnv {
       throw Exception("Not implemented encode order");
     } else {
       ls.pushNil();
-      while(ls.next(relindex(idx, 1))) {
+      while (ls.next(relindex(idx, 1))) {
         if (ls.type(-2) == LuaType.luaString) {
           var field = pt.findField(ls.checkString(-2)!);
           if (field != null) {
@@ -176,8 +175,7 @@ class PbEnv {
 
         if (ev != null) {
           ls.pushString(ev.name);
-        }
-        else {
+        } else {
           pushInteger(ls, u64, true, ps.int64Mode);
         }
 
@@ -192,8 +190,7 @@ class PbEnv {
         (sv, len) = s.readbytes();
         if (f.type == null || f.type!.isDead) {
           ls.pushNil();
-        }
-        else {
+        } else {
           ps.pushTypeTable(ls, f.type!);
           PbSlice s = this.s;
           this.s = sv;
@@ -244,30 +241,31 @@ class PbEnv {
       }
     }
 
-    if ((mask & 1) == 0 && ps.pushDefField(ls, f.type!.findFieldByTag(1), true)) {
+    if ((mask & 1) == 0 &&
+        ps.pushDefField(ls, f.type!.findFieldByTag(1), true)) {
       ls.replace(top + 1);
       mask |= 1;
     }
 
-    if ((mask & 2) == 0 && ps.pushDefField(ls, f.type!.findFieldByTag(2), true)) {
+    if ((mask & 2) == 0 &&
+        ps.pushDefField(ls, f.type!.findFieldByTag(2), true)) {
       ls.replace(top + 2);
       mask |= 2;
     }
 
     if (mask == 3) {
       ls.rawSet(-3);
-    }
-    else {
+    } else {
       ls.pop(2);
     }
   }
 
   void dRepeated(PbField f, int tag) {
-    if (gettype(tag) != PB_TBYTES || (f.packed == 0 && pbWtypebytype(f.typeId) == PB_TBYTES)) {
+    if (gettype(tag) != PB_TBYTES ||
+        (f.packed == 0 && pbWtypebytype(f.typeId) == PB_TBYTES)) {
       dField(f, tag);
       ls.rawSetI(-2, ls.rawLen(-2) + 1);
-    }
-    else {
+    } else {
       int len = ls.rawLen(-1);
       PbSlice p;
       (p, _) = s.readbytes();
@@ -294,19 +292,16 @@ class PbEnv {
       var f = t.findFieldByTag(gettag(tag));
       if (f == null) {
         s.skipvalue(tag);
-      }
-      else if (f.type != null && f.type!.isMap) {
+      } else if (f.type != null && f.type!.isMap) {
         ps.fetchTable(ls, f, ps.arrayType);
         dCheckType(f, tag);
         dMap(f);
         ls.pop(1);
-      }
-      else if (f.repeated){
+      } else if (f.repeated) {
         ps.fetchTable(ls, f, ps.arrayType);
         dRepeated(f, tag);
         ls.pop(1);
-      }
-      else {
+      } else {
         ls.pushString(f.name);
         if (f.oneofIdx != 0) {
           ls.pushString(t.oneofIndex[f.oneofIdx]!.name);

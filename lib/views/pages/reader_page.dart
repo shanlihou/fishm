@@ -251,11 +251,8 @@ class _ReaderPageState extends State<ReaderPage> {
     try {
       if (_initOption == InitOption.init) {
         int? newPage = await widget.readerContext.init(context);
-        if (newPage == null) {
-          return false;
-        }
 
-        _setPageController(PreloadPageController(initialPage: newPage));
+        _setPageController(PreloadPageController(initialPage: newPage!));
         _pageText.value = widget.readerContext.getPageText(context, newPage);
         widget.readerContext.recordHistory(context, newPage);
       } else if (_initOption == InitOption.pre) {
@@ -357,35 +354,22 @@ class _ReaderPageState extends State<ReaderPage> {
 
   void _preChapter() {
     int? newPage = widget.readerContext.preChapter(context);
-    if (newPage == null) {
-      _initOption = InitOption.preChapter;
-      setState(() {});
-      return;
-    }
 
-    _preloadController?.jumpToPage(newPage);
+    _preloadController?.jumpToPage(newPage!);
     _menuPage.value = MenuPageValue(true, 1);
   }
 
   void _nextChapter() {
     int? newPage = widget.readerContext.nextChapter(context);
-    if (newPage == null) {
-      _initOption = InitOption.nextChapter;
-      setState(() {});
-      return;
-    }
 
-    _preloadController?.jumpToPage(newPage);
+    _preloadController?.jumpToPage(newPage!);
     _menuPage.value = MenuPageValue(true, 1);
   }
 
   void _jumpToPage(int page) {
     int? absolutePage = widget.readerContext.getAbsolutePage(page);
-    if (absolutePage == null) {
-      return;
-    }
 
-    _preloadController?.jumpToPage(absolutePage);
+    _preloadController?.jumpToPage(absolutePage!);
   }
 
   Widget _buildMenu() {

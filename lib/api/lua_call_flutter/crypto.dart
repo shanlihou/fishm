@@ -37,13 +37,9 @@ class CryptoLib {
 
   static int _base64Decode(LuaState ls) {
     String? encoded = ls.toStr(-1);
-    if (encoded == null) {
-      ls.pushNil();
-      return 1;
-    }
 
     try {
-      Uint8List decoded = base64Decode(encoded);
+      Uint8List decoded = base64Decode(encoded!);
       Userdata ud = ls.newUserdata();
       ud.data = decoded;
     } catch (e) {
@@ -57,7 +53,7 @@ class CryptoLib {
     String? key = ls.toStr(1);
     Userdata? content = ls.toUserdata(2);
 
-    if (key == null || content == null) {
+    if (content == null) {
       ls.pushNil();
       return 1;
     }
@@ -68,7 +64,7 @@ class CryptoLib {
     }
 
     try {
-      RSAKeypair rsaKeypair = RSAKeypair(RSAPrivateKey.fromString(key));
+      RSAKeypair rsaKeypair = RSAKeypair(RSAPrivateKey.fromString(key!));
       Uint8List decrypted =
           rsaKeypair.privateKey.decryptData(content.data as Uint8List);
       Userdata ud = ls.newUserdata();

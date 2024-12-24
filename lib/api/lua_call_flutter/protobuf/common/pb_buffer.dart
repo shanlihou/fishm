@@ -3,7 +3,6 @@ import '../pb_const.dart';
 import 'dart:typed_data';
 import '../pb_slice.dart';
 
-
 class PbBuffer {
   final List<int> _buffer = [];
 
@@ -14,10 +13,22 @@ class PbBuffer {
   int write32(int n) {
     int p, c = 0;
     do {
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
       p = n;
     } while (false);
     _buffer.add(p);
@@ -27,15 +38,42 @@ class PbBuffer {
   int write64(int n) {
     int p, c = 0;
     do {
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
-      p = n & 0x7F; if ((n >>= 7) == 0) break; _buffer.add(p | 0x80); ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
+      p = n & 0x7F;
+      if ((n >>= 7) == 0) break;
+      _buffer.add(p | 0x80);
+      ++c;
       p = n & 0x7f;
     } while (false);
 
@@ -136,10 +174,8 @@ class PbBuffer {
 
       case PB_Tdouble:
         double? d = ls.toNumberX(idx);
-        if (d != null) {
-          len = addDouble(d);
-          ret = 1;
-        }
+        len = addDouble(d!);
+        ret = 1;
 
         if (d == 0.0) {
           hasData = 0;
@@ -148,10 +184,8 @@ class PbBuffer {
 
       case PB_Tfloat:
         double? d = ls.toNumberX(idx);
-        if (d != null) {
-          len = addFloat(d);
-          ret = 1;
-        }
+        len = addFloat(d!);
+        ret = 1;
 
         if (d == 0.0) {
           hasData = 0;
@@ -160,10 +194,8 @@ class PbBuffer {
 
       case PB_Tfixed32:
         int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addFixed32(n);
-          ret = 1;
-        }
+        len = addFixed32(n!);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -172,10 +204,8 @@ class PbBuffer {
 
       case PB_Tsfixed32:
         int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addFixed32(n);
-          ret = 1;
-        }
+        len = addFixed32(n!);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -184,10 +214,8 @@ class PbBuffer {
 
       case PB_Tint32:
         int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addVarint64(n);
-          ret = 1;
-        }
+        len = addVarint64(n!);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -196,10 +224,8 @@ class PbBuffer {
 
       case PB_Tuint32:
         int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addVarint32(n);
-          ret = 1;
-        }
+        len = addVarint32(n!);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -207,11 +233,9 @@ class PbBuffer {
         break;
 
       case PB_Tsint32:
-        int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addVarint32((n << 1) ^ (n >> 31));
-          ret = 1;
-        }
+        int? n = ls.toIntegerX(idx)!;
+        len = addVarint32((n << 1) ^ (n >> 31));
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -219,11 +243,9 @@ class PbBuffer {
         break;
 
       case PB_Tfixed64:
-        int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addFixed64(n);
-          ret = 1;
-        }
+        int? n = ls.toIntegerX(idx)!;
+        len = addFixed64(n);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -231,11 +253,9 @@ class PbBuffer {
         break;
 
       case PB_Tsfixed64:
-        int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addFixed64(n);
-          ret = 1;
-        }
+        int? n = ls.toIntegerX(idx)!;
+        len = addFixed64(n);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -244,11 +264,9 @@ class PbBuffer {
 
       case PB_Tint64:
       case PB_Tuint64:
-        int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addVarint64(n);
-          ret = 1;
-        }
+        int? n = ls.toIntegerX(idx)!;
+        len = addVarint64(n);
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
@@ -256,18 +274,17 @@ class PbBuffer {
         break;
 
       case PB_Tsint64:
-        int? n = ls.toIntegerX(idx);
-        if (n != null) {
-          len = addVarint64((n << 1) ^ (n >> 63));
-          ret = 1;
-        }
+        int? n = ls.toIntegerX(idx)!;
+        len = addVarint64((n << 1) ^ (n >> 63));
+        ret = 1;
 
         if (n == 0) {
           hasData = 0;
         }
         break;
 
-      case PB_Tbytes: case PB_Tstring:
+      case PB_Tbytes:
+      case PB_Tstring:
         if (ls.type(idx) == LuaType.luaString) {
           String s = ls.checkString(idx)!;
           len = addBytes(s);
@@ -277,8 +294,7 @@ class PbBuffer {
           }
 
           ret = 1;
-        }
-        else {
+        } else {
           hasData = 0;
         }
         break;

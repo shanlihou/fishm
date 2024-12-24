@@ -166,12 +166,12 @@ class HttpLib {
       ls.pop(1);
     }
 
-    if (cbid == null || url == null) {
+    if (url == null) {
       Log.instance.e('cbid is null');
       return 0;
     }
 
-    _get(url, cbid, query, headers, responseType);
+    _get(url, cbid!, query, headers, responseType);
     return 0;
   }
 

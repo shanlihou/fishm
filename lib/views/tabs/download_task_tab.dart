@@ -23,10 +23,7 @@ class DownloadTaskTab extends StatefulWidget {
 void _gotoReaderPage(BuildContext context, TaskDownload task) {
   ComicProvider p = context.read<ComicProvider>();
   String uniqueId = getComicUniqueId(task.comicId, task.extensionName);
-  ComicModel? comicModel = p.getComicModel(uniqueId);
-  if (comicModel == null) {
-    return;
-  }
+  ComicModel comicModel = p.getComicModel(uniqueId)!;
 
   Navigator.push(
     context,

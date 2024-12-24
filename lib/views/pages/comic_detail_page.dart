@@ -77,12 +77,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     ComicModel? comicModel = p.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
-    if (comicModel == null) {
-      _isFetchChapterDownCnt = false;
-      return;
-    }
-
-    if (comicModel.chapters.isEmpty) {
+    if (comicModel!.chapters.isEmpty) {
       _isFetchChapterDownCnt = false;
       return;
     }
@@ -112,33 +107,31 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     ComicModel? comicModel = provider.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
-    if (comicModel != null) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      await provider.addComic(comicModel, true);
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _fetchChapterDownCnts();
-      });
-      return;
-    }
-
-    Object ret = await getDetail(
-        widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
-
-    ComicDetail detail;
-    try {
-      detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
-    } catch (e) {
-      Log.instance.e('get comic detail failed: $e');
-      return;
-    }
     await Future.delayed(const Duration(milliseconds: 100));
-    await provider.addComic(
-        ComicModel.fromComicDetail(detail, widget.extensionName), true);
+    await provider.addComic(comicModel!, true);
 
     Future.delayed(const Duration(milliseconds: 100), () {
       _fetchChapterDownCnts();
     });
+    // return;
+
+    // Object ret = await getDetail(
+    //     widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
+
+    // ComicDetail detail;
+    // try {
+    //   detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
+    // } catch (e) {
+    //   Log.instance.e('get comic detail failed: $e');
+    //   return;
+    // }
+    // await Future.delayed(const Duration(milliseconds: 100));
+    // await provider.addComic(
+    //     ComicModel.fromComicDetail(detail, widget.extensionName), true);
+
+    // Future.delayed(const Duration(milliseconds: 100), () {
+    //   _fetchChapterDownCnts();
+    // });
   }
 
   void _toggleFavorite() {
@@ -248,10 +241,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     String uniqueId =
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName);
 
-    ComicModel? comicModel = comicProvider.getComicModel(uniqueId);
-    if (comicModel == null) {
-      return;
-    }
+    ComicModel comicModel = comicProvider.getComicModel(uniqueId)!;
 
     late ReadHistoryModel readHistory;
     if (comicProvider.readHistory.containsKey(uniqueId)) {
@@ -299,16 +289,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     }
 
     var detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
-    ComicModel? comicModel = provider.getComicModel(
-        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
+    ComicModel comicModel = provider.getComicModel(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName))!;
 
-    if (comicModel != null) {
-      comicModel.updateFromComicDetail(detail);
-      provider.addComic(comicModel, true);
-    } else {
-      provider.addComic(
-          ComicModel.fromComicDetail(detail, widget.extensionName), true);
-    }
+    comicModel.updateFromComicDetail(detail);
+    provider.addComic(comicModel, true);
   }
 
   void _downloadAllChapters() {
@@ -316,11 +301,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
     var comicProvider = context.read<ComicProvider>();
     var taskProvider = context.read<TaskProvider>();
-    ComicModel? comicModel = comicProvider.getComicModel(
-        getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
-    if (comicModel == null) {
-      return;
-    }
+    ComicModel comicModel = comicProvider.getComicModel(
+        getComicUniqueId(widget.comicItem.comicId, widget.extensionName))!;
 
     for (var chapter in comicModel.chapters) {
       addDownloadTask(comicProvider, taskProvider, widget.comicItem.comicId,

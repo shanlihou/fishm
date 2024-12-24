@@ -455,11 +455,8 @@ ComicChapterStatus getChapterStatus(
     String chapterId) {
   ComicModel? comicModel =
       comicProvider.getComicModel(getComicUniqueId(comicId, extensionName));
-  if (comicModel == null) {
-    return ComicChapterStatus.loading;
-  }
 
-  ChapterModel? chapterModel = comicModel.getChapterModel(chapterId);
+  ChapterModel? chapterModel = comicModel!.getChapterModel(chapterId);
   if (chapterModel == null) {
     return ComicChapterStatus.loading;
   }
@@ -497,11 +494,8 @@ void addDownloadTask(
 
   ComicModel? comicModel =
       comicProvider.getComicModel(getComicUniqueId(comicId, extensionName));
-  if (comicModel == null) {
-    return;
-  }
 
-  ChapterModel? chapterModel = comicModel.getChapterModel(chapterId);
+  ChapterModel? chapterModel = comicModel!.getChapterModel(chapterId);
   if (chapterModel == null) {
     return;
   }

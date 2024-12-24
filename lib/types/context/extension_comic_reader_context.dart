@@ -201,7 +201,10 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
     if (isNext) {
       String last = readerChapters.lastChapterId();
       String? nextChapterId = comicModel.nextChapterId(last);
-      if (nextChapterId == null) return -1;
+      if (nextChapterId == null) {
+        return -1;
+      }
+
       ChapterDetail detail = (await getChapterDetails(
           comicModel, extensionName, comicId, nextChapterId))!;
       await p.saveComic(comicModel);
@@ -211,7 +214,9 @@ class ExtensionComicReaderContext extends ComicReaderContext<ChapterDetail> {
     } else {
       String first = readerChapters.firstChapterId();
       String? preChapterId = comicModel.preChapterId(first);
-      if (preChapterId == null) return -1;
+      if (preChapterId == null) {
+        return -1;
+      }
       ChapterDetail detail = (await getChapterDetails(
           comicModel, extensionName, comicId, preChapterId))!;
       await p.saveComic(comicModel);

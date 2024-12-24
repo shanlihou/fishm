@@ -27,11 +27,8 @@ class JsonLib {
 
   static int _jsonDecode(LuaState ls) {
     String? jsonStr = ls.checkString(-1);
-    if (jsonStr == null) {
-      return 0;
-    }
 
-    Object json = const JsonDecoder().convert(jsonStr);
+    Object json = const JsonDecoder().convert(jsonStr!);
     if (json is List) {
       pushJsonList(ls, json);
     } else if (json is Map<String, dynamic>) {
@@ -41,5 +38,4 @@ class JsonLib {
     }
     return 1;
   }
-
 }
