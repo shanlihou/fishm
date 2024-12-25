@@ -7,11 +7,12 @@ import '../../api/lua_call_flutter/crypto.dart';
 import '../../api/lua_call_flutter/bytes.dart';
 import '../../api/lua_call_flutter/dart_utils.dart';
 import '../../api/lua_call_flutter/os_ext.dart';
-import '../../api/lua_call_flutter/protobuf/protobuf.dart';
+//import '../../api/lua_call_flutter/protobuf/protobuf.dart';
 import '../../common/log.dart';
 import '../../utils/lua_table.dart';
 import './completer.dart';
 import '../../const/lua_const.dart';
+import 'package:lua_dardo_pb/lua_dardo_pb.dart';
 
 class LuaManager {
   late LuaState ls;
@@ -27,7 +28,7 @@ class LuaManager {
     ls.requireF('dart_json', JsonLib.openJsonLib, true);
     ls.requireF('dart_crypto', CryptoLib.openCryptoLib, true);
     ls.requireF('dart_bytes', BytesLib.openBytesLib, true);
-    ls.requireF('dart_pb', ProtobufLib.openProtobufLib, true);
+    ls.requireF('dart_pb', openProtobufLib, true);
     ls.requireF('dart_utils', UtilsLib.openUtilsLib, true);
     ls.requireF('dart_os_ext', OsExtensionLib.openOsExtensionLib, true);
     ls.pop(1);

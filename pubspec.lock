@@ -533,9 +533,11 @@ packages:
   lua_dardo_pb:
     dependency: "direct main"
     description:
-      path: "/Users/hoshily/custom/git/flutter/lua_dardo_pb"
-      relative: false
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: ad178f82927b156159f701dbb49db22c14faa4c9
+      url: "https://github.com/shanlihou/lua_dardo_pb.git"
+    source: git
     version: "0.0.1"
   macros:
     dependency: transitive

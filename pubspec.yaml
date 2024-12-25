@@ -33,7 +33,9 @@ dependencies:
   provider: ^6.1.2
   lua_dardo_co: ^0.0.10
   lua_dardo_pb:
-    path: /Users/hoshily/custom/git/flutter/lua_dardo_pb
+    git:
+      url: https://github.com/shanlihou/lua_dardo_pb.git
+      ref: main
   # lua_dardo_co:
   #   path: /Users/hoshily/custom/git/flutter/LuaDardo
     # path: E:\shgithub\flutter\LuaDardo
