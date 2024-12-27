@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
+import '../../const/general_const.dart';
 
 class TabProvider extends ChangeNotifier {
-  int currentIndex = 0;
+  int currentIndex = initTabIndex;
 
   void setCurrentIndex(int index) {
     currentIndex = index;

@@ -11,7 +11,8 @@ class BottomAppBarWidget extends StatefulWidget {
   final List<String> titles;
   final List<String> iconOffs;
   final List<String> iconOns;
-  final PageController pageController = PageController();
+  final PageController pageController =
+      PageController(initialPage: initTabIndex);
 
   BottomAppBarWidget({
     super.key,

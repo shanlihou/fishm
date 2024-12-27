@@ -59,3 +59,5 @@ const int tabSearch = 1;
 const int tabShelf = 2;
 const int tabImport = 3;
 const int tabMy = 4;
+
+const int initTabIndex = 2;

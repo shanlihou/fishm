@@ -46,10 +46,13 @@ Future<void> _main() async {
     Hive.registerAdapter(ReadHistoryModelAdapter());
 
     String targetPath = '';
+    String targetPathZh = '';
     if (Platform.isWindows) {
       targetPath = '$cbzDir\\tutorial.zip';
+      targetPathZh = '$cbzDir\\教程.zip';
     } else {
       targetPath = '$cbzDir/tutorial.zip';
+      targetPathZh = '$cbzDir/教程.zip';
     }
 
     if (File(targetPath).existsSync()) {
@@ -58,6 +61,7 @@ Future<void> _main() async {
       // create dir cbz
       await Directory(cbzDir).create(recursive: true);
       await assetToFile(tutorialZip, targetPath);
+      await assetToFile(tutorialZipZh, targetPathZh);
     }
   } catch (e, s) {
     Log.instance.e('Hive init error e:$e, s:$s');

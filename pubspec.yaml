@@ -139,6 +139,7 @@ flutter:
     - assets/images/loading/loading.gif
     - assets/images/loading/loading.png
     - assets/zip/tutorial.zip
+    - assets/zip/教程.zip
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
