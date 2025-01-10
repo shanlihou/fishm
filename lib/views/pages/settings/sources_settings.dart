@@ -111,10 +111,14 @@ class _SourcesSettingsState extends State<SourcesSettings> {
                           color: const Color.fromARGB(255, 251, 2, 2)),
                       Container(
                         margin: EdgeInsets.only(left: 20.w),
-                        child: Text(AppLocalizations.of(context)!.sourceWarning,
-                            style: TextStyle(
-                                fontSize: 40.spMin,
-                                color: CupertinoColors.systemGrey)),
+                        child: SizedBox(
+                          width: 930.w,
+                          child: Text(
+                              AppLocalizations.of(context)!.sourceWarning,
+                              style: TextStyle(
+                                  fontSize: 40.spMin,
+                                  color: CupertinoColors.systemGrey)),
+                        ),
                       ),
                     ],
                   )),
