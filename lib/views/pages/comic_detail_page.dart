@@ -107,31 +107,33 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     ComicModel? comicModel = provider.getComicModel(
         getComicUniqueId(widget.comicItem.comicId, widget.extensionName));
 
+    if (comicModel != null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      await provider.addComic(comicModel, true);
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _fetchChapterDownCnts();
+      });
+      return;
+    }
+
+    Object ret = await getDetail(
+        widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
+
+    ComicDetail detail;
+    try {
+      detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
+    } catch (e) {
+      Log.instance.e('get comic detail failed: $e');
+      return;
+    }
     await Future.delayed(const Duration(milliseconds: 100));
-    await provider.addComic(comicModel!, true);
+    await provider.addComic(
+        ComicModel.fromComicDetail(detail, widget.extensionName), true);
 
     Future.delayed(const Duration(milliseconds: 100), () {
       _fetchChapterDownCnts();
     });
-    // return;
-
-    // Object ret = await getDetail(
-    //     widget.extensionName, widget.comicItem.comicId, widget.comicItem.extra);
-
-    // ComicDetail detail;
-    // try {
-    //   detail = ComicDetail.fromJson(ret as Map<String, dynamic>);
-    // } catch (e) {
-    //   Log.instance.e('get comic detail failed: $e');
-    //   return;
-    // }
-    // await Future.delayed(const Duration(milliseconds: 100));
-    // await provider.addComic(
-    //     ComicModel.fromComicDetail(detail, widget.extensionName), true);
-
-    // Future.delayed(const Duration(milliseconds: 100), () {
-    //   _fetchChapterDownCnts();
-    // });
   }
 
   void _toggleFavorite() {
