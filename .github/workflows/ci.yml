@@ -21,7 +21,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0'  # 指定 Flutter 版本
+          flutter-version: '3.22.0'  # 指定 Flutter 版本
 
       - name: Install dependencies
         run: flutter pub get
