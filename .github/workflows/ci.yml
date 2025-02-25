@@ -16,12 +16,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '18'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'  # 指定 Flutter 版本
+          flutter-version: '3.27.0'  # 指定 Flutter 版本
 
       - name: Install dependencies
         run: flutter pub get
