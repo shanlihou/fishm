@@ -133,7 +133,7 @@ class _NetworkSettingsState extends State<NetworkSettings> {
                       children: [
                         Text(AppLocalizations.of(context)!.proxy),
                         CupertinoSwitch(
-                          activeColor: primaryTextColor,
+                          activeTrackColor: primaryTextColor,
                           value: p.settings?.enableProxy ?? false,
                           onChanged: (value) {
                             p.settings?.enableProxy = value;

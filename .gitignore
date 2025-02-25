@@ -50,3 +50,5 @@ build.sh
 tmp
 archive_img
 code
+archive_cbz_img
+cbz
