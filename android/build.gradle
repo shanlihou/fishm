@@ -16,3 +16,18 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+buildscript {
+    ext.kotlin_version = '1.8.22'  // 升级 Kotlin 版本
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'  // 升级 AGP 版本
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+ext.kotlin_version = '1.8.22'  // 升级 Kotlin 版本
