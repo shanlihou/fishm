@@ -46,7 +46,12 @@ class _ExtensionStoreTabState extends State<ExtensionStoreTab> {
       extension: extension,
       status: status,
       supportConfig: false,
+      onLongPress: _onRemoveStoreExtension,
     );
+  }
+
+  void _onRemoveStoreExtension(model_extensions.Extension extension) {
+    context.read<ExtensionProvider>().removeExtensionStore(extension.name);
   }
 
   @override

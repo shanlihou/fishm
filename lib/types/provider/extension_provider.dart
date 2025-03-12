@@ -71,6 +71,12 @@ class ExtensionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeExtensionStore(String name) {
+    _extensionsStore!.extensions.removeWhere((e) => e.name == name);
+    _extensionsBox.put(extensionStoreKey, _extensionsStore!);
+    notifyListeners();
+  }
+
   void updateExtensionStore(List<model_extensions.Extension> extensions) {
     mergeExtensions(_extensionsStore!.extensions, extensions);
     _extensionsBox.put(extensionStoreKey, _extensionsStore!);
