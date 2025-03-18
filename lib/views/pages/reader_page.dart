@@ -355,15 +355,28 @@ class _ReaderPageState extends State<ReaderPage> {
   void _preChapter() {
     int? newPage = widget.readerContext.preChapter(context);
 
-    _preloadController?.jumpToPage(newPage!);
     _menuPage.value = MenuPageValue(true, 1);
+
+    if (newPage == null) {
+      _initOption = InitOption.preChapter;
+      setState(() {});
+      return;
+    }
+
+    _preloadController?.jumpToPage(newPage);
   }
 
   void _nextChapter() {
     int? newPage = widget.readerContext.nextChapter(context);
 
-    _preloadController?.jumpToPage(newPage!);
     _menuPage.value = MenuPageValue(true, 1);
+    if (newPage == null) {
+      _initOption = InitOption.nextChapter;
+      setState(() {});
+      return;
+    }
+
+    _preloadController?.jumpToPage(newPage);
   }
 
   void _jumpToPage(int page) {

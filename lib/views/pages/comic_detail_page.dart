@@ -15,9 +15,11 @@ import '../../const/assets_const.dart';
 import '../../const/general_const.dart';
 import '../../models/api/comic_detail.dart';
 import '../../models/db/comic_model.dart';
+import '../../models/db/extensions.dart';
 import '../../models/db/read_history_model.dart';
 import '../../types/context/extension_comic_reader_context.dart';
 import '../../types/manager/global_manager.dart';
+import '../../types/provider/extension_provider.dart';
 import '../../types/provider/task_provider.dart';
 import '../../utils/utils_general.dart';
 import '../../views/class/comic_item.dart';
@@ -87,7 +89,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         break;
       }
       if (chapter.images.isEmpty) {
-        Log.instance.d('fetch chapter once');
+        // Log.instance.d('fetch chapter once');
         await getChapterDetails(comicModel, widget.extensionName,
             widget.comicItem.comicId, chapter.id);
 
@@ -320,6 +322,11 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       return const Center(child: CupertinoActivityIndicator());
     }
 
+    var p = context.read<ExtensionProvider>();
+    Extension? extension = p.getExtension(widget.extensionName);
+
+    var alias = extension != null ? extension.alias : "";
+
     _initWithContext();
 
     return CupertinoPageScaffold(
@@ -397,7 +404,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                     Text(
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        '${AppLocalizations.of(context)?.extensions}: ${widget.extensionName}'),
+                                        '${AppLocalizations.of(context)?.extensions}: $alias'),
                                     Expanded(child: Container()),
                                     SizedBox(
                                       width: 400.w,

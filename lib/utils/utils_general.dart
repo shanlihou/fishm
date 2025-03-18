@@ -268,6 +268,7 @@ int judgeVersion(String version1, String version2) {
 
 Future<void> _downloadExtension(model_extensions.Extension extension) async {
   Dio dio = Dio();
+  Log.instance.d('downloadExtension: ${extension.url}');
   await dio.download(extension.url, tempExtDownloadPath);
   final bytes = await File(tempExtDownloadPath).readAsBytes();
   final archive = ZipDecoder().decodeBytes(bytes);
@@ -299,8 +300,8 @@ Future<model_extensions.Extension?> installExtension(
     } else {
       await _copyLocalExtension(extension);
     }
-  } catch (e) {
-    Log.instance.e('_installExtension error $extension: $e');
+  } catch (s, e) {
+    Log.instance.e('_installExtension error $extension: $e, stackTrace: $s');
     return null;
   }
 

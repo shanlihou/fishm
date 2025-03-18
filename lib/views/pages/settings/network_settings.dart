@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/log.dart';
 import '../../../const/assets_const.dart';
 import '../../../const/color_const.dart';
 import '../../../types/manager/global_manager.dart';
@@ -29,6 +30,7 @@ class _NetworkSettingsState extends State<NetworkSettings> {
     super.initState();
 
     _hostFocusNode.addListener(() {
+      Log.instance.d('host focus: ${_hostFocusNode.hasFocus}');
       if (!_hostFocusNode.hasFocus) {
         _saveSettings();
       }
@@ -63,41 +65,6 @@ class _NetworkSettingsState extends State<NetworkSettings> {
     var p = context.watch<SettingProvider>();
     _hostController.text = p.settings?.proxyHost ?? '';
     _portController.text = p.settings?.proxyPort.toString() ?? '';
-
-    List<Widget> children = [
-      CupertinoFormSection(
-        header: Text(AppLocalizations.of(context)!.proxy),
-        children: [
-          CupertinoFormRow(
-            prefix: Text(AppLocalizations.of(context)!.enable),
-            child: CupertinoSwitch(
-              value: p.settings?.enableProxy ?? false,
-              onChanged: (value) {
-                p.settings?.enableProxy = value;
-                globalManager.resetProxy(p);
-                p.saveSettings();
-              },
-            ),
-          ),
-        ],
-      ),
-    ];
-
-    if (p.settings?.enableProxy ?? false) {
-      children.addAll([
-        CupertinoTextFormFieldRow(
-          controller: _hostController,
-          placeholder: AppLocalizations.of(context)!.host,
-          focusNode: _hostFocusNode,
-        ),
-        CupertinoTextFormFieldRow(
-          controller: _portController,
-          placeholder: AppLocalizations.of(context)!.port,
-          keyboardType: TextInputType.number,
-          focusNode: _portFocusNode,
-        ),
-      ]);
-    }
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -168,6 +135,7 @@ class _NetworkSettingsState extends State<NetworkSettings> {
                             controller: _hostController,
                             placeholder: AppLocalizations.of(context)!.host,
                             textAlign: TextAlign.right,
+                            focusNode: _hostFocusNode,
                           ),
                         ),
                       ],
@@ -197,6 +165,7 @@ class _NetworkSettingsState extends State<NetworkSettings> {
                             textAlign: TextAlign.right,
                             controller: _portController,
                             placeholder: AppLocalizations.of(context)!.port,
+                            focusNode: _portFocusNode,
                           ),
                         ),
                       ],

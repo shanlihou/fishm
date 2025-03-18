@@ -52,6 +52,16 @@ class ExtensionProvider with ChangeNotifier {
     return extensions.map((e) => e.name).toList();
   }
 
+  model_extensions.Extension? getExtension(String name) {
+    for (var e in _extensions!.extensions) {
+      if (e.name == name) {
+        return e;
+      }
+    }
+
+    return null;
+  }
+
   void updateExtension(model_extensions.Extension extension) {
     bool found = false;
     for (var i = _extensions!.extensions.length - 1; i >= 0; i--) {
