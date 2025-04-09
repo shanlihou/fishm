@@ -88,3 +88,17 @@ https://github.com/shanlihou/fish_demo/blob/master/local.yaml?raw=true
 - For real-world usage, replace the YAML address with trusted sources .  
 
 ---
+
+## 🧩 Extending fishm
+
+To create custom plugins or sources, explore our extension demo templates:
+
+### 🔧 Plugin Development Guides
+1. **YAML Source Config**  
+   [![YAML Icon](https://img.shields.io/badge/View_YAML_Config-6A5ACD?logo=yaml)](https://github.com/shanlihou/fish_demo/blob/master/local.yaml)  
+   Reference for creating source definition files.
+
+2. **Full Extension Kit**  
+   ```bash
+   git clone https://github.com/shanlihou/fish_demo.git
+   ```
