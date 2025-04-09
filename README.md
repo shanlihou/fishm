@@ -8,6 +8,18 @@ A **cross-platform manga reader** built with Flutter, offering offline/online re
 
 ---
 
+## 🎬 Visual Showcase
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/shanlihou/PicNest/refs/heads/main/preview1.jpg" alt="Search Manga" width="300"/>
+  <img src="https://raw.githubusercontent.com/shanlihou/PicNest/refs/heads/main/preview2.jpg" alt="Manga Detail" width="300"/> 
+  <img src="https://raw.githubusercontent.com/shanlihou/PicNest/refs/heads/main/preview3.jpg" alt="Manga Reader" width="300"/>
+</div>
+
+*From left to right: Search Manga → Manga Detail → Manga Reader*
+
+---
+
 ## ✨ Features  
 ### 📖 Core Reading  
 - **Multi-format support**: Parse `.cbz`/`.zip` files locally  
