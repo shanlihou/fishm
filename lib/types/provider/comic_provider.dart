@@ -88,7 +88,6 @@ class ComicProvider with ChangeNotifier {
 
   Future<void> saveComic(ComicModel comic, {bool isNotify = false}) async {
     await addComic(comic, false);
-    await _favoriteComicBox.put(comic.uniqueId, comic);
     if (isNotify) {
       notifyListeners();
     }
