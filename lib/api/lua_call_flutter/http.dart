@@ -96,9 +96,10 @@ class HttpLib {
       int code = ret.statusCode ?? 0;
 
       actionsManager.addAction(HttpResponse.toAction(response, code, cbid));
-    } catch (e) {
-      Log.instance.e('post $url failed: $e');
-      actionsManager.addAction(HttpResponse.toAction('failed', 0, cbid));
+    } on DioException catch (exception) {
+      Log.instance.e('post $url failed: $exception');
+      actionsManager.addAction(HttpResponse.toAction(
+          'failed', exception.response?.statusCode ?? 0, cbid));
     }
   }
 
