@@ -5,7 +5,7 @@ import 'package:fishm/views/tabs/download_task_tab.dart';
 import 'favorite_tab.dart';
 import 'history_tab.dart';
 import 'local_comic_tab.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class BookShelfTab extends StatefulWidget {
   const BookShelfTab({super.key});

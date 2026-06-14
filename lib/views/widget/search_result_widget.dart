@@ -10,7 +10,7 @@ import '../../types/common/search_footer.dart';
 import '../../types/common/search_header.dart';
 import '../class/comic_item.dart';
 import 'comic_item_widget.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class SearchResultController {
   ValueChanged<String>? onChanged;

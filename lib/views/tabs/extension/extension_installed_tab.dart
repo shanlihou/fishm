@@ -11,7 +11,7 @@ import '../../../utils/utils_widget.dart';
 import '../../dialog/install_confirm_dialog.dart';
 
 import '../../widget/extension_item_widget.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class ExtensionInstalledTab extends StatefulWidget {
   final VoidCallback onTap;

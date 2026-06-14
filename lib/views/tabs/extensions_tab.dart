@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 import '../../const/color_const.dart';
 import 'extension/extension_installed_tab.dart';

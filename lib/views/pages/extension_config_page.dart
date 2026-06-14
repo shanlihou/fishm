@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 import '../../api/flutter_call_lua/method.dart';
 import '../../common/log.dart';

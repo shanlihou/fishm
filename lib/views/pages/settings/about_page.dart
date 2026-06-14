@@ -11,7 +11,7 @@ import '../../../const/color_const.dart';
 import '../../../const/general_const.dart';
 import '../../../types/manager/actions.dart';
 import '../../../types/provider/setting_provider.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});

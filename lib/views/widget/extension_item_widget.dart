@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../../models/db/extensions.dart' as model_extensions;
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 import '../../const/assets_const.dart';
 import '../../const/general_const.dart';
 import '../../types/manager/actions.dart';

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:fishm/models/db/comic_model.dart';
 import 'package:fishm/types/provider/comic_provider.dart';
 import 'package:fishm/utils/utils_general.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 import '../../const/general_const.dart';
 import '../../types/provider/tab_provider.dart';
 import '../../utils/utils_widget.dart';

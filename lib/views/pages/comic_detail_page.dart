@@ -27,7 +27,7 @@ import '../dialog/loading_dialog.dart';
 import '../widget/comic_chapter_status_widget.dart';
 import '../widget/net_image.dart';
 import '../../types/context/net_iamge_context.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 import 'reader_page.dart';
 

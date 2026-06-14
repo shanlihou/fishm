@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:fishm/const/color_const.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 import '../../common/log.dart';
 import '../../const/assets_const.dart';

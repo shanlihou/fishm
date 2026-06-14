@@ -24,7 +24,7 @@ import 'types/provider/tab_provider.dart';
 import 'types/provider/task_provider.dart';
 import 'utils/utils_general.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

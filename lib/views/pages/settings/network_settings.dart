@@ -8,7 +8,7 @@ import '../../../const/color_const.dart';
 import '../../../types/manager/global_manager.dart';
 import '../../../types/provider/setting_provider.dart';
 
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 import '../../../utils/utils_widget.dart';
 

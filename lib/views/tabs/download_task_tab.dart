@@ -11,7 +11,7 @@ import '../../types/provider/task_provider.dart';
 import '../../types/task/task_download.dart';
 import '../../utils/utils_general.dart';
 import '../pages/reader_page.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class DownloadTaskTab extends StatefulWidget {
   const DownloadTaskTab({super.key});

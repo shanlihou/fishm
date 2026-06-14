@@ -5,7 +5,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 import '../../../common/log.dart';
 import '../../../const/assets_const.dart';
 import '../../../utils/utils_widget.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class DebugSettingPage extends StatefulWidget {
   const DebugSettingPage({super.key});

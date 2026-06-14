@@ -5,7 +5,7 @@ import 'package:fishm/const/color_const.dart';
 
 import '../../types/provider/extension_provider.dart';
 import '../widget/search_result_widget.dart';
-import 'package:flutter_gen/gen_l10n/localizations.dart';
+import 'package:fishm/l10n/localizations.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
